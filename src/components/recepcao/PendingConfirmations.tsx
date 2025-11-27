@@ -1,7 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Phone, MessageSquare, AlertCircle } from "lucide-react";
+import { Clock, Phone, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 interface PendingAppointment {
@@ -65,22 +64,15 @@ export const PendingConfirmations = () => {
   }
 
   return (
-    <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5 shadow-lg shadow-amber-500/10">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-amber-500 animate-pulse" />
-            <span>Confirmações Pendentes</span>
-          </CardTitle>
-          <Badge variant="secondary" className="bg-amber-500/20 text-amber-700 border-amber-500/30">
-            {pendingAppointments.length}
-          </Badge>
-        </div>
-        <p className="text-xs text-muted-foreground mt-1">
+    <div className="space-y-3 pb-2">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-xs text-muted-foreground">
           Amanhã • Aguardando confirmação
         </p>
-      </CardHeader>
-      <CardContent className="space-y-3">
+        <Badge variant="secondary" className="bg-amber-500/20 text-amber-700 border-amber-500/30">
+          {pendingAppointments.length}
+        </Badge>
+      </div>
         {pendingAppointments.map((appointment) => (
           <div
             key={appointment.id}
@@ -133,7 +125,6 @@ export const PendingConfirmations = () => {
             </div>
           </div>
         ))}
-      </CardContent>
-    </Card>
+    </div>
   );
 };

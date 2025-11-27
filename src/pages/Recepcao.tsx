@@ -32,6 +32,12 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 type ViewType = "timeline" | "kanban" | "hybrid" | "grid" | "queue";
 
@@ -112,11 +118,44 @@ const Recepcao = () => {
                       </Button>
                     </SheetTrigger>
                     <SheetContent side="left" className="w-80 p-0">
-                      <div className="p-4 space-y-4">
-                        <PendingConfirmations />
-                        <RoomStatusPanel />
-                        <QuickActions />
-                        <AlertsPanel />
+                      <div className="p-4">
+                        <Accordion type="single" collapsible defaultValue="confirmations" className="space-y-2">
+                          <AccordionItem value="confirmations" className="border rounded-lg bg-card">
+                            <AccordionTrigger className="px-4 hover:no-underline">
+                              <span className="font-semibold">Confirmações Pendentes</span>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-4">
+                              <PendingConfirmations />
+                            </AccordionContent>
+                          </AccordionItem>
+
+                          <AccordionItem value="rooms" className="border rounded-lg bg-card">
+                            <AccordionTrigger className="px-4 hover:no-underline">
+                              <span className="font-semibold">Status das Salas</span>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-4">
+                              <RoomStatusPanel />
+                            </AccordionContent>
+                          </AccordionItem>
+
+                          <AccordionItem value="actions" className="border rounded-lg bg-card">
+                            <AccordionTrigger className="px-4 hover:no-underline">
+                              <span className="font-semibold">Ações Rápidas</span>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-4">
+                              <QuickActions />
+                            </AccordionContent>
+                          </AccordionItem>
+
+                          <AccordionItem value="alerts" className="border rounded-lg bg-card">
+                            <AccordionTrigger className="px-4 hover:no-underline">
+                              <span className="font-semibold">Alertas do Dia</span>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-4">
+                              <AlertsPanel />
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
                       </div>
                     </SheetContent>
                   </Sheet>
@@ -178,11 +217,44 @@ const Recepcao = () => {
 
             {/* Informações Complementares - Desktop */}
             <div className="hidden lg:block w-80 flex-shrink-0">
-              <div className="sticky top-32 space-y-4">
-                <PendingConfirmations />
-                <RoomStatusPanel />
-                <QuickActions />
-                <AlertsPanel />
+              <div className="sticky top-32">
+                <Accordion type="single" collapsible defaultValue="confirmations" className="space-y-2">
+                  <AccordionItem value="confirmations" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <span className="font-semibold">Confirmações Pendentes</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4">
+                      <PendingConfirmations />
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="rooms" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <span className="font-semibold">Status das Salas</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4">
+                      <RoomStatusPanel />
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="actions" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <span className="font-semibold">Ações Rápidas</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4">
+                      <QuickActions />
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="alerts" className="border rounded-lg bg-card">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <span className="font-semibold">Alertas do Dia</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4">
+                      <AlertsPanel />
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </div>
             </div>
           </div>

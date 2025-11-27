@@ -55,9 +55,8 @@ const quickStats = [
 
 export const QuickActions = () => {
   return (
-    <div className="p-4 sm:p-5 space-y-6 bg-card/50 backdrop-blur-sm rounded-xl border border-border/50 h-full">
+    <div className="space-y-6 pb-2">
       <div>
-        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">Ações Rápidas</h3>
         <div className="space-y-2">
           {actions.map((action, index) => (
             <Button
@@ -85,7 +84,7 @@ export const QuickActions = () => {
       <Separator />
 
       <div>
-        <h3 className="text-base font-semibold text-foreground mb-4">Status Atual</h3>
+        <h4 className="text-sm font-semibold text-foreground mb-3">Status Atual</h4>
         <div className="space-y-3">
           {quickStats.map((stat, index) => (
             <div
@@ -107,7 +106,7 @@ export const QuickActions = () => {
       <Separator />
 
       <div>
-        <h3 className="text-base font-semibold text-foreground mb-4">Comunicação</h3>
+        <h4 className="text-sm font-semibold text-foreground mb-3">Comunicação</h4>
         <div className="space-y-2">
           <Button variant="outline" className="w-full justify-start hover:bg-primary/5">
             <MessageCircle className="h-4 w-4 mr-2 text-success" />
