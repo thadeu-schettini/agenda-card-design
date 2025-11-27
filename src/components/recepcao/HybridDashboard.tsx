@@ -36,7 +36,8 @@ const appointments = [
     professional: "Dr(a). Rollin Durgan",
     statusLabel: "Atrasado",
     payment: "Sem pagamento",
-    price: "Sem preço"
+    price: "Sem preço",
+    urgent: true
   },
   {
     id: 2,
@@ -49,7 +50,8 @@ const appointments = [
     professional: "Dr(a). Brayan O'Keefe",
     statusLabel: "Pendente",
     payment: "Sem pagamento",
-    price: "Sem preço"
+    price: "Sem preço",
+    urgent: false
   },
   {
     id: 3,
@@ -62,7 +64,8 @@ const appointments = [
     professional: "Dr(a). Cleta Bogisich",
     statusLabel: "Realizado",
     payment: "Pago",
-    price: "R$ 210,00"
+    price: "R$ 210,00",
+    urgent: false
   },
   {
     id: 4,
@@ -75,7 +78,8 @@ const appointments = [
     professional: "Dr. Carlos Mendes",
     statusLabel: "Confirmado",
     payment: "Pendente",
-    price: "R$ 180,00"
+    price: "R$ 180,00",
+    urgent: false
   },
   {
     id: 5,
@@ -88,7 +92,8 @@ const appointments = [
     professional: "Dr(a). Rollin Durgan",
     statusLabel: "Confirmado",
     payment: "Pago",
-    price: "R$ 150,00"
+    price: "R$ 150,00",
+    urgent: false
   }
 ];
 
@@ -102,9 +107,10 @@ const pendingCharges = [
 export const HybridDashboard = ({ searchQuery }: HybridDashboardProps) => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [showAllAppointments, setShowAllAppointments] = useState(false);
+  const [appointmentsList, setAppointmentsList] = useState(appointments);
 
   // Filter appointments based on search and status
-  const filteredAppointments = appointments.filter(apt => {
+  const filteredAppointments = appointmentsList.filter(apt => {
     const matchesSearch = searchQuery === "" || 
       apt.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       apt.professional.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -114,6 +120,14 @@ export const HybridDashboard = ({ searchQuery }: HybridDashboardProps) => {
     
     return matchesSearch && matchesStatus;
   });
+
+  const toggleUrgency = (aptId: number) => {
+    setAppointmentsList(prev => 
+      prev.map(apt => 
+        apt.id === aptId ? { ...apt, urgent: !apt.urgent } : apt
+      )
+    );
+  };
 
   const displayedAppointments = showAllAppointments 
     ? filteredAppointments 
@@ -158,7 +172,10 @@ export const HybridDashboard = ({ searchQuery }: HybridDashboardProps) => {
               className="animate-fade-in"
               style={{ animationDelay: `${index * 50}ms` }}
             >
-              <AppointmentListItem {...apt} />
+              <AppointmentListItem 
+                {...apt} 
+                onUrgencyToggle={() => toggleUrgency(apt.id)}
+              />
             </div>
           ))}
         </div>

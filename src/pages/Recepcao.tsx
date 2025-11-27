@@ -25,6 +25,7 @@ import { AlertsPanel } from "@/components/recepcao/AlertsPanel";
 import { QueueManagementView } from "@/components/recepcao/QueueManagementView";
 import { AdvancedFilters } from "@/components/recepcao/AdvancedFilters";
 import { NextAppointments } from "@/components/recepcao/NextAppointments";
+import { RoomStatusPanel } from "@/components/recepcao/RoomStatusPanel";
 import {
   Sheet,
   SheetContent,
@@ -111,6 +112,7 @@ const Recepcao = () => {
                     </SheetTrigger>
                     <SheetContent side="left" className="w-80 p-0">
                       <div className="p-4 space-y-4">
+                        <RoomStatusPanel />
                         <QuickActions />
                         <AlertsPanel />
                       </div>
@@ -175,6 +177,7 @@ const Recepcao = () => {
             {/* Informações Complementares - Desktop */}
             <div className="hidden lg:block w-80 flex-shrink-0">
               <div className="sticky top-32 space-y-4">
+                <RoomStatusPanel />
                 <QuickActions />
                 <AlertsPanel />
               </div>
