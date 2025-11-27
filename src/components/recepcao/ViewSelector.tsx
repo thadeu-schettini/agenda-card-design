@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, LayoutList, Columns, Calendar } from "lucide-react";
+import { LayoutGrid, LayoutList, Columns, Calendar, Users } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-type ViewType = "timeline" | "kanban" | "hybrid" | "grid";
+type ViewType = "timeline" | "kanban" | "hybrid" | "grid" | "queue";
 
 interface ViewSelectorProps {
   currentView: ViewType;
@@ -15,6 +15,7 @@ interface ViewSelectorProps {
 
 const views = [
   { id: "hybrid" as ViewType, icon: Calendar, label: "Dashboard Híbrido" },
+  { id: "queue" as ViewType, icon: Users, label: "Gestão de Fila" },
   { id: "timeline" as ViewType, icon: LayoutList, label: "Timeline" },
   { id: "kanban" as ViewType, icon: Columns, label: "Kanban" },
   { id: "grid" as ViewType, icon: LayoutGrid, label: "Grade" },
