@@ -1,7 +1,18 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, MessageCircle, Clock, CreditCard, FileText, UserCog, X, Edit } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { 
+  Calendar, 
+  MessageCircle, 
+  Clock, 
+  CreditCard, 
+  FileText, 
+  Stethoscope, 
+  DollarSign,
+  CheckCircle2,
+  Sparkles,
+  ArrowRight
+} from "lucide-react";
 
 interface AppointmentCardProps {
   onClose?: () => void;
@@ -9,109 +20,159 @@ interface AppointmentCardProps {
 
 export const AppointmentCard = ({ onClose }: AppointmentCardProps) => {
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-lg">
-      <CardHeader className="border-b border-border pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-semibold text-foreground flex items-center gap-2">
-            Detalhes do Agendamento
-            <Button variant="ghost" size="icon" className="h-6 w-6">
-              <Edit className="h-4 w-4 text-primary" />
-            </Button>
-          </CardTitle>
-          {onClose && (
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-5 w-5" />
-            </Button>
-          )}
-        </div>
-      </CardHeader>
-
-      <CardContent className="pt-6 space-y-6">
-        {/* Patient Information */}
-        <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <span className="text-primary font-semibold text-lg">PC</span>
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-primary mb-1">
-              Paciente 7 Cruickshank
-            </h3>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-              <span>Contato: 551910074070</span>
-              <MessageCircle className="h-4 w-4 text-success" />
-              <span className="text-success">WhatsApp</span>
+    <Card className="w-full max-w-4xl mx-auto overflow-hidden border-0 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 animate-scale-in bg-gradient-to-br from-card to-card/80 backdrop-blur-sm">
+      {/* Header with gradient */}
+      <div className="relative p-6 pb-8 bg-gradient-to-r from-primary via-primary to-accent overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30" />
+        
+        <div className="relative flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500" />
+              <div className="relative h-20 w-20 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-xl group-hover:scale-110 transition-transform duration-300">
+                <span className="text-3xl font-bold text-white">PC</span>
+              </div>
             </div>
-            <Badge className="bg-success text-success-foreground hover:bg-success/90">
-              Concluída
-            </Badge>
+            
+            <div className="animate-fade-in">
+              <h2 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">
+                Paciente 7 Cruickshank
+                <Sparkles className="h-5 w-5 text-white/80 animate-pulse" />
+              </h2>
+              <div className="flex items-center gap-3 text-white/90">
+                <span className="text-sm font-medium">551910074070</span>
+                <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  <span className="text-xs font-semibold">WhatsApp</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Badge className="bg-success text-success-foreground hover:bg-success/90 shadow-lg border-0 px-4 py-2 text-sm font-semibold animate-slide-up">
+            <CheckCircle2 className="h-4 w-4 mr-1.5" />
+            Concluída
+          </Badge>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="p-6 space-y-6">
+        {/* Date & Time Card */}
+        <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-muted/50 to-muted/30 rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-300 group animate-slide-up [animation-delay:100ms]">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+              <Calendar className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground font-medium">Data do Agendamento</p>
+              <p className="text-base font-bold text-foreground">27 de Novembro, 2025</p>
+            </div>
+          </div>
+          
+          <div className="h-12 w-px bg-border" />
+          
+          <div className="flex items-center gap-3 flex-1">
+            <div className="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-300">
+              <Clock className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground font-medium">Horário</p>
+              <p className="text-base font-bold text-foreground">12:05 - 12:35</p>
+            </div>
           </div>
         </div>
 
-        {/* Date and Time */}
-        <div className="flex items-center gap-2 text-foreground">
-          <Calendar className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">27/11/2025</span>
-          <Clock className="h-4 w-4 text-muted-foreground ml-2" />
-          <span className="font-medium">12:05 - 12:35</span>
-        </div>
+        {/* Service & Payment Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Service Card */}
+          <div className="group p-5 bg-gradient-to-br from-card to-muted/30 rounded-xl border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300 animate-slide-up [animation-delay:200ms]">
+            <div className="flex items-start gap-3 mb-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <Stethoscope className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-muted-foreground font-medium mb-1">Serviço</p>
+                <p className="text-lg font-bold text-foreground">Consulta Dermatologia</p>
+              </div>
+            </div>
+            <div className="pt-3 border-t border-border/50">
+              <p className="text-xs text-muted-foreground font-medium mb-1">Tipo de atendimento</p>
+              <p className="text-sm font-semibold text-foreground">Consulta Padrão</p>
+            </div>
+          </div>
 
-        {/* Service and Payment Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Serviço</p>
-            <p className="font-semibold text-foreground">Consulta Dermatologia</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Valor do serviço</p>
-            <p className="font-semibold text-foreground">R$ 210,00</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Tipo de atendimento</p>
-            <p className="font-semibold text-foreground">Consulta Padrão</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Pagamento</p>
-            <div className="flex items-center gap-2">
-              <p className="font-semibold text-foreground">Sem pagamento vinculado</p>
-              <Button variant="outline" size="sm" className="h-8">
-                <CreditCard className="h-3 w-3 mr-1" />
-                Cobrar agora
+          {/* Payment Card */}
+          <div className="group p-5 bg-gradient-to-br from-card to-muted/30 rounded-xl border border-border/50 hover:border-success/30 hover:shadow-lg transition-all duration-300 animate-slide-up [animation-delay:300ms]">
+            <div className="flex items-start gap-3 mb-3">
+              <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <DollarSign className="h-5 w-5 text-success" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-muted-foreground font-medium mb-1">Valor do serviço</p>
+                <p className="text-2xl font-bold text-success">R$ 210,00</p>
+              </div>
+            </div>
+            <div className="pt-3 border-t border-border/50 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground font-medium mb-1">Status do pagamento</p>
+                <p className="text-sm font-semibold text-warning">Pendente</p>
+              </div>
+              <Button 
+                size="sm" 
+                className="bg-gradient-to-r from-primary to-accent text-white border-0 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300"
+              >
+                <CreditCard className="h-3.5 w-3.5 mr-1.5" />
+                Cobrar
               </Button>
             </div>
           </div>
         </div>
 
         {/* Observations */}
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <FileText className="h-4 w-4 text-muted-foreground" />
-            <p className="text-sm font-medium text-muted-foreground">Observações</p>
+        <div className="p-5 bg-muted/30 rounded-xl border border-border/50 animate-slide-up [animation-delay:400ms]">
+          <div className="flex items-center gap-2 mb-3">
+            <FileText className="h-4 w-4 text-primary" />
+            <p className="text-sm font-semibold text-foreground">Observações</p>
           </div>
-          <p className="text-sm text-foreground pl-6">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Agendamento gerado automaticamente (57)
           </p>
         </div>
 
         {/* Action Section */}
-        <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-          <div className="flex items-start gap-2">
-            <UserCog className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="font-semibold text-foreground mb-1">Abrir atendimento</p>
-              <p className="text-sm text-muted-foreground">
-                Abra ou reabra o modo de atendimento para acompanhar cronômetro, prontuário e prescrição desta consulta. 
-                Alterações ficam registradas no histórico.
-              </p>
+        <div className="relative overflow-hidden p-6 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 rounded-2xl border border-primary/20 animate-slide-up [animation-delay:500ms] group">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 animate-shimmer" 
+               style={{ backgroundSize: '1000px 100%' }} />
+          
+          <div className="relative space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <Stethoscope className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
+                  Iniciar Atendimento
+                  <ArrowRight className="h-5 w-5 text-primary group-hover:translate-x-1 transition-transform duration-300" />
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Abra o modo de atendimento para acompanhar cronômetro, registrar prontuário e criar prescrições. 
+                  Todas as alterações são registradas automaticamente no histórico do paciente.
+                </p>
+              </div>
             </div>
+            
+            <Button 
+              size="lg"
+              className="w-full bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] text-white font-semibold border-0 shadow-lg hover:shadow-xl hover:bg-[position:right_center] transition-all duration-500 group"
+            >
+              <Sparkles className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform duration-300" />
+              Abrir Atendimento
+              <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+            </Button>
           </div>
-          <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-            Abrir atendimento
-          </Button>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 };
