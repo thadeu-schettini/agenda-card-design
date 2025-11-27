@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MoreVertical, Clock, User, CheckCircle2, DollarSign, MessageSquare } from "lucide-react";
+import { MoreVertical, Clock, User, CheckCircle2, DollarSign, MessageSquare, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckInModal } from "@/components/recepcao/CheckInModal";
@@ -12,6 +12,8 @@ interface AppointmentListItemProps {
   status: "confirmed" | "pending" | "completed" | "cancelled";
   service?: string;
   professional?: string;
+  urgent?: boolean;
+  onUrgencyToggle?: () => void;
 }
 
 const statusConfig = {
@@ -54,7 +56,9 @@ export const AppointmentListItem = ({
   patientName, 
   status, 
   service = "Consulta",
-  professional = "Profissional"
+  professional = "Profissional",
+  urgent = false,
+  onUrgencyToggle
 }: AppointmentListItemProps) => {
   const config = statusConfig[status];
   const [checkInOpen, setCheckInOpen] = useState(false);
@@ -63,8 +67,13 @@ export const AppointmentListItem = ({
 
   return (
     <>
-      <div className={`group relative overflow-hidden bg-gradient-to-r ${config.gradient} border-l-4 ${config.borderColor} hover:shadow-md transition-all duration-300 animate-fade-in mb-2 mx-2 rounded-r-lg`}>
+      <div className={`group relative overflow-hidden bg-gradient-to-r ${config.gradient} border-l-4 ${urgent ? 'border-destructive ring-2 ring-destructive/30' : config.borderColor} hover:shadow-md transition-all duration-300 animate-fade-in mb-2 mx-2 rounded-r-lg`}>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+        {urgent && (
+          <div className="absolute top-2 right-2">
+            <div className="h-3 w-3 bg-destructive rounded-full animate-pulse" />
+          </div>
+        )}
         
         <div className="relative p-4">
           <div className="flex items-start justify-between mb-3">
@@ -73,8 +82,16 @@ export const AppointmentListItem = ({
                 <User className={`h-4 w-4 ${config.textColor}`} />
               </div>
               <div>
-                <div className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
-                  {patientName}
+                <div className="flex items-center gap-2">
+                  <div className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                    {patientName}
+                  </div>
+                  {urgent && (
+                    <Badge variant="destructive" className="text-xs animate-pulse flex items-center gap-1">
+                      <AlertTriangle className="h-3 w-3" />
+                      Urgente
+                    </Badge>
+                  )}
                 </div>
                 <Badge 
                   variant="secondary" 
@@ -105,6 +122,20 @@ export const AppointmentListItem = ({
 
           {/* Ações Rápidas */}
           <div className="flex gap-2 pt-2 border-t border-border/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            {onUrgencyToggle && (
+              <Button
+                size="sm"
+                variant={urgent ? "destructive" : "ghost"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUrgencyToggle();
+                }}
+                className="h-8 hover:bg-white/20"
+                title={urgent ? "Remover urgência" : "Marcar como urgente"}
+              >
+                <AlertTriangle className="h-3 w-3" />
+              </Button>
+            )}
             <Button
               size="sm"
               variant="ghost"
