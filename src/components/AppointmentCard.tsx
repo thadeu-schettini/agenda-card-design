@@ -22,7 +22,7 @@ export const AppointmentCard = ({ onClose }: AppointmentCardProps) => {
   return (
     <Card className="w-full max-w-4xl mx-auto overflow-hidden border-0 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 animate-scale-in bg-gradient-to-br from-card to-card/80 backdrop-blur-sm">
       {/* Header with gradient */}
-      <div className="relative p-6 pb-8 bg-gradient-to-r from-primary via-primary to-accent overflow-hidden">
+      <div className="relative p-6 pb-8 bg-gradient-to-r from-primary via-primary to-primary-glow overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30" />
         
         <div className="relative flex items-start justify-between">
@@ -118,13 +118,13 @@ export const AppointmentCard = ({ onClose }: AppointmentCardProps) => {
                 <p className="text-xs text-muted-foreground font-medium mb-1">Status do pagamento</p>
                 <p className="text-sm font-semibold text-warning">Pendente</p>
               </div>
-              <Button 
-                size="sm" 
-                className="bg-gradient-to-r from-primary to-accent text-white border-0 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300"
-              >
-                <CreditCard className="h-3.5 w-3.5 mr-1.5" />
-                Cobrar
-              </Button>
+            <Button 
+              size="sm" 
+              className="bg-gradient-to-r from-primary to-primary-dark text-white border-0 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300"
+            >
+              <CreditCard className="h-3.5 w-3.5 mr-1.5" />
+              Cobrar
+            </Button>
             </div>
           </div>
         </div>
@@ -141,7 +141,7 @@ export const AppointmentCard = ({ onClose }: AppointmentCardProps) => {
         </div>
 
         {/* Action Section */}
-        <div className="relative overflow-hidden p-6 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 rounded-2xl border border-primary/20 animate-slide-up [animation-delay:500ms] group">
+        <div className="relative overflow-hidden p-6 bg-gradient-to-br from-primary/5 via-primary/3 to-primary/5 rounded-2xl border border-primary/20 animate-slide-up [animation-delay:500ms] group">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 animate-shimmer" 
                style={{ backgroundSize: '1000px 100%' }} />
           
@@ -164,7 +164,7 @@ export const AppointmentCard = ({ onClose }: AppointmentCardProps) => {
             
             <Button 
               size="lg"
-              className="w-full bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] text-white font-semibold border-0 shadow-lg hover:shadow-xl hover:bg-[position:right_center] transition-all duration-500 group"
+              className="w-full bg-gradient-to-r from-primary via-primary-glow to-primary bg-[length:200%_100%] text-white font-semibold border-0 shadow-lg hover:shadow-xl hover:bg-[position:right_center] transition-all duration-500 group"
             >
               <Sparkles className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform duration-300" />
               Abrir Atendimento
