@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DoorOpen, DoorClosed, Sparkles, Clock } from "lucide-react";
 
 type RoomStatus = "available" | "occupied" | "cleaning";
@@ -89,18 +88,12 @@ export const RoomStatusPanel = () => {
   const cleaningCount = mockRooms.filter((r) => r.status === "cleaning").length;
 
   return (
-    <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">Status dos Consultórios</CardTitle>
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-success/10 text-success text-xs">
-              {availableCount} livres
-            </Badge>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-2">
+    <div className="space-y-2 pb-2">
+      <div className="flex items-center justify-end mb-2">
+        <Badge variant="secondary" className="bg-success/10 text-success text-xs">
+          {availableCount} livres
+        </Badge>
+      </div>
         {mockRooms.map((room) => {
           const config = statusConfig[room.status];
           const StatusIcon = config.icon;
@@ -189,7 +182,6 @@ export const RoomStatusPanel = () => {
             </span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 };
