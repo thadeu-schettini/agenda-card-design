@@ -13,6 +13,8 @@ import { z } from "zod";
 import { ConsultationHistory } from "@/components/ConsultationHistory";
 import { MedicalPrescription } from "@/components/MedicalPrescription";
 import { SafetyAnalysisDialog } from "@/components/SafetyAnalysisDialog";
+import { ConsultationComparison } from "@/components/ConsultationComparison";
+import { PrintPreview } from "@/components/PrintPreview";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DynamicFormBuilder, FormSection } from "@/components/DynamicFormBuilder";
 
@@ -616,8 +618,9 @@ const Prontuario = () => {
               </div>
 
               {/* Right: Actions */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <ConsultationHistory />
+                <ConsultationComparison />
                 <Button size="sm" className="gap-2">
                   <Save className="h-4 w-4" />
                   Salvar
@@ -918,7 +921,12 @@ const Prontuario = () => {
               </TabsContent>
 
               <TabsContent value="prescricao" className="mt-0">
-                <MedicalPrescription />
+                <div className="space-y-4">
+                  <div className="flex justify-end">
+                    <PrintPreview type="prescription" />
+                  </div>
+                  <MedicalPrescription />
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
