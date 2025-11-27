@@ -1,11 +1,17 @@
-import { MoreVertical, Clock, User } from "lucide-react";
+import { useState } from "react";
+import { MoreVertical, Clock, User, CheckCircle2, DollarSign, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { CheckInModal } from "@/components/recepcao/CheckInModal";
+import { PaymentModal } from "@/components/recepcao/PaymentModal";
+import { CommunicationModal } from "@/components/recepcao/CommunicationModal";
 
 interface AppointmentListItemProps {
   time: string;
   patientName: string;
   status: "confirmed" | "pending" | "completed" | "cancelled";
+  service?: string;
+  professional?: string;
 }
 
 const statusConfig = {
@@ -43,50 +49,132 @@ const statusConfig = {
   }
 };
 
-export const AppointmentListItem = ({ time, patientName, status }: AppointmentListItemProps) => {
+export const AppointmentListItem = ({ 
+  time, 
+  patientName, 
+  status, 
+  service = "Consulta",
+  professional = "Profissional"
+}: AppointmentListItemProps) => {
   const config = statusConfig[status];
+  const [checkInOpen, setCheckInOpen] = useState(false);
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [communicationOpen, setCommunicationOpen] = useState(false);
 
   return (
-    <div className={`group relative overflow-hidden bg-gradient-to-r ${config.gradient} border-l-4 ${config.borderColor} hover:shadow-md transition-all duration-300 cursor-pointer animate-fade-in mb-2 mx-2 rounded-r-lg`}>
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-      
-      <div className="relative p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className={`h-8 w-8 rounded-lg ${config.iconBg} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-              <User className={`h-4 w-4 ${config.textColor}`} />
-            </div>
-            <div>
-              <div className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
-                {patientName}
+    <>
+      <div className={`group relative overflow-hidden bg-gradient-to-r ${config.gradient} border-l-4 ${config.borderColor} hover:shadow-md transition-all duration-300 animate-fade-in mb-2 mx-2 rounded-r-lg`}>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+        
+        <div className="relative p-4">
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className={`h-8 w-8 rounded-lg ${config.iconBg} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                <User className={`h-4 w-4 ${config.textColor}`} />
               </div>
-              <Badge 
-                variant="secondary" 
-                className={`text-xs font-semibold ${config.textColor} bg-transparent border-0 px-0 hover:bg-transparent`}
-              >
-                {config.label}
-              </Badge>
+              <div>
+                <div className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                  {patientName}
+                </div>
+                <Badge 
+                  variant="secondary" 
+                  className={`text-xs font-semibold ${config.textColor} bg-transparent border-0 px-0 hover:bg-transparent`}
+                >
+                  {config.label}
+                </Badge>
+              </div>
             </div>
+            
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/20 hover:rotate-90"
+            >
+              <MoreVertical className="h-4 w-4" />
+            </Button>
           </div>
-          
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/20 hover:rotate-90"
-          >
-            <MoreVertical className="h-4 w-4" />
-          </Button>
-        </div>
 
-        <div className="flex items-center gap-2 text-sm">
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg ${config.iconBg} group-hover:scale-105 transition-transform duration-300`}>
-            <Clock className={`h-3.5 w-3.5 ${config.textColor}`} />
-            <span className={`font-semibold ${config.textColor}`}>{time}</span>
+          <div className="flex items-center gap-2 text-sm mb-3">
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg ${config.iconBg} group-hover:scale-105 transition-transform duration-300`}>
+              <Clock className={`h-3.5 w-3.5 ${config.textColor}`} />
+              <span className={`font-semibold ${config.textColor}`}>{time}</span>
+            </div>
+            <div className={`h-1.5 w-1.5 rounded-full ${config.dotColor} animate-pulse`} />
+            <span className="text-muted-foreground font-medium">Hoje</span>
           </div>
-          <div className={`h-1.5 w-1.5 rounded-full ${config.dotColor} animate-pulse`} />
-          <span className="text-muted-foreground font-medium">Hoje</span>
+
+          {/* Ações Rápidas */}
+          <div className="flex gap-2 pt-2 border-t border-border/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCheckInOpen(true);
+              }}
+              className="flex-1 h-8 hover:bg-white/20"
+            >
+              <CheckCircle2 className="h-3 w-3 mr-1" />
+              <span className="text-xs">Check-in</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                setPaymentOpen(true);
+              }}
+              className="flex-1 h-8 hover:bg-white/20"
+            >
+              <DollarSign className="h-3 w-3 mr-1" />
+              <span className="text-xs">Pagamento</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCommunicationOpen(true);
+              }}
+              className="flex-1 h-8 hover:bg-white/20"
+            >
+              <MessageSquare className="h-3 w-3 mr-1" />
+              <span className="text-xs">Mensagem</span>
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Modais */}
+      <CheckInModal
+        open={checkInOpen}
+        onOpenChange={setCheckInOpen}
+        appointment={{
+          patientName,
+          time,
+          service,
+          professional,
+          status: config.label,
+        }}
+      />
+      <PaymentModal
+        open={paymentOpen}
+        onOpenChange={setPaymentOpen}
+        appointment={{
+          patientName,
+          service,
+          value: 150.00, // Mock value
+        }}
+      />
+      <CommunicationModal
+        open={communicationOpen}
+        onOpenChange={setCommunicationOpen}
+        appointment={{
+          patientName,
+          time,
+          service,
+        }}
+      />
+    </>
   );
 };

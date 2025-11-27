@@ -22,6 +22,8 @@ import { HybridDashboard } from "@/components/recepcao/HybridDashboard";
 import { SmartGrid } from "@/components/recepcao/SmartGrid";
 import { QuickActions } from "@/components/recepcao/QuickActions";
 import { AlertsPanel } from "@/components/recepcao/AlertsPanel";
+import { QueueManagementView } from "@/components/recepcao/QueueManagementView";
+import { AdvancedFilters } from "@/components/recepcao/AdvancedFilters";
 import { NextAppointments } from "@/components/recepcao/NextAppointments";
 import {
   Sheet,
@@ -29,12 +31,44 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-type ViewType = "timeline" | "kanban" | "hybrid" | "grid";
+type ViewType = "timeline" | "kanban" | "hybrid" | "grid" | "queue";
 
 const Recepcao = () => {
   const [currentView, setCurrentView] = useState<ViewType>("hybrid");
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const [activeFilters, setActiveFilters] = useState({
+    professionals: [] as string[],
+    services: [] as string[],
+    modes: [] as string[],
+    status: [] as string[],
+  });
+
+  const availableFilters = {
+    professionals: ["Dr. João Santos", "Dra. Ana Costa", "Dra. Paula Lima", "Dr. Pedro Alves"],
+    services: ["Consulta Psicológica", "Fisioterapia", "Nutrição", "Consulta Médica"],
+    modes: ["Presencial", "Online", "Domiciliar"],
+    status: ["Confirmado", "Aguardando", "Realizado", "Cancelado"],
+  };
+
+  const handleFilterChange = (category: keyof typeof activeFilters, value: string) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [category]: prev[category].includes(value)
+        ? prev[category].filter((item) => item !== value)
+        : [...prev[category], value],
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setActiveFilters({
+      professionals: [],
+      services: [],
+      modes: [],
+      status: [],
+    });
+  };
 
   const renderView = () => {
     switch (currentView) {
@@ -46,6 +80,8 @@ const Recepcao = () => {
         return <HybridDashboard searchQuery={searchQuery} />;
       case "grid":
         return <SmartGrid searchQuery={searchQuery} />;
+      case "queue":
+        return <QueueManagementView searchQuery={searchQuery} />;
       default:
         return <HybridDashboard searchQuery={searchQuery} />;
     }
@@ -114,7 +150,15 @@ const Recepcao = () => {
                     className="pl-10 bg-background/50 backdrop-blur-sm border-border/50 focus:border-primary/50"
                   />
                 </div>
-                <ViewSelector currentView={currentView} onViewChange={setCurrentView} />
+                <div className="flex gap-2">
+                  <AdvancedFilters
+                    filters={availableFilters}
+                    activeFilters={activeFilters}
+                    onFilterChange={handleFilterChange}
+                    onClearFilters={handleClearFilters}
+                  />
+                  <ViewSelector currentView={currentView} onViewChange={setCurrentView} />
+                </div>
               </div>
             </div>
           </div>
