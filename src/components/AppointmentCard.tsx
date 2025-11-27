@@ -337,61 +337,10 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
                   </div>
 
                   {formData.mode === "online" && (
-                    <div className="space-y-3 p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-xs font-medium text-muted-foreground">Sala Online</Label>
-                        <Button
-                          type="button"
-                          size="sm"
-                          onClick={generateRoomLinks}
-                          className="bg-gradient-to-r from-primary to-primary-glow"
-                        >
-                          <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-                          Criar Sala
-                        </Button>
-                      </div>
-                      
-                      {roomLinks && (
-                        <div className="space-y-3 animate-fade-in">
-                          <div className="p-3 bg-background/50 rounded-lg">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-semibold text-foreground">Link do Paciente</span>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => copyToClipboard(roomLinks.patientLink, 'Paciente')}
-                                className="h-7 px-2 text-xs"
-                              >
-                                <Copy className="h-3 w-3 mr-1" />
-                                Copiar
-                              </Button>
-                            </div>
-                            <p className="text-xs text-muted-foreground break-all font-mono">
-                              {roomLinks.patientLink}
-                            </p>
-                          </div>
-                          
-                          <div className="p-3 bg-background/50 rounded-lg">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-semibold text-foreground">Link do Profissional</span>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => copyToClipboard(roomLinks.professionalLink, 'Profissional')}
-                                className="h-7 px-2 text-xs"
-                              >
-                                <Copy className="h-3 w-3 mr-1" />
-                                Copiar
-                              </Button>
-                            </div>
-                            <p className="text-xs text-muted-foreground break-all font-mono">
-                              {roomLinks.professionalLink}
-                            </p>
-                          </div>
-                        </div>
-                      )}
+                    <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                      <p className="text-xs text-muted-foreground">
+                        A sala online será criada ao visualizar os detalhes do agendamento.
+                      </p>
                     </div>
                   )}
 
@@ -473,24 +422,69 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
               </div>
 
               {/* Mode-specific information */}
-              {formData.mode === "online" && formData.onlineLink && (
-                <div className="p-4 bg-blue-500/10 rounded-xl border border-blue-500/30 animate-slide-up [animation-delay:150ms]">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                      <LinkIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              {formData.mode === "online" && (
+                <div className="space-y-3 p-4 bg-blue-500/10 rounded-xl border border-blue-500/30 animate-slide-up [animation-delay:150ms]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                        <LinkIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground font-medium mb-1">Atendimento Online</p>
+                        <p className="text-sm font-semibold text-foreground">Sala Virtual</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-xs text-muted-foreground font-medium mb-1">Atendimento Online</p>
-                      <a 
-                        href={formData.onlineLink} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                    {!roomLinks && (
+                      <Button
+                        size="sm"
+                        onClick={generateRoomLinks}
+                        className="bg-gradient-to-r from-primary to-primary-glow shadow-md hover:shadow-lg"
                       >
-                        Acessar sala
-                      </a>
-                    </div>
+                        <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                        Criar Sala
+                      </Button>
+                    )}
                   </div>
+                  
+                  {roomLinks && (
+                    <div className="space-y-3 animate-fade-in">
+                      <div className="p-3 bg-background/50 rounded-lg border border-border/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-semibold text-foreground">Link do Paciente</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => copyToClipboard(roomLinks.patientLink, 'Paciente')}
+                            className="h-7 px-2 text-xs"
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            Copiar
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground break-all font-mono">
+                          {roomLinks.patientLink}
+                        </p>
+                      </div>
+                      
+                      <div className="p-3 bg-background/50 rounded-lg border border-border/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-semibold text-foreground">Link do Profissional</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => copyToClipboard(roomLinks.professionalLink, 'Profissional')}
+                            className="h-7 px-2 text-xs"
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            Copiar
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground break-all font-mono">
+                          {roomLinks.professionalLink}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
