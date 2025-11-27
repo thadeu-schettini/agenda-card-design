@@ -11,8 +11,9 @@ import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { ConsultationHistory } from "@/components/ConsultationHistory";
-import { MedicalAlerts } from "@/components/MedicalAlerts";
-import { VitalSignsChart } from "@/components/VitalSignsChart";
+import { MedicalPrescription } from "@/components/MedicalPrescription";
+import { SafetyAnalysisDialog } from "@/components/SafetyAnalysisDialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Validation schemas
 const vitalSignsSchema = z.object({
@@ -37,6 +38,7 @@ const Prontuario = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [formType, setFormType] = useState('soap');
   const [isRecording, setIsRecording] = useState(false);
+  const [activeTab, setActiveTab] = useState('prontuario');
   const [vitalSigns, setVitalSigns] = useState<VitalSigns>({
     heartRate: '72',
     bloodPressure: '120/80',
@@ -566,16 +568,28 @@ const Prontuario = () => {
         </Card>
       </div>
 
-      {/* Layout Principal */}
+      {/* Layout Principal com Tabs */}
       <div className="max-w-[1800px] mx-auto space-y-6">
-        {/* Medical Alerts - Full Width */}
-        <MedicalAlerts />
+        <Card className="border shadow-sm">
+          <CardContent className="p-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                <TabsList className="grid w-full max-w-md grid-cols-2">
+                  <TabsTrigger value="prontuario" className="gap-2">
+                    <FileText className="h-4 w-4" />
+                    Prontuário
+                  </TabsTrigger>
+                  <TabsTrigger value="prescricao" className="gap-2">
+                    <Pill className="h-4 w-4" />
+                    Prescrição
+                  </TabsTrigger>
+                </TabsList>
+                
+                <SafetyAnalysisDialog />
+              </div>
 
-        {/* Vital Signs Chart - Full Width */}
-        <VitalSignsChart />
-
-        {/* Grid com Formulário e Sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <TabsContent value="prontuario" className="mt-0">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Panel - Dynamic Form */}
         <div className="lg:col-span-2 space-y-6">
           {renderFormFields()}
@@ -795,8 +809,16 @@ const Prontuario = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
-      </div>
+                </div>
+              </div>
+              </TabsContent>
+
+              <TabsContent value="prescricao" className="mt-0">
+                <MedicalPrescription />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
