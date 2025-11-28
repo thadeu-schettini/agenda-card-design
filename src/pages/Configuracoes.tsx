@@ -48,7 +48,6 @@ import {
 
 type ConfigSection = 
   | "home" 
-  | "recursos"
   | "organizacao" 
   | "agenda" 
   | "integracoes" 
@@ -177,16 +176,6 @@ export default function Configuracoes() {
     badge?: string;
     requiresActivation?: boolean;
   }> = [
-    {
-      id: "recursos",
-      title: "Recursos do Sistema",
-      description: "Ative ou desative módulos e funcionalidades",
-      icon: Package,
-      color: "from-purple-500 to-pink-500",
-      completion: 100,
-      items: ["Fiscal", "Autopilot", "Convênios", "Cupons", "Telemedicina"],
-      badge: "IMPORTANTE",
-    },
     {
       id: "organizacao",
       title: "Organização",
@@ -318,51 +307,9 @@ export default function Configuracoes() {
               </CardContent>
             </Card>
 
-            {/* Recursos em Destaque */}
-            <Card
-              className="border-2 border-primary/50 backdrop-blur-sm bg-gradient-to-br from-primary/10 to-primary/5 shadow-xl animate-fade-in cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all duration-300"
-              onClick={() => changeSection("recursos")}
-            >
-              <CardContent className="pt-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 p-4 shadow-lg">
-                      <Package className="h-full w-full text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-2xl font-bold">Recursos do Sistema</h3>
-                        <Badge variant="default" className="gap-1">
-                          <Sparkles className="h-3 w-3" />
-                          IMPORTANTE
-                        </Badge>
-                      </div>
-                      <p className="text-muted-foreground">
-                        Ative ou desative módulos e funcionalidades do sistema. Configure quais recursos sua clínica irá utilizar.
-                      </p>
-                      <div className="flex items-center gap-4 pt-2">
-                        <div className="flex items-center gap-2 text-sm">
-                          <CheckCircle2 className="h-4 w-4 text-green-500" />
-                          <span className="text-muted-foreground">{Object.values(resources).filter(Boolean).length} módulos ativos</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <AlertCircle className="h-4 w-4 text-amber-500" />
-                          <span className="text-muted-foreground">Configure antes de usar</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <Button size="lg" className="gap-2">
-                    Configurar Recursos
-                    <ArrowLeft className="h-4 w-4 rotate-180" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Configuration Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {configSections.filter(s => s.id !== "recursos").map((section, index) => {
+              {configSections.map((section, index) => {
                 const isInactive = section.requiresActivation && !resources[section.id as keyof typeof resources];
                 
                 return (
@@ -439,10 +386,31 @@ export default function Configuracoes() {
                   </div>
 
                   <CardHeader className="space-y-4">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${section.color} p-4 shadow-lg group-hover:shadow-xl transition-all duration-300 ${
-                      isInactive ? 'grayscale opacity-50' : ''
-                    }`}>
-                      <section.icon className="h-full w-full text-white" />
+                    <div className="flex items-start justify-between">
+                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${section.color} p-4 shadow-lg group-hover:shadow-xl transition-all duration-300 ${
+                        isInactive ? 'grayscale opacity-50' : ''
+                      }`}>
+                        <section.icon className="h-full w-full text-white" />
+                      </div>
+                      
+                      {section.requiresActivation && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <Switch
+                                checked={resources[section.id as keyof typeof resources] || false}
+                                onCheckedChange={(checked) => {
+                                  setResources({ ...resources, [section.id]: checked });
+                                  toast.success(checked ? `${section.title} ativado` : `${section.title} desativado`);
+                                }}
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{isInactive ? 'Ativar módulo' : 'Desativar módulo'}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -486,7 +454,7 @@ export default function Configuracoes() {
                       variant="outline"
                       disabled={isInactive}
                     >
-                      {isInactive ? 'Ative em Recursos' : 'Configurar'}
+                      {isInactive ? 'Ative o módulo acima' : 'Configurar'}
                       <ArrowLeft className="h-4 w-4 ml-2 rotate-180 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </CardContent>
@@ -580,292 +548,6 @@ export default function Configuracoes() {
               </div>
             </div>
           </div>
-
-          {/* Recursos Section */}
-          {activeSection === "recursos" && (
-            <div className="space-y-6">
-              <Card className="border-border/50 backdrop-blur-sm bg-card/95 shadow-lg">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Package className="h-5 w-5 text-primary" />
-                        Módulos do Sistema
-                      </CardTitle>
-                      <CardDescription className="mt-2">
-                        Ative ou desative módulos conforme a necessidade da sua clínica
-                      </CardDescription>
-                    </div>
-                    <Badge variant="secondary" className="gap-1">
-                      <CheckCircle2 className="h-3 w-3" />
-                      {Object.values(resources).filter(Boolean).length}/5 ativos
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Fiscal */}
-                    <Card
-                      className={`border-2 transition-all cursor-pointer ${
-                        resources.fiscal
-                          ? "border-green-500 bg-green-500/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                      onClick={() => setResources({ ...resources, fiscal: !resources.fiscal })}
-                    >
-                      <CardContent className="pt-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-start gap-3">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                              resources.fiscal
-                                ? "bg-gradient-to-br from-amber-500 to-orange-500"
-                                : "bg-muted"
-                            }`}>
-                              <FileText className={`h-6 w-6 ${
-                                resources.fiscal ? "text-white" : "text-muted-foreground"
-                              }`} />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg">Fiscal (Notas / NF-e)</h3>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Ativa configurações e telas relacionadas à emissão fiscal
-                              </p>
-                            </div>
-                          </div>
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            resources.fiscal ? "bg-green-500" : "bg-muted"
-                          }`}>
-                            {resources.fiscal ? (
-                              <Check className="h-5 w-5 text-white" />
-                            ) : (
-                              <X className="h-5 w-5 text-muted-foreground" />
-                            )}
-                          </div>
-                        </div>
-                        {resources.fiscal && (
-                          <div className="pt-3 border-t">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="w-full"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                changeSection("fiscal");
-                              }}
-                            >
-                              Configurar Fiscal
-                            </Button>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-
-                    {/* Autopilot */}
-                    <Card
-                      className={`border-2 transition-all cursor-pointer ${
-                        resources.autopilot
-                          ? "border-violet-500 bg-violet-500/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                      onClick={() => setResources({ ...resources, autopilot: !resources.autopilot })}
-                    >
-                      <CardContent className="pt-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-start gap-3">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                              resources.autopilot
-                                ? "bg-gradient-to-br from-violet-500 to-purple-500"
-                                : "bg-muted"
-                            }`}>
-                              <Bot className={`h-6 w-6 ${
-                                resources.autopilot ? "text-white" : "text-muted-foreground"
-                              }`} />
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-semibold text-lg">Autopilot</h3>
-                                <Badge variant="outline" className="text-xs">BETA</Badge>
-                              </div>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Controle de acesso ao módulo de automações inteligentes
-                              </p>
-                            </div>
-                          </div>
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            resources.autopilot ? "bg-violet-500" : "bg-muted"
-                          }`}>
-                            {resources.autopilot ? (
-                              <Check className="h-5 w-5 text-white" />
-                            ) : (
-                              <X className="h-5 w-5 text-muted-foreground" />
-                            )}
-                          </div>
-                        </div>
-                        {resources.autopilot && (
-                          <div className="pt-3 border-t">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="w-full"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                changeSection("autopilot");
-                              }}
-                            >
-                              Configurar Autopilot
-                            </Button>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-
-                    {/* Convênios */}
-                    <Card
-                      className={`border-2 transition-all cursor-pointer ${
-                        resources.convenios
-                          ? "border-blue-500 bg-blue-500/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                      onClick={() => setResources({ ...resources, convenios: !resources.convenios })}
-                    >
-                      <CardContent className="pt-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-start gap-3">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                              resources.convenios
-                                ? "bg-gradient-to-br from-blue-500 to-cyan-500"
-                                : "bg-muted"
-                            }`}>
-                              <Shield className={`h-6 w-6 ${
-                                resources.convenios ? "text-white" : "text-muted-foreground"
-                              }`} />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg">Convênios</h3>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Quando desativado, telas e campos de convênios são ocultos
-                              </p>
-                            </div>
-                          </div>
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            resources.convenios ? "bg-blue-500" : "bg-muted"
-                          }`}>
-                            {resources.convenios ? (
-                              <Check className="h-5 w-5 text-white" />
-                            ) : (
-                              <X className="h-5 w-5 text-muted-foreground" />
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Cupons */}
-                    <Card
-                      className={`border-2 transition-all cursor-pointer ${
-                        resources.cupons
-                          ? "border-pink-500 bg-pink-500/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                      onClick={() => setResources({ ...resources, cupons: !resources.cupons })}
-                    >
-                      <CardContent className="pt-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-start gap-3">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                              resources.cupons
-                                ? "bg-gradient-to-br from-pink-500 to-red-500"
-                                : "bg-muted"
-                            }`}>
-                              <Sparkles className={`h-6 w-6 ${
-                                resources.cupons ? "text-white" : "text-muted-foreground"
-                              }`} />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg">Cupons e Promoções</h3>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Controla o acesso ao módulo de cupons e campanhas promocionais
-                              </p>
-                            </div>
-                          </div>
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            resources.cupons ? "bg-pink-500" : "bg-muted"
-                          }`}>
-                            {resources.cupons ? (
-                              <Check className="h-5 w-5 text-white" />
-                            ) : (
-                              <X className="h-5 w-5 text-muted-foreground" />
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Telemedicina */}
-                    <Card
-                      className={`border-2 transition-all cursor-pointer ${
-                        resources.telemedicina
-                          ? "border-cyan-500 bg-cyan-500/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                      onClick={() => setResources({ ...resources, telemedicina: !resources.telemedicina })}
-                    >
-                      <CardContent className="pt-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-start gap-3">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                              resources.telemedicina
-                                ? "bg-gradient-to-br from-cyan-500 to-blue-500"
-                                : "bg-muted"
-                            }`}>
-                              <Video className={`h-6 w-6 ${
-                                resources.telemedicina ? "text-white" : "text-muted-foreground"
-                              }`} />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg">Telemedicina</h3>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Habilita atendimentos online e salas de videochamada
-                              </p>
-                            </div>
-                          </div>
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            resources.telemedicina ? "bg-cyan-500" : "bg-muted"
-                          }`}>
-                            {resources.telemedicina ? (
-                              <Check className="h-5 w-5 text-white" />
-                            ) : (
-                              <X className="h-5 w-5 text-muted-foreground" />
-                            )}
-                          </div>
-                        </div>
-                        {resources.telemedicina && (
-                          <div className="pt-3 border-t">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="w-full"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                changeSection("telemedicina");
-                              }}
-                            >
-                              Configurar Telemedicina
-                            </Button>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <Button onClick={handleSave} className="w-full md:w-auto gap-2 mt-6">
-                    <Save className="h-4 w-4" />
-                    Salvar Configurações
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          )}
 
           {/* Section Content - Keep existing sections */}
           {activeSection === "organizacao" && (
@@ -1820,12 +1502,12 @@ export default function Configuracoes() {
                       <div>
                         <p className="font-semibold text-lg">Módulo Telemedicina Desativado</p>
                         <p className="text-sm text-muted-foreground mt-1">
-                          Ative o módulo de Telemedicina na página de Recursos para configurar
+                          Ative o switch de Telemedicina no card acima para configurar
                         </p>
                       </div>
-                      <Button onClick={() => changeSection("recursos")} className="gap-2">
+                      <Button onClick={() => changeSection("home")} className="gap-2">
                         <Package className="h-4 w-4" />
-                        Ir para Recursos
+                        Voltar para Início
                       </Button>
                     </div>
                   ) : (
@@ -2049,12 +1731,12 @@ export default function Configuracoes() {
                       <div>
                         <p className="font-semibold text-lg">Módulo Fiscal Desativado</p>
                         <p className="text-sm text-muted-foreground mt-1">
-                          Ative o módulo Fiscal na página de Recursos para configurar
+                          Ative o switch de Fiscal no card acima para configurar
                         </p>
                       </div>
-                      <Button onClick={() => changeSection("recursos")} className="gap-2">
+                      <Button onClick={() => changeSection("home")} className="gap-2">
                         <Package className="h-4 w-4" />
-                        Ir para Recursos
+                        Voltar para Início
                       </Button>
                     </div>
                   ) : (
