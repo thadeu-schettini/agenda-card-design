@@ -39,6 +39,7 @@ import {
   MapPin,
   Copy
 } from "lucide-react";
+import { BillingModal } from "@/components/recepcao/BillingModal";
 
 type AppointmentStatus = 
   | "pendente"
@@ -72,6 +73,7 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
   const { toast } = useToast();
   const [status, setStatus] = useState<AppointmentStatus>("realizado");
   const [isEditing, setIsEditing] = useState(false);
+  const [billingModalOpen, setBillingModalOpen] = useState(false);
   const [roomLinks, setRoomLinks] = useState<{
     patientLink: string;
     professionalLink: string;
@@ -541,6 +543,7 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
                     <Button 
                       size="sm" 
                       variant="default"
+                      onClick={() => setBillingModalOpen(true)}
                       className="shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 bg-gradient-to-r from-primary to-primary-glow border-0 w-full sm:w-auto"
                     >
                       <CreditCard className="h-3.5 w-3.5 mr-1.5" />
@@ -594,6 +597,20 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
           )}
         </div>
       </DialogContent>
+
+      {/* Billing Modal */}
+      <BillingModal
+        open={billingModalOpen}
+        onOpenChange={setBillingModalOpen}
+        appointment={{
+          patientName: "Paciente 7 Cruickshank",
+          patientPhone: "551910074070",
+          service: formData.service,
+          date: formData.date,
+          time: formData.startTime,
+          value: parseFloat(formData.serviceValue.replace(',', '.'))
+        }}
+      />
     </Dialog>
   );
 };
