@@ -216,15 +216,6 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                 </p>
               </div>
             </div>
-            
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onOpenChange(false)}
-              className="rounded-full"
-            >
-              <X className="h-5 w-5" />
-            </Button>
           </div>
         </div>
 
