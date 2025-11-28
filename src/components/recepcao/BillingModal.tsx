@@ -194,24 +194,24 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] lg:max-w-[1400px] max-h-[95vh] p-0 gap-0 overflow-hidden bg-background">
+      <DialogContent className="max-w-[95vw] w-full lg:max-w-[1400px] max-h-[95vh] p-0 gap-0 overflow-hidden bg-background">
         {/* Header */}
-        <div className="relative px-6 py-5 border-b border-border bg-gradient-to-r from-background via-muted/20 to-background">
+        <div className="relative px-4 md:px-6 py-4 md:py-5 border-b border-border bg-gradient-to-r from-background via-muted/20 to-background">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.08),transparent_60%)]" />
           <div className="relative flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-xl">
-                <Receipt className="h-6 w-6 text-primary" />
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="p-2 md:p-3 bg-primary/10 rounded-xl">
+                <Receipt className="h-5 w-5 md:h-6 md:w-6 text-primary" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                <h2 className="text-lg md:text-2xl font-bold text-foreground flex items-center gap-2">
                   Registro de Cobrança
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs hidden sm:flex">
                     <Sparkles className="h-3 w-3 mr-1" />
                     Preview ao vivo
                   </Badge>
                 </h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
+                <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
                   Formulário à esquerda • Visualização do recibo à direita
                 </p>
               </div>
@@ -220,17 +220,17 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
         </div>
 
         {/* Split Screen Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 h-[calc(95vh-120px)]">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 h-[calc(95vh-120px)]">
           {/* Left: Form */}
-          <ScrollArea className="h-full border-r border-border">
+          <ScrollArea className="h-full lg:border-r border-border">
             <div className="p-6 space-y-6">
               {/* Patient Info */}
-              <div className="p-5 bg-muted/30 rounded-xl border border-border space-y-3">
+              <div className="p-4 md:p-5 bg-muted/30 rounded-xl border border-border space-y-3">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                   <User className="h-4 w-4 text-primary" />
                   Informações do Paciente
                 </h3>
-                <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-muted-foreground">Nome:</span>
                     <p className="font-semibold">{appointment.patientName}</p>
@@ -324,7 +324,7 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                           )}
                         </div>
                         
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div>
                             <Label className="text-xs text-muted-foreground mb-1.5">Quantidade</Label>
                             <Input
@@ -376,7 +376,7 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                     <CreditCard className="h-4 w-4 text-primary" />
                     Forma de Pagamento
                   </Label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2 md:gap-3">
                     {paymentMethods.map((method) => {
                       const Icon = method.icon;
                       return (
@@ -384,103 +384,107 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                           key={method.id}
                           onClick={() => setPaymentMethod(method.id)}
                           className={cn(
-                            "p-4 rounded-xl border-2 transition-all text-left",
+                            "p-3 md:p-4 rounded-xl border-2 transition-all text-left",
                             paymentMethod === method.id
                               ? "border-primary bg-primary/5 shadow-md"
                               : "border-border hover:border-primary/50"
                           )}
                         >
-                          <Icon className={cn("h-5 w-5 mb-2", method.color)} />
-                          <p className="text-sm font-semibold">{method.label}</p>
+                          <Icon className={cn("h-4 w-4 md:h-5 md:w-5 mb-2", method.color)} />
+                          <p className="text-xs md:text-sm font-semibold">{method.label}</p>
                         </button>
                       );
                     })}
                   </div>
                 </div>
 
-                <Separator />
+                {/* Installments - Only for Credit */}
+                {paymentMethod === "credit" && (
+                  <>
+                    <Separator />
 
-                {/* Installments */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-semibold flex items-center gap-2">
-                    <CalendarDays className="h-4 w-4 text-primary" />
-                    Parcelamento
-                  </Label>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label htmlFor="installments" className="text-xs text-muted-foreground mb-2">
-                        Número de Parcelas
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold flex items-center gap-2">
+                        <CalendarDays className="h-4 w-4 text-primary" />
+                        Parcelamento
                       </Label>
-                      <Select 
-                        value={installments.toString()} 
-                        onValueChange={(value) => setInstallments(Number(value))}
-                      >
-                        <SelectTrigger id="installments" className="h-11">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
-                            <SelectItem key={num} value={num.toString()}>
-                              {num === 1 ? "À vista" : `${num}x de R$ ${(totals.total / num).toFixed(2)}`}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <Label htmlFor="installments" className="text-xs text-muted-foreground mb-2">
+                            Número de Parcelas
+                          </Label>
+                          <Select 
+                            value={installments.toString()} 
+                            onValueChange={(value) => setInstallments(Number(value))}
+                          >
+                            <SelectTrigger id="installments" className="h-11">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                                <SelectItem key={num} value={num.toString()}>
+                                  {num === 1 ? "À vista" : `${num}x de R$ ${(totals.total / num).toFixed(2)}`}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                    {installments > 1 && (
-                      <div>
-                        <Label htmlFor="interval" className="text-xs text-muted-foreground mb-2">
-                          Intervalo
-                        </Label>
-                        <Select 
-                          value={installmentInterval.toString()} 
-                          onValueChange={(value) => setInstallmentInterval(Number(value))}
-                        >
-                          <SelectTrigger id="interval" className="h-11">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="7">Semanal</SelectItem>
-                            <SelectItem value="15">Quinzenal</SelectItem>
-                            <SelectItem value="30">Mensal</SelectItem>
-                            <SelectItem value="60">Bimestral</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        {installments > 1 && (
+                          <div>
+                            <Label htmlFor="interval" className="text-xs text-muted-foreground mb-2">
+                              Intervalo
+                            </Label>
+                            <Select 
+                              value={installmentInterval.toString()} 
+                              onValueChange={(value) => setInstallmentInterval(Number(value))}
+                            >
+                              <SelectTrigger id="interval" className="h-11">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="7">Semanal</SelectItem>
+                                <SelectItem value="15">Quinzenal</SelectItem>
+                                <SelectItem value="30">Mensal</SelectItem>
+                                <SelectItem value="60">Bimestral</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  {installments > 1 && (
-                    <div className="p-4 bg-primary/5 rounded-lg border border-primary/20 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Valor de cada parcela</span>
-                        <span className="text-lg font-bold text-primary">
-                          R$ {totals.installmentValue.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">
-                          Primeira parcela vence em
-                        </span>
-                        <span className="font-semibold">
-                          {new Date(dueDate).toLocaleDateString('pt-BR')}
-                        </span>
-                      </div>
-                      {installmentDates.length > 1 && (
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">
-                            Última parcela vence em
-                          </span>
-                          <span className="font-semibold">
-                            {new Date(installmentDates[installmentDates.length - 1]).toLocaleDateString('pt-BR')}
-                          </span>
+                      {installments > 1 && (
+                        <div className="p-4 bg-primary/5 rounded-lg border border-primary/20 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Valor de cada parcela</span>
+                            <span className="text-lg font-bold text-primary">
+                              R$ {totals.installmentValue.toFixed(2)}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-muted-foreground">
+                              Primeira parcela vence em
+                            </span>
+                            <span className="font-semibold">
+                              {new Date(dueDate).toLocaleDateString('pt-BR')}
+                            </span>
+                          </div>
+                          {installmentDates.length > 1 && (
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-muted-foreground">
+                                Última parcela vence em
+                              </span>
+                              <span className="font-semibold">
+                                {new Date(installmentDates[installmentDates.length - 1]).toLocaleDateString('pt-BR')}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
+                  </>
+                )}
               </div>
 
               {/* Status */}
@@ -558,8 +562,8 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
             </div>
           </ScrollArea>
 
-          {/* Right: Receipt Preview */}
-          <ScrollArea className="h-full bg-muted/20">
+          {/* Right: Receipt Preview - Hidden on Mobile */}
+          <ScrollArea className="hidden lg:block h-full bg-muted/20">
             <div className="p-6">
               <div className="max-w-[600px] mx-auto">
                 {/* Preview Label */}
@@ -719,8 +723,8 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                       </div>
                     </div>
 
-                    {/* Installments Info */}
-                    {installments > 1 && (
+                    {/* Installments Info - Only for Credit */}
+                    {paymentMethod === "credit" && installments > 1 && (
                       <>
                         <Separator />
                         <div>
@@ -802,29 +806,29 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
         </div>
 
         {/* Footer Actions */}
-        <div className="border-t border-border p-4 bg-background flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="border-t border-border p-4 bg-background flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
             <div className="text-left">
               <p className="text-xs text-muted-foreground">
-                {installments > 1 ? `Total (${installments}x)` : "Total da Cobrança"}
+                {paymentMethod === "credit" && installments > 1 ? `Total (${installments}x)` : "Total da Cobrança"}
               </p>
-              <p className="text-2xl font-black bg-gradient-to-r from-primary to-success bg-clip-text text-transparent">
+              <p className="text-xl md:text-2xl font-black bg-gradient-to-r from-primary to-success bg-clip-text text-transparent">
                 R$ {totals.total.toFixed(2)}
               </p>
-              {installments > 1 && (
+              {paymentMethod === "credit" && installments > 1 && (
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {installments}x de R$ {totals.installmentValue.toFixed(2)}
                 </p>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {discountApplied && (
                 <Badge variant="outline" className="text-success border-success/20">
                   <Tag className="h-3 w-3 mr-1" />
                   10% OFF
                 </Badge>
               )}
-              {installments > 1 && (
+              {paymentMethod === "credit" && installments > 1 && (
                 <Badge variant="outline" className="text-primary border-primary/20">
                   <CalendarDays className="h-3 w-3 mr-1" />
                   {installments}x
@@ -833,19 +837,19 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-2 w-full sm:w-auto">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={loading}
-              className="min-w-[120px]"
+              className="flex-1 sm:flex-none sm:min-w-[120px]"
             >
               Cancelar
             </Button>
             <Button
               onClick={handleRegisterPayment}
               disabled={loading || items.some(i => !i.description || i.total === 0)}
-              className="min-w-[200px] gap-2 shadow-xl bg-gradient-to-r from-primary to-primary-glow hover:shadow-2xl hover:scale-105 transition-all"
+              className="flex-1 sm:flex-none sm:min-w-[200px] gap-2 shadow-xl bg-gradient-to-r from-primary to-primary-glow hover:shadow-2xl hover:scale-105 transition-all"
             >
               {loading ? (
                 <div className="flex items-center gap-2">
