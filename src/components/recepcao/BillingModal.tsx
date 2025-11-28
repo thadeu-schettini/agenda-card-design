@@ -76,6 +76,7 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
   const [loading, setLoading] = useState(false);
   const [observations, setObservations] = useState("");
   const [installments, setInstallments] = useState(1);
+  const [downPayment, setDownPayment] = useState("");
   const installmentInterval = 30; // Padrão mensal
 
   const paymentMethods = [
@@ -94,8 +95,10 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
     const subtotal = items.reduce((sum, item) => sum + item.total, 0);
     const discount = discountApplied ? subtotal * 0.1 : 0;
     const total = subtotal - discount;
-    const installmentValue = total / installments;
-    return { subtotal, discount, total, installmentValue };
+    const downPaymentValue = downPayment ? parseFloat(downPayment) : 0;
+    const remainingAmount = total - downPaymentValue;
+    const installmentValue = remainingAmount > 0 ? remainingAmount / installments : 0;
+    return { subtotal, discount, total, downPaymentValue, remainingAmount, installmentValue };
   };
 
   const calculateInstallmentDates = () => {
@@ -406,9 +409,31 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                     <div className="space-y-3">
                       <Label className="text-sm font-semibold flex items-center gap-2">
                         <CalendarDays className="h-4 w-4 text-primary" />
-                        Parcelamento Mensal
+                        Entrada + Parcelamento
                       </Label>
                       
+                      <div>
+                        <Label htmlFor="downPayment" className="text-xs text-muted-foreground mb-2">
+                          Valor de Entrada (Opcional)
+                        </Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                            R$
+                          </span>
+                          <Input
+                            id="downPayment"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            max={totals.total}
+                            value={downPayment}
+                            onChange={(e) => setDownPayment(e.target.value)}
+                            className="h-11 pl-10"
+                            placeholder="0,00"
+                          />
+                        </div>
+                      </div>
+
                       <div>
                         <Label htmlFor="installments" className="text-xs text-muted-foreground mb-2">
                           Número de Parcelas
@@ -423,21 +448,47 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                           <SelectContent>
                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
                               <SelectItem key={num} value={num.toString()}>
-                                {num === 1 ? "À vista" : `${num}x de R$ ${(totals.total / num).toFixed(2)}`}
+                                {num === 1 ? "À vista" : `${num}x de R$ ${(totals.remainingAmount / num).toFixed(2)}`}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
 
-                      {installments > 1 && (
+                      {(installments > 1 || totals.downPaymentValue > 0) && (
                         <div className="p-4 bg-primary/5 rounded-lg border border-primary/20 space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-muted-foreground">Valor de cada parcela</span>
-                            <span className="text-lg font-bold text-primary">
-                              R$ {totals.installmentValue.toFixed(2)}
-                            </span>
-                          </div>
+                          {totals.downPaymentValue > 0 && (
+                            <>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-muted-foreground">Entrada</span>
+                                <span className="text-base font-bold text-success">
+                                  R$ {totals.downPaymentValue.toFixed(2)}
+                                </span>
+                              </div>
+                              <Separator className="bg-primary/20" />
+                            </>
+                          )}
+                          {installments > 1 && (
+                            <>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-muted-foreground">Restante a parcelar</span>
+                                <span className="text-base font-semibold">
+                                  R$ {totals.remainingAmount.toFixed(2)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-muted-foreground">Valor de cada parcela</span>
+                                <span className="text-lg font-bold text-primary">
+                                  R$ {totals.installmentValue.toFixed(2)}
+                                </span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      )}
+
+                      {installments > 1 && (
+                        <div className="space-y-2">
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-muted-foreground">
                               Primeira parcela vence em
@@ -699,51 +750,68 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                       </div>
                     </div>
 
-                    {/* Installments Info - Only for Credit */}
-                    {paymentMethod === "credit" && installments > 1 && (
+                    {/* Payment Info - Credit with Down Payment or Installments */}
+                    {paymentMethod === "credit" && (totals.downPaymentValue > 0 || installments > 1) && (
                       <>
                         <Separator />
                         <div>
                           <div className="flex items-center justify-between mb-3">
                             <p className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
-                              <CalendarDays className="h-3.5 w-3.5" />
-                              PARCELAMENTO
+                              <DollarSign className="h-3.5 w-3.5" />
+                              DETALHAMENTO DO PAGAMENTO
                             </p>
-                            <Badge variant="outline" className="text-xs">
-                              {installments}x parcelas
-                            </Badge>
+                            {installments > 1 && (
+                              <Badge variant="outline" className="text-xs">
+                                {installments}x parcelas
+                              </Badge>
+                            )}
                           </div>
                           
                           <div className="space-y-3">
-                            <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm text-muted-foreground">Valor de cada parcela</span>
-                                <span className="text-xl font-bold text-primary">
-                                  R$ {totals.installmentValue.toFixed(2)}
-                                </span>
+                            {totals.downPaymentValue > 0 && (
+                              <div className="p-4 bg-success/5 rounded-lg border border-success/20">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm font-medium text-muted-foreground">Entrada (à vista)</span>
+                                  <span className="text-xl font-bold text-success">
+                                    R$ {totals.downPaymentValue.toFixed(2)}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex items-center justify-between text-xs pt-2 border-t border-primary/20">
-                                <span className="text-muted-foreground">Total parcelado</span>
-                                <span className="font-semibold">
-                                  {installments}x de R$ {totals.installmentValue.toFixed(2)}
-                                </span>
-                              </div>
-                            </div>
+                            )}
 
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              <div className="p-2.5 bg-muted/30 rounded">
-                                <p className="text-muted-foreground mb-1">Primeira parcela</p>
-                                <p className="font-semibold">
-                                  {new Date(installmentDates[0]).toLocaleDateString('pt-BR')}
-                                </p>
+                            {installments > 1 && (
+                              <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm text-muted-foreground">Valor de cada parcela</span>
+                                  <span className="text-xl font-bold text-primary">
+                                    R$ {totals.installmentValue.toFixed(2)}
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between text-xs pt-2 border-t border-primary/20">
+                                  <span className="text-muted-foreground">Total parcelado</span>
+                                  <span className="font-semibold">
+                                    {installments}x de R$ {totals.installmentValue.toFixed(2)} = R$ {totals.remainingAmount.toFixed(2)}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="p-2.5 bg-muted/30 rounded">
-                                <p className="text-muted-foreground mb-1">Última parcela</p>
-                                <p className="font-semibold">
-                                  {new Date(installmentDates[installmentDates.length - 1]).toLocaleDateString('pt-BR')}
-                                </p>
+                            )}
+
+                            {installments > 1 && (
+                              <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="p-2.5 bg-muted/30 rounded">
+                                  <p className="text-muted-foreground mb-1">Primeira parcela</p>
+                                  <p className="font-semibold">
+                                    {new Date(installmentDates[0]).toLocaleDateString('pt-BR')}
+                                  </p>
+                                </div>
+                                <div className="p-2.5 bg-muted/30 rounded">
+                                  <p className="text-muted-foreground mb-1">Última parcela</p>
+                                  <p className="font-semibold">
+                                    {new Date(installmentDates[installmentDates.length - 1]).toLocaleDateString('pt-BR')}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
+                            )}
                           </div>
                         </div>
                       </>
@@ -793,6 +861,12 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                 <Badge variant="outline" className="text-success border-success/20">
                   <Tag className="h-3 w-3 mr-1" />
                   10% OFF
+                </Badge>
+              )}
+              {paymentMethod === "credit" && totals.downPaymentValue > 0 && (
+                <Badge variant="outline" className="text-success border-success/20">
+                  <DollarSign className="h-3 w-3 mr-1" />
+                  Entrada
                 </Badge>
               )}
               {paymentMethod === "credit" && installments > 1 && (
