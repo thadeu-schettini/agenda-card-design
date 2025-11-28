@@ -149,118 +149,168 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[95vh] overflow-hidden p-0 gap-0 bg-background">
-        {/* Header com gradient */}
-        <div className="relative p-6 pb-8 bg-gradient-to-br from-primary via-primary-glow to-primary overflow-hidden">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20" />
+        {/* Modern Header */}
+        <div className="relative p-8 bg-gradient-to-br from-background via-muted/30 to-background border-b border-border/50 overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.08),transparent_50%)]" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           
           <div className="relative">
-            <DialogTitle className="flex items-center gap-3 text-2xl font-bold text-white mb-6">
-              <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-xl border border-white/30">
-                <Receipt className="h-6 w-6 text-white" />
+            <div className="flex items-start justify-between gap-6 mb-8">
+              <div className="flex items-center gap-4 flex-1">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
+                  <div className="relative p-4 bg-primary/10 backdrop-blur-md rounded-2xl border border-primary/20 group-hover:scale-105 transition-transform">
+                    <Receipt className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <div>
+                  <DialogTitle className="text-3xl font-bold text-foreground mb-1 flex items-center gap-3">
+                    Registro de Cobrança
+                    <Badge variant="outline" className="text-xs font-normal">
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      Novo
+                    </Badge>
+                  </DialogTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Crie cobranças personalizadas e gerencie pagamentos
+                  </p>
+                </div>
               </div>
-              Fatura Manual
-              <Sparkles className="h-5 w-5 text-white/80 animate-pulse" />
-            </DialogTitle>
 
-            {/* Patient & Appointment Info */}
+              <div className="flex items-center gap-2">
+                <Badge className={cn("px-3 py-1", currentStatus?.color)}>
+                  {currentStatus?.label}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Patient & Appointment Info - Redesigned */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                <div className="flex items-center gap-2 mb-2">
-                  <User className="h-4 w-4 text-white/70" />
-                  <span className="text-xs text-white/70 font-medium">Paciente</span>
+              <div className="group p-4 bg-card rounded-xl border border-border hover:border-primary/30 hover:shadow-lg transition-all">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg group-hover:scale-110 transition-transform">
+                    <User className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Paciente</p>
+                    <p className="text-base font-bold text-foreground truncate">{appointment.patientName}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{appointment.patientPhone}</p>
+                  </div>
                 </div>
-                <p className="text-white font-semibold">{appointment.patientName}</p>
-                <p className="text-xs text-white/80 mt-1">{appointment.patientPhone}</p>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                <div className="flex items-center gap-2 mb-2">
-                  <FileText className="h-4 w-4 text-white/70" />
-                  <span className="text-xs text-white/70 font-medium">Serviço</span>
+              <div className="group p-4 bg-card rounded-xl border border-border hover:border-primary/30 hover:shadow-lg transition-all">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-accent/10 rounded-lg group-hover:scale-110 transition-transform">
+                    <FileText className="h-5 w-5 text-accent" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Serviço</p>
+                    <p className="text-base font-bold text-foreground">{appointment.service}</p>
+                  </div>
                 </div>
-                <p className="text-white font-semibold">{appointment.service}</p>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="h-4 w-4 text-white/70" />
-                  <span className="text-xs text-white/70 font-medium">Data/Hora</span>
+              <div className="group p-4 bg-card rounded-xl border border-border hover:border-primary/30 hover:shadow-lg transition-all">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-success/10 rounded-lg group-hover:scale-110 transition-transform">
+                    <Calendar className="h-5 w-5 text-success" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Agendamento</p>
+                    <p className="text-base font-bold text-foreground">{appointment.date}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{appointment.time}</p>
+                  </div>
                 </div>
-                <p className="text-white font-semibold">{appointment.date}</p>
-                <p className="text-xs text-white/80 mt-1">{appointment.time}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(95vh-200px)] p-6 space-y-6">
-          {/* Due Date & Value */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="dueDate" className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                <Clock className="h-4 w-4 text-primary" />
-                Data de vencimento
+        <div className="overflow-y-auto max-h-[calc(95vh-280px)] p-6 space-y-6">
+          {/* Due Date & Value - Redesigned */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="p-5 bg-card rounded-xl border border-border hover:border-primary/30 transition-all">
+              <Label htmlFor="dueDate" className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                <div className="p-1.5 bg-primary/10 rounded-lg">
+                  <Clock className="h-4 w-4 text-primary" />
+                </div>
+                Vencimento da Fatura
               </Label>
               <Input
                 id="dueDate"
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="mt-1"
+                className="mt-2 h-11"
               />
             </div>
 
-            <div>
-              <Label className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-primary" />
-                Valor
-              </Label>
-              <div className="mt-1 p-4 bg-primary/5 rounded-lg border border-primary/20">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-sm text-muted-foreground">Total calculado</span>
-                  <span className="text-2xl font-bold text-primary">
+            <div className="relative group p-5 bg-gradient-to-br from-success/5 via-success/10 to-primary/5 rounded-xl border border-success/20 hover:border-success/40 transition-all overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(34,197,94,0.15),transparent_70%)]" />
+              <div className="relative">
+                <Label className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <div className="p-1.5 bg-success/10 rounded-lg">
+                    <DollarSign className="h-4 w-4 text-success" />
+                  </div>
+                  Valor Total
+                </Label>
+                <div className="flex items-baseline gap-2 mt-2">
+                  <span className="text-4xl font-black bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
                     R$ {totals.total.toFixed(2)}
                   </span>
+                  <span className="text-xs text-muted-foreground font-medium px-2 py-1 bg-background/50 rounded-md">
+                    Auto
+                  </span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Calculado automaticamente a partir dos itens
+                <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
+                  <Sparkles className="h-3 w-3" />
+                  Calculado automaticamente
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Description */}
-          <div>
-            <Label htmlFor="description" className="text-sm font-medium text-foreground mb-2">
-              Descrição
+          {/* Description - Enhanced */}
+          <div className="p-5 bg-card rounded-xl border border-border hover:border-primary/30 transition-all">
+            <Label htmlFor="description" className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <div className="p-1.5 bg-primary/10 rounded-lg">
+                <FileText className="h-4 w-4 text-primary" />
+              </div>
+              Descrição da Cobrança
             </Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              rows={2}
+              rows={3}
+              placeholder="Adicione detalhes sobre a cobrança..."
               className="resize-none"
             />
           </div>
 
-          {/* Invoice Items */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
+          {/* Invoice Items - Enhanced */}
+          <div className="p-5 bg-muted/30 rounded-xl border border-border">
+            <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="text-sm font-semibold text-foreground">Itens da fatura</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Adicione serviços, procedimentos ou produtos
+                <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                  <div className="p-1.5 bg-primary/10 rounded-lg">
+                    <Receipt className="h-4 w-4 text-primary" />
+                  </div>
+                  Itens da Fatura
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1.5">
+                  Personalize os itens da cobrança com serviços e produtos
                 </p>
               </div>
               <Button
                 onClick={addItem}
                 size="sm"
-                variant="outline"
-                className="gap-2"
+                className="gap-2 shadow-md hover:shadow-lg hover:scale-105 transition-all"
               >
                 <Plus className="h-4 w-4" />
-                Adicionar item
+                Novo Item
               </Button>
             </div>
 
@@ -333,35 +383,42 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                 </table>
               </div>
 
-              {/* Total Summary */}
-              <div className="border-t border-border bg-muted/20 p-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">R$ {totals.subtotal.toFixed(2)}</span>
+              {/* Total Summary - Enhanced */}
+              <div className="border-t border-border bg-gradient-to-r from-muted/50 to-muted/30 p-5 space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground font-medium">Subtotal</span>
+                  <span className="font-semibold text-foreground">R$ {totals.subtotal.toFixed(2)}</span>
                 </div>
                 {discountApplied && (
-                  <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
-                    <span>Desconto (10%)</span>
-                    <span className="font-medium">- R$ {totals.discount.toFixed(2)}</span>
+                  <div className="flex justify-between items-center text-sm animate-fade-in">
+                    <span className="text-success font-medium flex items-center gap-1.5">
+                      <Tag className="h-3.5 w-3.5" />
+                      Desconto (10%)
+                    </span>
+                    <span className="font-semibold text-success">- R$ {totals.discount.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-base font-bold border-t border-border pt-2">
-                  <span>Total da fatura</span>
-                  <span className="text-primary">R$ {totals.total.toFixed(2)}</span>
+                <div className="flex justify-between items-center pt-3 border-t border-border">
+                  <span className="text-base font-bold text-foreground">Total da Fatura</span>
+                  <span className="text-2xl font-black bg-gradient-to-r from-primary to-success bg-clip-text text-transparent">
+                    R$ {totals.total.toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Payment Method & Status */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                <CreditCard className="h-4 w-4 text-primary" />
-                Método de pagamento
+          {/* Payment Method & Status - Redesigned */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="p-5 bg-card rounded-xl border border-border hover:border-primary/30 transition-all">
+              <Label className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+                <div className="p-1.5 bg-primary/10 rounded-lg">
+                  <CreditCard className="h-4 w-4 text-primary" />
+                </div>
+                Método de Pagamento
               </Label>
               <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -369,8 +426,10 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                     const Icon = method.icon;
                     return (
                       <SelectItem key={method.id} value={method.id}>
-                        <div className="flex items-center gap-2">
-                          <Icon className="h-4 w-4" />
+                        <div className="flex items-center gap-2.5">
+                          <div className="p-1.5 bg-muted rounded-md">
+                            <Icon className="h-3.5 w-3.5" />
+                          </div>
                           {method.label}
                         </div>
                       </SelectItem>
@@ -380,9 +439,14 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
               </Select>
             </div>
 
-            <div>
-              <Label className="text-sm font-medium text-foreground mb-3">Status inicial</Label>
-              <div className="flex gap-2">
+            <div className="p-5 bg-card rounded-xl border border-border hover:border-primary/30 transition-all">
+              <Label className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+                <div className="p-1.5 bg-primary/10 rounded-lg">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                </div>
+                Status Inicial
+              </Label>
+              <div className="grid grid-cols-3 gap-2">
                 {statusOptions.map((option) => (
                   <Button
                     key={option.value}
@@ -390,74 +454,103 @@ export const BillingModal = ({ open, onOpenChange, appointment }: BillingModalPr
                     variant={status === option.value ? "default" : "outline"}
                     size="sm"
                     className={cn(
-                      "flex-1 gap-2",
-                      status === option.value && "shadow-lg"
+                      "h-11 flex-col gap-1 relative overflow-hidden",
+                      status === option.value && "shadow-lg ring-2 ring-primary/20"
                     )}
                   >
-                    {status === option.value && <CheckCircle2 className="h-3.5 w-3.5" />}
-                    {option.label}
+                    {status === option.value && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
+                    )}
+                    <span className="relative text-xs font-semibold">{option.label}</span>
                   </Button>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Discount Coupon */}
-          <div>
-            <Label htmlFor="discount" className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-              <Tag className="h-4 w-4 text-primary" />
-              Cupom de desconto (opcional)
+          {/* Discount Coupon - Enhanced */}
+          <div className="p-5 bg-gradient-to-br from-card to-muted/30 rounded-xl border border-border hover:border-primary/30 transition-all">
+            <Label htmlFor="discount" className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+              <div className="p-1.5 bg-primary/10 rounded-lg">
+                <Tag className="h-4 w-4 text-primary" />
+              </div>
+              Cupom de Desconto
+              <Badge variant="outline" className="text-xs ml-auto">Opcional</Badge>
             </Label>
-            <div className="flex gap-2">
+            <div className="flex gap-2.5">
               <Input
                 id="discount"
                 value={discountCode}
                 onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-                placeholder="Ex.: CLINICA50 ou código único"
-                className="flex-1"
+                placeholder="Digite o código do cupom"
+                className="flex-1 h-11 font-mono"
                 disabled={discountApplied}
               />
               <Button
                 onClick={validateDiscount}
-                variant="outline"
+                variant={discountApplied ? "secondary" : "default"}
                 disabled={!discountCode || discountApplied}
+                className="h-11 px-6 gap-2"
               >
-                Validar
+                {discountApplied ? (
+                  <>
+                    <CheckCircle2 className="h-4 w-4" />
+                    Aplicado
+                  </>
+                ) : (
+                  "Validar"
+                )}
               </Button>
             </div>
             {discountApplied && (
-              <p className="text-xs text-green-600 dark:text-green-400 mt-2 flex items-center gap-1.5">
-                <CheckCircle2 className="h-3.5 w-3.5" />
-                Cupom aplicado com sucesso
-              </p>
+              <div className="mt-3 p-3 bg-success/10 rounded-lg border border-success/20 animate-fade-in">
+                <p className="text-sm text-success font-medium flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Desconto de 10% aplicado com sucesso!
+                </p>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Footer Actions */}
-        <div className="border-t border-border p-6 bg-muted/20">
-          <div className="flex gap-3 justify-end">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={loading}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleRegisterPayment}
-              disabled={loading || items.some(i => !i.description || i.total === 0)}
-              className="gap-2 shadow-lg min-w-[200px]"
-            >
-              {loading ? (
-                "Processando..."
-              ) : (
-                <>
-                  <Receipt className="h-4 w-4" />
-                  Registrar pagamento
-                </>
-              )}
-            </Button>
+        {/* Footer Actions - Enhanced */}
+        <div className="relative border-t border-border p-6 bg-gradient-to-r from-background via-muted/20 to-background">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(59,130,246,0.05),transparent_70%)]" />
+          <div className="relative flex flex-col sm:flex-row gap-3 justify-between items-center">
+            <div className="flex items-baseline gap-2">
+              <span className="text-sm text-muted-foreground">Total:</span>
+              <span className="text-2xl font-black bg-gradient-to-r from-primary to-success bg-clip-text text-transparent">
+                R$ {totals.total.toFixed(2)}
+              </span>
+            </div>
+            
+            <div className="flex gap-3 w-full sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={loading}
+                className="flex-1 sm:flex-initial h-11"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleRegisterPayment}
+                disabled={loading || items.some(i => !i.description || i.total === 0)}
+                className="flex-1 sm:flex-initial gap-2 shadow-xl h-11 px-8 bg-gradient-to-r from-primary to-primary-glow hover:shadow-2xl hover:scale-105 transition-all"
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Processando
+                  </div>
+                ) : (
+                  <>
+                    <Receipt className="h-4 w-4" />
+                    Registrar Pagamento
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
