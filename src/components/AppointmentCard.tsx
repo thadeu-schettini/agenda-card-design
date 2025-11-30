@@ -424,6 +424,40 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
                 </div>
               </div>
 
+              {/* Professional Card */}
+              <div className="p-4 sm:p-5 bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl border border-primary/20 hover:border-primary/30 transition-all duration-300 animate-slide-up [animation-delay:150ms] group">
+                <div className="flex items-start gap-4">
+                  {/* Avatar */}
+                  <div className="relative flex-shrink-0">
+                    <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500" />
+                    <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center border-2 border-white/30 shadow-xl group-hover:scale-105 transition-transform duration-300">
+                      <span className="text-xl sm:text-2xl font-bold text-white">
+                        {formData.professional.split(' ').map(n => n[0]).slice(0, 2).join('')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Professional Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Stethoscope className="h-4 w-4 text-primary flex-shrink-0" />
+                      <p className="text-xs text-muted-foreground font-medium">Profissional</p>
+                    </div>
+                    <h3 className="text-base sm:text-lg font-bold text-foreground mb-2 break-words">
+                      {formData.professional}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary" className="text-xs font-medium">
+                        Dermatologia
+                      </Badge>
+                      <Badge variant="secondary" className="text-xs font-medium">
+                        CRM 12345-SP
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Mode-specific information */}
               {formData.mode === "online" && (
                 <div className="space-y-3 p-3 sm:p-4 bg-blue-500/10 rounded-xl border border-blue-500/30 animate-slide-up [animation-delay:150ms]">
@@ -518,15 +552,9 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
                       <p className="text-base sm:text-lg font-bold text-foreground break-words">{formData.service}</p>
                     </div>
                   </div>
-                  <div className="pt-3 border-t border-border/50 space-y-2">
-                    <div>
-                      <p className="text-xs text-muted-foreground font-medium mb-1">Profissional</p>
-                      <p className="text-sm font-semibold text-foreground">{formData.professional}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground font-medium mb-1">Tipo de atendimento</p>
-                      <p className="text-sm font-semibold text-foreground">{formData.attendanceType}</p>
-                    </div>
+                  <div className="pt-3 border-t border-border/50">
+                    <p className="text-xs text-muted-foreground font-medium mb-1">Tipo de atendimento</p>
+                    <p className="text-sm font-semibold text-foreground">{formData.attendanceType}</p>
                   </div>
                 </div>
 
