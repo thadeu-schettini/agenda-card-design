@@ -325,7 +325,7 @@ export default function Configuracoes() {
                   >
                     {/* Inactive Overlay */}
                     {isInactive && (
-                      <div className="absolute inset-0 bg-gradient-to-br from-muted/10 to-muted/5 pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 via-muted/10 to-muted/5 pointer-events-none backdrop-blur-[1px]" />
                     )}
 
                     {/* Gradient Background */}
@@ -344,14 +344,14 @@ export default function Configuracoes() {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div>
-                              <Badge variant="destructive" className="text-sm gap-1.5 px-3 py-1 shadow-md animate-pulse">
-                                <AlertCircle className="h-4 w-4" />
-                                Inativo
+                              <Badge variant="destructive" className="text-base gap-2 px-4 py-2 shadow-lg animate-pulse font-bold">
+                                <AlertCircle className="h-5 w-5" />
+                                MÓDULO INATIVO
                               </Badge>
                             </div>
                           </TooltipTrigger>
-                          <TooltipContent side="left" className="z-50">
-                            <p>Ative este módulo dentro da configuração</p>
+                          <TooltipContent side="left" className="z-50 max-w-xs">
+                            <p className="font-medium">Clique no card para ativar este módulo e desbloquear seus recursos</p>
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -409,37 +409,72 @@ export default function Configuracoes() {
                   </CardHeader>
 
                   <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Zap className="h-3 w-3" />
-                        <span>Itens de configuração:</span>
-                      </div>
-                      <ul className="space-y-2">
-                        {section.items.map((item, idx) => (
-                          <li key={idx} className="flex items-center gap-2 text-sm">
-                            {section.completion === 100 ? (
-                              <CheckCircle2 className="h-4 w-4 text-primary" />
-                            ) : (
-                              <Circle className="h-4 w-4 text-muted-foreground" />
-                            )}
-                            <span className="text-muted-foreground">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    {isInactive ? (
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/10 border-2 border-dashed border-destructive/30">
+                          <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+                          <div className="space-y-1 flex-1">
+                            <p className="text-sm font-semibold text-destructive">Módulo Desativado</p>
+                            <p className="text-xs text-muted-foreground">
+                              Clique em "Ativar Módulo" para desbloquear {section.items.length} recursos
+                            </p>
+                          </div>
+                        </div>
 
-                    <Button
-                      className={`w-full mt-6 transition-all ${
-                        isInactive 
-                          ? 'opacity-50 cursor-not-allowed' 
-                          : 'group-hover:shadow-lg'
-                      }`}
-                      variant="outline"
-                      disabled={isInactive}
-                    >
-                      {isInactive ? 'Ative o módulo acima' : 'Configurar'}
-                      <ArrowLeft className="h-4 w-4 ml-2 rotate-180 group-hover:translate-x-1 transition-transform" />
-                    </Button>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                            <Sparkles className="h-4 w-4 text-primary" />
+                            <span>Recursos disponíveis ao ativar:</span>
+                          </div>
+                          <ul className="space-y-2">
+                            {section.items.map((item, idx) => (
+                              <li key={idx} className="flex items-center gap-2 text-sm">
+                                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                  <Sparkles className="h-3 w-3 text-primary" />
+                                </div>
+                                <span className="text-muted-foreground font-medium">{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <Button
+                          className="w-full mt-2 gap-2 shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                          size="lg"
+                        >
+                          <Zap className="h-5 w-5" />
+                          Ativar Módulo
+                          <ArrowLeft className="h-4 w-4 rotate-180 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Zap className="h-3 w-3" />
+                          <span>Itens de configuração:</span>
+                        </div>
+                        <ul className="space-y-2">
+                          {section.items.map((item, idx) => (
+                            <li key={idx} className="flex items-center gap-2 text-sm">
+                              {section.completion === 100 ? (
+                                <CheckCircle2 className="h-4 w-4 text-primary" />
+                              ) : (
+                                <Circle className="h-4 w-4 text-muted-foreground" />
+                              )}
+                              <span className="text-muted-foreground">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <Button
+                          className="w-full mt-6 transition-all group-hover:shadow-lg"
+                          variant="outline"
+                        >
+                          Configurar
+                          <ArrowLeft className="h-4 w-4 ml-2 rotate-180 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               );
