@@ -37,8 +37,13 @@ import {
   X,
   Link as LinkIcon,
   MapPin,
-  Copy
+  Copy,
+  ChevronsUpDown,
+  Check
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 import { BillingModal } from "@/components/recepcao/BillingModal";
 
 type AppointmentStatus = 
@@ -74,10 +79,21 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
   const [status, setStatus] = useState<AppointmentStatus>("realizado");
   const [isEditing, setIsEditing] = useState(false);
   const [billingModalOpen, setBillingModalOpen] = useState(false);
+  const [professionalOpen, setProfessionalOpen] = useState(false);
   const [roomLinks, setRoomLinks] = useState<{
     patientLink: string;
     professionalLink: string;
   } | null>(null);
+  
+  const professionals = [
+    "Dr(a). Cleta Bogisich",
+    "Dr. João Silva",
+    "Dra. Maria Santos",
+    "Dr. Pedro Costa",
+    "Dra. Ana Oliveira",
+    "Dr. Carlos Mendes",
+    "Dra. Juliana Ferreira"
+  ];
   const [formData, setFormData] = useState({
     date: "2025-11-27",
     startTime: "12:05",
@@ -277,12 +293,47 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
                 <div className="space-y-3 sm:space-y-4">
                   <div>
                     <Label htmlFor="professional" className="text-xs font-medium text-muted-foreground">Profissional</Label>
-                    <Input
-                      id="professional"
-                      value={formData.professional}
-                      onChange={(e) => setFormData({ ...formData, professional: e.target.value })}
-                      className="mt-1.5"
-                    />
+                    <Popover open={professionalOpen} onOpenChange={setProfessionalOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={professionalOpen}
+                          className="w-full justify-between mt-1.5 font-normal"
+                        >
+                          {formData.professional || "Selecione um profissional..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Buscar profissional..." />
+                          <CommandList>
+                            <CommandEmpty>Nenhum profissional encontrado.</CommandEmpty>
+                            <CommandGroup>
+                              {professionals.map((prof) => (
+                                <CommandItem
+                                  key={prof}
+                                  value={prof}
+                                  onSelect={(currentValue) => {
+                                    setFormData({ ...formData, professional: currentValue });
+                                    setProfessionalOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      formData.professional === prof ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {prof}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div>
                     <Label htmlFor="service" className="text-xs font-medium text-muted-foreground">Serviço</Label>
