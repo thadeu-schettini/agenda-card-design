@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Plus, FileText } from "lucide-react";
+import { Search, Plus, FileText, Archive, ArchiveRestore, History, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -25,6 +25,7 @@ interface ClinicalForm {
   fieldsCount: number;
   sectionsCount: number;
   status: "publicado" | "rascunho";
+  archived?: boolean;
 }
 
 const mockForms: ClinicalForm[] = [
@@ -36,6 +37,7 @@ const mockForms: ClinicalForm[] = [
     fieldsCount: 15,
     sectionsCount: 3,
     status: "publicado",
+    archived: false,
   },
   {
     id: "2",
@@ -45,6 +47,7 @@ const mockForms: ClinicalForm[] = [
     fieldsCount: 12,
     sectionsCount: 4,
     status: "publicado",
+    archived: false,
   },
   {
     id: "3",
@@ -54,6 +57,7 @@ const mockForms: ClinicalForm[] = [
     fieldsCount: 18,
     sectionsCount: 5,
     status: "rascunho",
+    archived: false,
   },
 ];
 
@@ -61,6 +65,7 @@ export default function FormulariosClinicos() {
   const [searchQuery, setSearchQuery] = useState("");
   const [specialtyFilter, setSpecialtyFilter] = useState("todas");
   const [statusFilter, setStatusFilter] = useState("todos");
+  const [showArchived, setShowArchived] = useState(false);
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const [selectedForm, setSelectedForm] = useState<ClinicalForm | null>(null);
@@ -70,7 +75,8 @@ export default function FormulariosClinicos() {
     const matchesSearch = form.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSpecialty = specialtyFilter === "todas" || form.specialty === specialtyFilter;
     const matchesStatus = statusFilter === "todos" || form.status === statusFilter;
-    return matchesSearch && matchesSpecialty && matchesStatus;
+    const matchesArchived = showArchived ? form.archived : !form.archived;
+    return matchesSearch && matchesSpecialty && matchesStatus && matchesArchived;
   });
 
   const handleEditForm = (form: ClinicalForm) => {
@@ -98,6 +104,18 @@ export default function FormulariosClinicos() {
   const handleViewHistory = (formId: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
     setHistoryFormId(formId);
+  };
+
+  const handleArchiveForm = (formId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    // In real implementation, this would update the database
+    console.log("Archive form:", formId);
+  };
+
+  const handleUnarchiveForm = (formId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    // In real implementation, this would update the database
+    console.log("Unarchive form:", formId);
   };
 
   return (
@@ -164,6 +182,18 @@ export default function FormulariosClinicos() {
                 <SelectItem value="rascunho">Rascunho</SelectItem>
               </SelectContent>
             </Select>
+
+            <Button
+              variant={showArchived ? "default" : "outline"}
+              onClick={() => setShowArchived(!showArchived)}
+              className="w-full sm:w-auto"
+            >
+              <Archive className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">
+                {showArchived ? "Ocultar Arquivados" : "Ver Arquivados"}
+              </span>
+              <span className="sm:hidden">Arquivados</span>
+            </Button>
           </div>
         </div>
 
@@ -196,10 +226,12 @@ export default function FormulariosClinicos() {
             {filteredForms.map((form) => (
               <Card
                 key={form.id}
-                className="p-4 sm:p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                onClick={() => handleEditForm(form)}
+                className="p-4 sm:p-6 hover:shadow-lg transition-all duration-300 group relative"
               >
-                <div className="space-y-3">
+                <div 
+                  className="space-y-3 cursor-pointer"
+                  onClick={() => handleEditForm(form)}
+                >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-sm sm:text-base group-hover:text-primary transition-colors line-clamp-2">
@@ -224,6 +256,46 @@ export default function FormulariosClinicos() {
                   </div>
 
                   <Badge variant="outline" className="text-xs">{form.type}</Badge>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-1 mt-4 pt-3 border-t">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => handleDuplicateForm(form, e)}
+                    className="flex-1 text-xs"
+                  >
+                    <Copy className="h-3 w-3 sm:mr-1" />
+                    <span className="hidden sm:inline">Duplicar</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => handleViewHistory(form.id, e)}
+                    className="flex-1 text-xs"
+                  >
+                    <History className="h-3 w-3 sm:mr-1" />
+                    <span className="hidden sm:inline">Histórico</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => form.archived ? handleUnarchiveForm(form.id, e) : handleArchiveForm(form.id, e)}
+                    className="flex-1 text-xs"
+                  >
+                    {form.archived ? (
+                      <>
+                        <ArchiveRestore className="h-3 w-3 sm:mr-1" />
+                        <span className="hidden sm:inline">Restaurar</span>
+                      </>
+                    ) : (
+                      <>
+                        <Archive className="h-3 w-3 sm:mr-1" />
+                        <span className="hidden sm:inline">Arquivar</span>
+                      </>
+                    )}
+                  </Button>
                 </div>
               </Card>
             ))}
