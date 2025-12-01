@@ -108,46 +108,58 @@ export function FormEditorModal({ open, onOpenChange, formData }: FormEditorModa
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[95vw] h-[95vh] p-0 gap-0">
         {/* Header */}
-        <div className="flex items-center justify-between p-3 sm:p-4 border-b bg-muted/30">
-          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-            <h2 className="text-base sm:text-lg font-bold truncate">
-              {formData ? "Editar Formulário" : "Criar Novo Formulário"}
-            </h2>
-            
-            {/* Mobile preview toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="lg:hidden shrink-0"
-              onClick={() => setShowPreview(!showPreview)}
-            >
-              {showPreview ? (
-                <>
-                  <EyeOff className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Editar</span>
-                </>
-              ) : (
-                <>
-                  <Eye className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Preview</span>
-                </>
-              )}
-            </Button>
-          </div>
+        <div className="border-b bg-muted/30">
+          <div className="flex items-center justify-between p-3 sm:p-4">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              <h2 className="text-base sm:text-lg font-bold truncate">
+                {formData ? "Editar Formulário" : "Construtor de Formulários"}
+              </h2>
+              
+              {/* Mobile preview toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="lg:hidden shrink-0"
+                onClick={() => setShowPreview(!showPreview)}
+              >
+                {showPreview ? (
+                  <>
+                    <EyeOff className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Editar</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Preview</span>
+                  </>
+                )}
+              </Button>
+            </div>
 
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            <Button variant="outline" size="sm" onClick={() => handleSave(false)} className="text-xs sm:text-sm">
-              <Save className="h-3 sm:h-4 w-3 sm:w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Salvar Rascunho</span>
-              <span className="sm:hidden">Salvar</span>
-            </Button>
-            <Button size="sm" onClick={() => handleSave(true)} className="text-xs sm:text-sm">
-              <span className="hidden sm:inline">Publicar Modelo</span>
-              <span className="sm:hidden">Publicar</span>
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-8 w-8 sm:h-10 sm:w-10">
-              <X className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              <Button variant="outline" size="sm" onClick={() => handleSave(false)} className="text-xs sm:text-sm">
+                <Save className="h-3 sm:h-4 w-3 sm:w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Rascunho</span>
+                <span className="sm:hidden">Salvar</span>
+              </Button>
+              <Button size="sm" onClick={() => handleSave(true)} className="text-xs sm:text-sm">
+                <span className="hidden sm:inline">Publicar</span>
+                <span className="sm:hidden">OK</span>
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-8 w-8 sm:h-10 sm:w-10">
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          
+          {/* Instructions */}
+          <div className="px-3 sm:px-4 pb-3 text-xs sm:text-sm text-muted-foreground">
+            <p className="hidden lg:block">
+              Configure à esquerda e veja o resultado em tempo real à direita
+            </p>
+            <p className="lg:hidden">
+              Alterne entre Editar e Preview para construir e visualizar seu formulário
+            </p>
           </div>
         </div>
 
