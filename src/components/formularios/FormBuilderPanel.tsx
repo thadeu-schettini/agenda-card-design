@@ -598,11 +598,19 @@ export function FormBuilderPanel({
 
   return (
     <ScrollArea className="h-full">
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-6">
+        {/* Instructions */}
+        <div className="rounded-lg bg-muted/50 p-3 sm:p-4 border border-border/50">
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            <strong className="text-foreground">Passo 1:</strong> Defina nome, especialidade e tipo de nota. 
+            <strong className="text-foreground ml-2">Passo 2:</strong> Organize em seções e adicione campos.
+          </p>
+        </div>
+
         {/* Form Header */}
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Nome do modelo *</Label>
+            <Label className="text-sm font-semibold">Nome do formulário *</Label>
             <div className="relative">
               <Input
                 placeholder="Ex: Avaliação fisioterapêutica"
@@ -621,9 +629,9 @@ export function FormBuilderPanel({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Especialidade *</Label>
+              <Label className="text-sm font-semibold">Especialidade *</Label>
               <Select value={specialty} onValueChange={setSpecialty}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
@@ -640,7 +648,7 @@ export function FormBuilderPanel({
             </div>
 
             <div className="space-y-2">
-              <Label>Tipo de nota *</Label>
+              <Label className="text-sm font-semibold">Tipo de nota *</Label>
               <Select value={noteType} onValueChange={setNoteType}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
@@ -660,10 +668,14 @@ export function FormBuilderPanel({
         {/* Sections */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold">Estrutura do formulário</h3>
+            <div>
+              <h3 className="font-semibold text-sm sm:text-base">Seções e Campos</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Arraste para reordenar</p>
+            </div>
             <Button size="sm" variant="outline" onClick={addSection}>
               <Plus className="mr-2 h-4 w-4" />
-              Adicionar Seção
+              <span className="hidden sm:inline">Nova Seção</span>
+              <span className="sm:hidden">Seção</span>
             </Button>
           </div>
 
