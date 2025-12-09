@@ -34,6 +34,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { NewTemplateModal } from "@/components/whatsapp/NewTemplateModal";
+import { TemplateEditorModal } from "@/components/whatsapp/TemplateEditorModal";
+import { TemplateStatsModal } from "@/components/whatsapp/TemplateStatsModal";
+import { WhatsAppConfigModal } from "@/components/whatsapp/WhatsAppConfigModal";
 import { toast } from "sonner";
 
 const mockTemplates = [
@@ -131,6 +134,10 @@ const WhatsAppBusiness = () => {
   const [automations, setAutomations] = useState(mockAutomations);
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
+  const [showEditorModal, setShowEditorModal] = useState(false);
+  const [showStatsModal, setShowStatsModal] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<typeof mockTemplates[0] | null>(null);
+  const [editorMode, setEditorMode] = useState<"create" | "edit" | "view">("view");
 
   const handleToggleAutomation = (id: number) => {
     setAutomations(automations.map(a => 
@@ -143,11 +150,20 @@ const WhatsAppBusiness = () => {
   };
 
   const handleViewTemplate = (template: typeof mockTemplates[0]) => {
-    toast.info(`Visualizando template: ${template.name}`);
+    setSelectedTemplate(template);
+    setEditorMode("view");
+    setShowEditorModal(true);
   };
 
   const handleEditTemplate = (template: typeof mockTemplates[0]) => {
-    toast.info(`Editando template: ${template.name}`);
+    setSelectedTemplate(template);
+    setEditorMode("edit");
+    setShowEditorModal(true);
+  };
+
+  const handleStatsTemplate = (template: typeof mockTemplates[0]) => {
+    setSelectedTemplate(template);
+    setShowStatsModal(true);
   };
 
   const stats = [
@@ -255,7 +271,7 @@ const WhatsAppBusiness = () => {
                           <Eye className="h-4 w-4 mr-2" />
                           Visualizar
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleStatsTemplate(template)}>
                           <TrendingUp className="h-4 w-4 mr-2" />
                           Estatísticas
                         </DropdownMenuItem>
@@ -345,14 +361,21 @@ const WhatsAppBusiness = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Edit className="h-4 w-4 mr-2" />
-                              Editar
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <TrendingUp className="h-4 w-4 mr-2" />
-                              Estatísticas
-                            </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => {
+                            setSelectedTemplate(mockTemplates.find(t => t.name === automation.template) || null);
+                            setEditorMode("edit");
+                            setShowEditorModal(true);
+                          }}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => {
+                            const template = mockTemplates.find(t => t.name === automation.template);
+                            if (template) handleStatsTemplate(template);
+                          }}>
+                            <TrendingUp className="h-4 w-4 mr-2" />
+                            Estatísticas
+                          </DropdownMenuItem>
                             <DropdownMenuItem className="text-destructive">
                               Excluir
                             </DropdownMenuItem>
@@ -372,6 +395,24 @@ const WhatsAppBusiness = () => {
       <NewTemplateModal 
         open={showNewTemplateModal} 
         onOpenChange={setShowNewTemplateModal} 
+      />
+
+      <TemplateEditorModal
+        open={showEditorModal}
+        onOpenChange={setShowEditorModal}
+        mode={editorMode}
+        template={selectedTemplate}
+      />
+
+      <TemplateStatsModal
+        open={showStatsModal}
+        onOpenChange={setShowStatsModal}
+        template={selectedTemplate}
+      />
+
+      <WhatsAppConfigModal
+        open={showConfigModal}
+        onOpenChange={setShowConfigModal}
       />
     </PageContainer>
   );
