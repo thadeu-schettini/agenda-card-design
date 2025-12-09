@@ -11,7 +11,10 @@ import {
   LayoutGrid,
   List,
   CalendarDays,
-  MapPin
+  MapPin,
+  Video,
+  Building2,
+  Home
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -29,8 +32,15 @@ interface CalendarEvent {
     service: string;
     status: "confirmed" | "pending" | "completed" | "cancelled";
     room?: string;
+    mode?: "presencial" | "online" | "domiciliar";
   };
 }
+
+const modeIcons = {
+  presencial: Building2,
+  online: Video,
+  domiciliar: Home
+};
 
 const statusColors = {
   confirmed: {
@@ -70,7 +80,8 @@ const mockEvents: CalendarEvent[] = [
       professional: "Dr. João Santos",
       service: "Consulta Geral",
       status: "confirmed",
-      room: "Sala 1"
+      room: "Sala 1",
+      mode: "presencial"
     }
   },
   {
@@ -83,7 +94,8 @@ const mockEvents: CalendarEvent[] = [
       professional: "Dra. Ana Lima",
       service: "Retorno",
       status: "pending",
-      room: "Sala 2"
+      room: "Sala 2",
+      mode: "online"
     }
   },
   {
@@ -95,7 +107,8 @@ const mockEvents: CalendarEvent[] = [
       patient: "Ana Costa",
       professional: "Dr. João Santos",
       service: "Exame de Rotina",
-      status: "completed"
+      status: "completed",
+      mode: "presencial"
     }
   },
   {
@@ -107,7 +120,8 @@ const mockEvents: CalendarEvent[] = [
       patient: "Pedro Souza",
       professional: "Dra. Ana Lima",
       service: "Primeira Consulta",
-      status: "cancelled"
+      status: "cancelled",
+      mode: "domiciliar"
     }
   },
   {
@@ -120,7 +134,8 @@ const mockEvents: CalendarEvent[] = [
       professional: "Dr. João Santos",
       service: "Acompanhamento",
       status: "confirmed",
-      room: "Sala 1"
+      room: "Sala 1",
+      mode: "online"
     }
   },
   {
@@ -133,7 +148,8 @@ const mockEvents: CalendarEvent[] = [
       professional: "Dr. João Santos",
       service: "Procedimento Especial",
       status: "pending",
-      room: "Sala 3"
+      room: "Sala 3",
+      mode: "presencial"
     }
   },
   {
@@ -145,7 +161,8 @@ const mockEvents: CalendarEvent[] = [
       patient: "Fernanda Lima",
       professional: "Dra. Ana Lima",
       service: "Consulta Geral",
-      status: "confirmed"
+      status: "confirmed",
+      mode: "domiciliar"
     }
   }
 ];
@@ -285,6 +302,8 @@ export const FullCalendarView = () => {
     const status = eventInfo.event.extendedProps.status as keyof typeof statusColors;
     const colors = statusColors[status];
     const isMonthView = effectiveView === "dayGridMonth";
+    const mode = eventInfo.event.extendedProps.mode as keyof typeof modeIcons | undefined;
+    const ModeIcon = mode ? modeIcons[mode] : null;
     
     // Calculate event duration in minutes for responsive display
     const start = eventInfo.event.start;
@@ -303,7 +322,7 @@ export const FullCalendarView = () => {
           colors.bg,
           colors.text
         )}>
-          <span className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0", colors.dot)} />
+          {ModeIcon && <ModeIcon className="w-3 h-3 flex-shrink-0" />}
           <span className="truncate">{eventInfo.event.extendedProps.patient}</span>
         </div>
       );
@@ -317,7 +336,7 @@ export const FullCalendarView = () => {
           colors.bg,
           colors.border
         )}>
-          <span className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0", colors.dot)} />
+          {ModeIcon && <ModeIcon className={cn("w-3 h-3 flex-shrink-0", colors.text)} />}
           <span className={cn("text-[10px] font-bold flex-shrink-0", colors.text)}>
             {eventInfo.timeText?.split(" - ")[0] || eventInfo.timeText}
           </span>
@@ -328,7 +347,7 @@ export const FullCalendarView = () => {
       );
     }
 
-    // Medium view - show time, patient name
+    // Medium view - show time, patient name, mode icon
     if (isMedium) {
       return (
         <div className={cn(
@@ -338,7 +357,7 @@ export const FullCalendarView = () => {
         )}>
           <div className="flex flex-col h-full min-w-0">
             <div className="flex items-center gap-1 min-w-0">
-              <span className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0", colors.dot)} />
+              {ModeIcon && <ModeIcon className={cn("w-3 h-3 flex-shrink-0", colors.text)} />}
               <span className={cn("text-[10px] font-bold", colors.text)}>
                 {eventInfo.timeText}
               </span>
@@ -360,7 +379,7 @@ export const FullCalendarView = () => {
       )}>
         <div className="flex flex-col h-full min-w-0">
           <div className="flex items-center gap-1 sm:gap-1.5 mb-0.5 min-w-0">
-            <span className={cn("w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full flex-shrink-0", colors.dot)} />
+            {ModeIcon && <ModeIcon className={cn("w-3 sm:w-3.5 h-3 sm:h-3.5 flex-shrink-0", colors.text)} />}
             <span className={cn("text-[10px] sm:text-xs font-bold", colors.text)}>
               {eventInfo.timeText}
             </span>
