@@ -49,6 +49,7 @@ interface ServiceDetailModalProps {
     tussCode?: string;
     color: string;
   } | null;
+  onEdit?: () => void;
 }
 
 // Mock usage data
@@ -94,7 +95,7 @@ const linkedProfessionals = [
   { name: "Dr. Marcos Souza", specialty: "Cardiologia", atendimentos: 52, rating: 4.7 },
 ];
 
-export function ServiceDetailModal({ open, onOpenChange, service }: ServiceDetailModalProps) {
+export function ServiceDetailModal({ open, onOpenChange, service, onEdit }: ServiceDetailModalProps) {
   const [isActive, setIsActive] = useState(service?.active ?? true);
 
   if (!service) return null;
@@ -493,7 +494,7 @@ export function ServiceDetailModal({ open, onOpenChange, service }: ServiceDetai
             Fechar
           </Button>
           <div className="flex gap-2">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2" onClick={onEdit}>
               <Edit2 className="h-4 w-4" />
               Editar
             </Button>

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { NewTransactionModal } from "@/components/financeiro/NewTransactionModal";
+import { TransactionDetailModal } from "@/components/financeiro/TransactionDetailModal";
+import { AddPaymentMethodModal } from "@/components/financeiro/AddPaymentMethodModal";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageContainer, PageContent } from "@/components/ui/page-container";
 import { FinanceiroSkeleton } from "@/components/skeletons/PageSkeletons";
@@ -115,6 +117,8 @@ export default function Financeiro() {
   const [searchTerm, setSearchTerm] = useState("");
   const [periodFilter, setPeriodFilter] = useState("month");
   const [showNewTransactionModal, setShowNewTransactionModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<typeof transactions[0] | null>(null);
+  const [isAddPaymentMethodOpen, setIsAddPaymentMethodOpen] = useState(false);
 
   const totalReceita = transactions.filter(t => t.type === "receita" && t.status === "pago").reduce((acc, t) => acc + t.value, 0);
   const totalDespesa = transactions.filter(t => t.type === "despesa" && t.status === "pago").reduce((acc, t) => acc + t.value, 0);
@@ -302,11 +306,19 @@ export default function Financeiro() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Formas de Pagamento</CardTitle>
-              <CardDescription>Distribuição por método</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg">Formas de Pagamento</CardTitle>
+                  <CardDescription>Distribuição por método</CardDescription>
+                </div>
+                <Button variant="outline" size="sm" className="gap-2" onClick={() => setIsAddPaymentMethodOpen(true)}>
+                  <Plus className="h-4 w-4" />
+                  Adicionar
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -434,9 +446,9 @@ export default function Financeiro() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Ver detalhes</DropdownMenuItem>
-                                <DropdownMenuItem>Editar</DropdownMenuItem>
-                                <DropdownMenuItem className="text-destructive">Excluir</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setSelectedTransaction(transaction)}>Ver detalhes</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setSelectedTransaction(transaction)}>Editar</DropdownMenuItem>
+                                <DropdownMenuItem className="text-destructive" onClick={() => setSelectedTransaction(transaction)}>Excluir</DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </TableCell>
@@ -607,6 +619,16 @@ export default function Financeiro() {
           </>
         )}
       </PageContent>
+
+      <TransactionDetailModal 
+        open={!!selectedTransaction} 
+        onOpenChange={(open) => !open && setSelectedTransaction(null)}
+        transaction={selectedTransaction}
+      />
+      <AddPaymentMethodModal 
+        open={isAddPaymentMethodOpen} 
+        onOpenChange={setIsAddPaymentMethodOpen}
+      />
     </PageContainer>
   );
 }

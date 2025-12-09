@@ -37,6 +37,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { ServiceDetailModal } from "@/components/servicos/ServiceDetailModal";
+import { ServiceEditModal } from "@/components/servicos/ServiceEditModal";
 
 const categories = [
   { id: "all", name: "Todos", count: 24 },
@@ -169,6 +170,8 @@ export default function Servicos() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isNewServiceOpen, setIsNewServiceOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<typeof services[0] | null>(null);
+  const [isEditServiceOpen, setIsEditServiceOpen] = useState(false);
+  const [serviceToEdit, setServiceToEdit] = useState<typeof services[0] | null>(null);
 
   const filteredServices = services.filter(service => {
     const matchesSearch = service.name.toLowerCase().includes(search.toLowerCase());
@@ -403,7 +406,10 @@ export default function Servicos() {
                           <Eye className="h-4 w-4" />
                           Visualizar
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2">
+                        <DropdownMenuItem className="gap-2" onClick={() => {
+                          setServiceToEdit(service);
+                          setIsEditServiceOpen(true);
+                        }}>
                           <Edit2 className="h-4 w-4" />
                           Editar
                         </DropdownMenuItem>
@@ -537,6 +543,16 @@ export default function Servicos() {
         open={!!selectedService} 
         onOpenChange={(open) => !open && setSelectedService(null)} 
         service={selectedService}
+        onEdit={() => {
+          setServiceToEdit(selectedService);
+          setIsEditServiceOpen(true);
+          setSelectedService(null);
+        }}
+      />
+      <ServiceEditModal 
+        open={isEditServiceOpen} 
+        onOpenChange={setIsEditServiceOpen}
+        service={serviceToEdit}
       />
       </PageContent>
     </PageContainer>
