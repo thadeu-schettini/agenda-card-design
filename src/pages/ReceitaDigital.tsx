@@ -36,6 +36,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { NewPrescriptionModal } from "@/components/receita/NewPrescriptionModal";
 import { QRCodeModal } from "@/components/receita/QRCodeModal";
+import { ViewPrescriptionModal } from "@/components/receita/ViewPrescriptionModal";
+import { PrescriptionHistoryModal } from "@/components/receita/PrescriptionHistoryModal";
+import { ReissuePrescriptionModal } from "@/components/receita/ReissuePrescriptionModal";
+import { CancelPrescriptionModal } from "@/components/receita/CancelPrescriptionModal";
 import { toast } from "sonner";
 
 const mockPrescriptions = [
@@ -113,7 +117,31 @@ const ReceitaDigital = () => {
   const [activeTab, setActiveTab] = useState("prescriptions");
   const [showNewPrescriptionModal, setShowNewPrescriptionModal] = useState(false);
   const [showQRCodeModal, setShowQRCodeModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showReissueModal, setShowReissueModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedPrescription, setSelectedPrescription] = useState<typeof mockPrescriptions[0] | null>(null);
+
+  const handleViewPrescription = (prescription: typeof mockPrescriptions[0]) => {
+    setSelectedPrescription(prescription);
+    setShowViewModal(true);
+  };
+
+  const handleReissue = (prescription: typeof mockPrescriptions[0]) => {
+    setSelectedPrescription(prescription);
+    setShowReissueModal(true);
+  };
+
+  const handleHistory = (prescription: typeof mockPrescriptions[0]) => {
+    setSelectedPrescription(prescription);
+    setShowHistoryModal(true);
+  };
+
+  const handleCancel = (prescription: typeof mockPrescriptions[0]) => {
+    setSelectedPrescription(prescription);
+    setShowCancelModal(true);
+  };
 
   const stats = [
     { label: "Receitas Hoje", value: 34, icon: FileDigit, color: "text-primary" },
@@ -256,7 +284,7 @@ const ReceitaDigital = () => {
 
                     {/* Actions */}
                     <div className="flex flex-wrap gap-2 pt-2 border-t">
-                      <Button variant="outline" size="sm" className="gap-1">
+                      <Button variant="outline" size="sm" className="gap-1" onClick={() => handleViewPrescription(prescription)}>
                         <Eye className="h-4 w-4" />
                         Ver Receita
                       </Button>
@@ -305,9 +333,9 @@ const ReceitaDigital = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>Reemitir Receita</DropdownMenuItem>
-                          <DropdownMenuItem>Histórico</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Cancelar</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleReissue(prescription)}>Reemitir Receita</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleHistory(prescription)}>Histórico</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive" onClick={() => handleCancel(prescription)}>Cancelar</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -328,6 +356,30 @@ const ReceitaDigital = () => {
       <QRCodeModal 
         open={showQRCodeModal} 
         onOpenChange={setShowQRCodeModal}
+        prescription={selectedPrescription}
+      />
+
+      <ViewPrescriptionModal
+        open={showViewModal}
+        onOpenChange={setShowViewModal}
+        prescription={selectedPrescription}
+      />
+
+      <PrescriptionHistoryModal
+        open={showHistoryModal}
+        onOpenChange={setShowHistoryModal}
+        patient={selectedPrescription?.patient || ""}
+      />
+
+      <ReissuePrescriptionModal
+        open={showReissueModal}
+        onOpenChange={setShowReissueModal}
+        prescription={selectedPrescription}
+      />
+
+      <CancelPrescriptionModal
+        open={showCancelModal}
+        onOpenChange={setShowCancelModal}
         prescription={selectedPrescription}
       />
     </PageContainer>

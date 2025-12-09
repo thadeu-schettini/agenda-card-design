@@ -33,6 +33,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { NewConsentModal } from "@/components/consentimentos/NewConsentModal";
+import { ConsentTemplateModal } from "@/components/consentimentos/ConsentTemplateModal";
+import { ViewConsentModal } from "@/components/consentimentos/ViewConsentModal";
 import { toast } from "sonner";
 
 const mockConsents = [
@@ -103,6 +105,10 @@ const Consentimentos = () => {
   const [activeTab, setActiveTab] = useState("consents");
   const [showNewConsentModal, setShowNewConsentModal] = useState(false);
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
+  const [showViewConsentModal, setShowViewConsentModal] = useState(false);
+  const [selectedConsent, setSelectedConsent] = useState<typeof mockConsents[0] | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<typeof mockTemplates[0] | null>(null);
+  const [templateMode, setTemplateMode] = useState<"create" | "edit" | "view">("create");
 
   const stats = [
     { label: "Enviados", value: 234, icon: Send, color: "text-primary" },
@@ -112,7 +118,8 @@ const Consentimentos = () => {
   ];
 
   const handleViewConsent = (consent: typeof mockConsents[0]) => {
-    toast.info(`Visualizando consentimento de ${consent.patient}`);
+    setSelectedConsent(consent);
+    setShowViewConsentModal(true);
   };
 
   const handleDownloadPDF = (consent: typeof mockConsents[0]) => {
@@ -124,7 +131,15 @@ const Consentimentos = () => {
   };
 
   const handleViewTemplate = (template: typeof mockTemplates[0]) => {
-    toast.info(`Visualizando template: ${template.name}`);
+    setSelectedTemplate(template);
+    setTemplateMode("view");
+    setShowNewTemplateModal(true);
+  };
+
+  const handleNewTemplate = () => {
+    setSelectedTemplate(null);
+    setTemplateMode("create");
+    setShowNewTemplateModal(true);
   };
 
   const handleUseTemplate = (template: typeof mockTemplates[0]) => {
@@ -139,7 +154,7 @@ const Consentimentos = () => {
         icon={FileSignature}
         actions={
           <div className="flex gap-2">
-            <Button variant="outline" className="gap-2" onClick={() => setShowNewTemplateModal(true)}>
+            <Button variant="outline" className="gap-2" onClick={handleNewTemplate}>
               <Plus className="h-4 w-4" />
               Novo Template
             </Button>
@@ -367,6 +382,19 @@ const Consentimentos = () => {
       <NewConsentModal 
         open={showNewConsentModal} 
         onOpenChange={setShowNewConsentModal} 
+      />
+
+      <ConsentTemplateModal
+        open={showNewTemplateModal}
+        onOpenChange={setShowNewTemplateModal}
+        mode={templateMode}
+        template={selectedTemplate}
+      />
+
+      <ViewConsentModal
+        open={showViewConsentModal}
+        onOpenChange={setShowViewConsentModal}
+        consent={selectedConsent}
       />
     </PageContainer>
   );

@@ -3,6 +3,10 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageContainer, PageContent } from "@/components/ui/page-container";
 import { LabResultModal } from "@/components/laboratorios/LabResultModal";
 import { ConnectLabModal } from "@/components/laboratorios/ConnectLabModal";
+import { LabHistoryModal } from "@/components/laboratorios/LabHistoryModal";
+import { AttachRecordModal } from "@/components/laboratorios/AttachRecordModal";
+import { NewExamRequestModal } from "@/components/laboratorios/NewExamRequestModal";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -109,7 +113,26 @@ const IntegracaoLaboratorios = () => {
   const [activeTab, setActiveTab] = useState("results");
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showAttachModal, setShowAttachModal] = useState(false);
+  const [showNewExamModal, setShowNewExamModal] = useState(false);
   const [selectedResult, setSelectedResult] = useState<typeof mockResults[0] | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState("");
+
+  const handleViewHistory = (result: typeof mockResults[0]) => {
+    setSelectedPatient(result.patient);
+    setShowHistoryModal(true);
+  };
+
+  const handleAttachRecord = (result: typeof mockResults[0]) => {
+    setSelectedResult(result);
+    setShowAttachModal(true);
+  };
+
+  const handleNewExam = (patient?: string) => {
+    setSelectedPatient(patient || "");
+    setShowNewExamModal(true);
+  };
 
   const stats = [
     { label: "Resultados Hoje", value: 23, icon: FileText, color: "text-primary" },
@@ -273,9 +296,9 @@ const IntegracaoLaboratorios = () => {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Ver Histórico</DropdownMenuItem>
-                                <DropdownMenuItem>Anexar ao Prontuário</DropdownMenuItem>
-                                <DropdownMenuItem>Solicitar Novo</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleViewHistory(result)}>Ver Histórico</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAttachRecord(result)}>Anexar ao Prontuário</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleNewExam(result.patient)}>Solicitar Novo</DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </div>
@@ -384,6 +407,9 @@ const IntegracaoLaboratorios = () => {
 
       <ConnectLabModal open={showConnectModal} onOpenChange={setShowConnectModal} />
       <LabResultModal open={showResultModal} onOpenChange={setShowResultModal} result={selectedResult} />
+      <LabHistoryModal open={showHistoryModal} onOpenChange={setShowHistoryModal} patient={selectedPatient} />
+      <AttachRecordModal open={showAttachModal} onOpenChange={setShowAttachModal} result={selectedResult} />
+      <NewExamRequestModal open={showNewExamModal} onOpenChange={setShowNewExamModal} patient={selectedPatient} />
     </PageContainer>
   );
 };
