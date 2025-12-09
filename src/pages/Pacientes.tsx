@@ -11,6 +11,8 @@ import { PatientDetailSheet } from "@/components/pacientes/PatientDetailSheet";
 import { PatientTableView } from "@/components/pacientes/PatientTableView";
 import { PatientCardView } from "@/components/pacientes/PatientCardView";
 import { PatientFilters } from "@/components/pacientes/PatientFilters";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageContainer, PageContent } from "@/components/ui/page-container";
 import {
   Select,
   SelectContent,
@@ -239,28 +241,20 @@ export default function Pacientes() {
   }), []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Header */}
-      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-20">
-        <div className="container mx-auto px-4 sm:px-6 py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                Pacientes
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {sortedPatients.length.toLocaleString()} de {mockPatients.length.toLocaleString()} pacientes
-              </p>
-            </div>
-            <Button className="shrink-0 shadow-md hover:shadow-lg transition-all">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Novo Paciente
-            </Button>
-          </div>
-        </div>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Pacientes"
+        description={`${sortedPatients.length.toLocaleString()} de ${mockPatients.length.toLocaleString()} pacientes`}
+        icon={Users}
+        iconGradient="from-blue-500 to-cyan-500"
+      >
+        <Button className="shrink-0 shadow-md hover:shadow-lg transition-all gap-2">
+          <UserPlus className="h-4 w-4" />
+          <span className="hidden sm:inline">Novo Paciente</span>
+        </Button>
+      </PageHeader>
 
-      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
+      <PageContent>
         {/* Stats Mini Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
@@ -517,16 +511,16 @@ export default function Pacientes() {
             </Button>
           </div>
         )}
-      </div>
 
-      {/* Patient Detail Sheet */}
-      {selectedPatient && (
-        <PatientDetailSheet
-          patient={selectedPatient}
-          open={sheetOpen}
-          onOpenChange={handleCloseSheet}
-        />
-      )}
-    </div>
+        {/* Patient Detail Sheet */}
+        {selectedPatient && (
+          <PatientDetailSheet
+            patient={selectedPatient}
+            open={sheetOpen}
+            onOpenChange={handleCloseSheet}
+          />
+        )}
+      </PageContent>
+    </PageContainer>
   );
 }

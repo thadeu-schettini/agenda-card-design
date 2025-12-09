@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { NewTransactionModal } from "@/components/financeiro/NewTransactionModal";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageContainer, PageContent } from "@/components/ui/page-container";
 import { 
   DollarSign, 
   TrendingUp, 
@@ -55,8 +57,6 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   Cell,
@@ -137,47 +137,39 @@ export default function Financeiro() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Financeiro</h1>
-              <p className="text-muted-foreground text-sm">
-                Gerencie receitas, despesas e parcelamentos
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Select value={periodFilter} onValueChange={setPeriodFilter}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Período" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="today">Hoje</SelectItem>
-                  <SelectItem value="week">Esta semana</SelectItem>
-                  <SelectItem value="month">Este mês</SelectItem>
-                  <SelectItem value="year">Este ano</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button variant="outline" size="icon">
-                <Download className="h-4 w-4" />
-              </Button>
-              <Button className="gap-2" onClick={() => setShowNewTransactionModal(true)}>
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Nova Transação</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Financeiro"
+        description="Gerencie receitas, despesas e parcelamentos"
+        icon={DollarSign}
+        iconGradient="from-emerald-500 to-emerald-600"
+      >
+        <Select value={periodFilter} onValueChange={setPeriodFilter}>
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="Período" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="today">Hoje</SelectItem>
+            <SelectItem value="week">Esta semana</SelectItem>
+            <SelectItem value="month">Este mês</SelectItem>
+            <SelectItem value="year">Este ano</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button variant="outline" size="icon">
+          <Download className="h-4 w-4" />
+        </Button>
+        <Button className="gap-2" onClick={() => setShowNewTransactionModal(true)}>
+          <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline">Nova Transação</span>
+        </Button>
+      </PageHeader>
 
       <NewTransactionModal 
         open={showNewTransactionModal} 
         onOpenChange={setShowNewTransactionModal} 
       />
 
-      <div className="container mx-auto px-4 py-6 space-y-6">
+      <PageContent>
         {/* Metrics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border-emerald-500/20">
@@ -605,7 +597,7 @@ export default function Financeiro() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
-    </div>
+      </PageContent>
+    </PageContainer>
   );
 }
