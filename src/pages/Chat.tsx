@@ -206,6 +206,7 @@ export default function Chat() {
   const [searchTerm, setSearchTerm] = useState("");
   const [autopilotEnabled, setAutopilotEnabled] = useState(true);
   const [showAISuggestions, setShowAISuggestions] = useState(true);
+  const [isAITyping, setIsAITyping] = useState(false);
 
   const getChannelIcon = (channel: string) => {
     const Icon = channelIcons[channel as keyof typeof channelIcons] || MessageSquare;
@@ -659,6 +660,27 @@ export default function Chat() {
                   </div>
                 </ScrollArea>
 
+                {/* AI Typing Indicator */}
+                {isAITyping && (
+                  <div className="px-4 py-3 border-t bg-gradient-to-r from-purple-500/5 to-pink-500/5">
+                    <div className="flex items-center gap-3 max-w-3xl mx-auto">
+                      <Avatar className="h-9 w-9 ring-2 ring-purple-500/30 shadow-md">
+                        <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white">
+                          <Bot className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex items-center gap-2 p-3 rounded-2xl bg-gradient-to-br from-purple-500/15 via-purple-500/10 to-pink-500/10 border border-purple-500/30">
+                        <div className="flex items-center gap-1">
+                          <span className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+                          <span className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+                          <span className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+                        </div>
+                        <span className="text-sm text-purple-600 font-medium ml-2">IA está digitando...</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* AI Suggestions */}
                 {showAISuggestions && (
                   <div className="px-4 py-3 border-t bg-gradient-to-r from-purple-500/5 to-pink-500/5">
@@ -743,7 +765,19 @@ export default function Chat() {
                         <Smile className="h-4 w-4" />
                       </Button>
                     </div>
-                    <Button className="gap-2 h-12 px-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 transition-all rounded-xl">
+                    <Button 
+                      className="gap-2 h-12 px-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 transition-all rounded-xl"
+                      onClick={() => {
+                        if (messageInput.trim()) {
+                          setIsAITyping(true);
+                          setMessageInput("");
+                          // Simulate AI typing for demo purposes
+                          setTimeout(() => {
+                            setIsAITyping(false);
+                          }, 3000);
+                        }
+                      }}
+                    >
                       <Send className="h-4 w-4" />
                       <span className="hidden sm:inline font-semibold">Enviar</span>
                     </Button>
