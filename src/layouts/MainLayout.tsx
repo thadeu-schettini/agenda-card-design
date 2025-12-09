@@ -21,7 +21,10 @@ export function MainLayout({ children }: MainLayoutProps) {
               <span className="font-semibold text-foreground">MedClinic</span>
             </div>
           </div>
-          {children}
+          {/* Page content with transition animation */}
+          <div className="animate-fade-in">
+            {children}
+          </div>
         </main>
       </div>
     </SidebarProvider>
