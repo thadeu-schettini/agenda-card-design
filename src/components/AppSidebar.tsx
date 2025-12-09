@@ -21,6 +21,8 @@ import {
   Layers,
   Video,
   BarChart3,
+  Target,
+  MessageSquare,
   Brain,
   Star,
   FileBarChart,
@@ -67,6 +69,8 @@ const managementItems = [
 ];
 
 const otherItems = [
+  { title: "Pipeline", url: "/pipeline", icon: Target },
+  { title: "Chat", url: "/chat", icon: MessageSquare },
   { title: "Notificações", url: "/notificacoes", icon: Bell },
   { title: "Telemedicina", url: "/telemedicina", icon: Video },
   { title: "Relatórios", url: "/relatorios", icon: FileBarChart },

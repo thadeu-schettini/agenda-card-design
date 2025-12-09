@@ -24,6 +24,10 @@ import Telemedicina from "./pages/Telemedicina";
 import Relatorios from "./pages/Relatorios";
 import Analises from "./pages/Analises";
 import Avaliacoes from "./pages/Avaliacoes";
+import Pipeline from "./pages/Pipeline";
+import Chat from "./pages/Chat";
+import PortalPaciente from "./pages/PortalPaciente";
+import SuperAdmin from "./pages/SuperAdmin";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
@@ -63,7 +67,13 @@ const App = () => (
               <Route path="/relatorios" element={<Relatorios />} />
               <Route path="/analises" element={<Analises />} />
               <Route path="/avaliacoes" element={<Avaliacoes />} />
+              <Route path="/pipeline" element={<Pipeline />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/superadmin" element={<SuperAdmin />} />
             </Route>
+            
+            {/* Portal Paciente - separate layout */}
+            <Route path="/portal-paciente" element={<PortalPaciente />} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
