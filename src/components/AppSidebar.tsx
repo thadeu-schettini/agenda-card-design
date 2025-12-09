@@ -9,6 +9,7 @@ import {
   Settings,
   Gift,
   CreditCard,
+  DollarSign,
   Building2,
   ChevronLeft,
   ChevronRight,
@@ -57,6 +58,7 @@ const managementItems = [
 ];
 
 const otherItems = [
+  { title: "Financeiro", url: "/financeiro", icon: DollarSign },
   { title: "Indicações", url: "/indicacoes", icon: Gift },
   { title: "Faturamento", url: "/billing", icon: CreditCard },
   { title: "Configurações", url: "/configuracoes", icon: Settings },

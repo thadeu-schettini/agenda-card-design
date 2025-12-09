@@ -10,6 +10,7 @@ import Prontuario from "./pages/Prontuario";
 import Recepcao from "./pages/Recepcao";
 import Indicacoes from "./pages/Indicacoes";
 import Billing from "./pages/Billing";
+import Financeiro from "./pages/Financeiro";
 import Configuracoes from "./pages/Configuracoes";
 import Profissionais from "./pages/Profissionais";
 import FormulariosClinicos from "./pages/FormulariosClinicos";
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/recepcao" element={<Recepcao />} />
             <Route path="/indicacoes" element={<Indicacoes />} />
             <Route path="/billing" element={<Billing />} />
+            <Route path="/financeiro" element={<Financeiro />} />
             <Route path="/configuracoes" element={<Configuracoes />} />
             <Route path="/profissionais" element={<Profissionais />} />
             <Route path="/formularios-clinicos" element={<FormulariosClinicos />} />
