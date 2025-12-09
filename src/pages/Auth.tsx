@@ -16,13 +16,17 @@ import {
   ArrowRight, 
   ArrowLeft,
   Check,
+  X,
   Sparkles,
   Shield,
   Zap,
   Crown,
   Building2,
   Phone,
-  Gift
+  Gift,
+  TrendingUp,
+  Star,
+  Clock
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -32,52 +36,71 @@ const plans = [
   {
     id: "starter",
     name: "Starter",
-    price: "R$ 97",
+    price: 97,
+    originalPrice: null,
     period: "/mês",
-    description: "Ideal para profissionais autônomos",
+    description: "Para começar",
     features: [
-      "Até 100 pacientes",
-      "Agenda básica",
-      "Prontuário eletrônico",
-      "Suporte por email"
+      { text: "Até 100 pacientes", included: true },
+      { text: "1 profissional", included: true },
+      { text: "Agenda básica", included: true },
+      { text: "Prontuário eletrônico", included: true },
+      { text: "Suporte por email", included: true },
+      { text: "Relatórios avançados", included: false },
+      { text: "IA integrada", included: false },
+      { text: "Multi-unidades", included: false },
     ],
     icon: Zap,
-    gradient: "from-emerald-500 to-teal-500",
-    popular: false
+    gradient: "from-slate-400 to-slate-500",
+    savings: null,
+    badge: null,
+    highlight: false
   },
   {
     id: "professional",
     name: "Professional",
-    price: "R$ 197",
+    price: 197,
+    originalPrice: null,
     period: "/mês",
-    description: "Para clínicas em crescimento",
+    description: "Mais escolhido",
     features: [
-      "Pacientes ilimitados",
-      "Agenda avançada",
-      "Prontuário completo",
-      "Relatórios e métricas",
-      "Suporte prioritário"
+      { text: "Pacientes ilimitados", included: true },
+      { text: "5 profissionais", included: true },
+      { text: "Agenda avançada", included: true },
+      { text: "Prontuário completo", included: true },
+      { text: "Suporte prioritário", included: true },
+      { text: "Relatórios avançados", included: true },
+      { text: "IA integrada", included: false },
+      { text: "Multi-unidades", included: false },
     ],
     icon: Crown,
     gradient: "from-primary to-blue-600",
-    popular: true
+    savings: null,
+    badge: "Popular",
+    highlight: false
   },
   {
     id: "enterprise",
     name: "Enterprise",
-    price: "R$ 397",
+    price: 397,
+    originalPrice: 597,
     period: "/mês",
-    description: "Solução completa para clínicas",
+    description: "Máximo retorno",
     features: [
-      "Tudo do Professional",
-      "Multi-unidades",
-      "API personalizada",
-      "Gerente dedicado",
-      "SLA garantido"
+      { text: "Pacientes ilimitados", included: true },
+      { text: "Profissionais ilimitados", included: true },
+      { text: "Agenda inteligente com IA", included: true },
+      { text: "Prontuário com IA integrada", included: true },
+      { text: "Gerente de conta dedicado", included: true },
+      { text: "Relatórios executivos", included: true },
+      { text: "IA para diagnósticos", included: true },
+      { text: "Multi-unidades + API", included: true },
     ],
     icon: Shield,
     gradient: "from-amber-500 to-orange-500",
-    popular: false
+    savings: "Economize R$ 200/mês",
+    badge: "Melhor Custo-Benefício",
+    highlight: true
   }
 ];
 
@@ -528,6 +551,19 @@ export default function Auth() {
               </div>
 
               <form onSubmit={handleRegister} className="space-y-4">
+                {/* ROI Calculator Teaser */}
+                <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 mb-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shrink-0">
+                      <TrendingUp className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">Clínicas Enterprise faturam em média 40% mais</p>
+                      <p className="text-xs text-muted-foreground">Automações e IA liberam seu tempo para mais atendimentos</p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Plan Cards */}
                 <div className="space-y-3">
                   {plans.map((plan) => (
@@ -535,53 +571,127 @@ export default function Auth() {
                       key={plan.id}
                       onClick={() => setSelectedPlan(plan.id)}
                       className={cn(
-                        "relative cursor-pointer transition-all duration-300 hover:shadow-lg border-2",
+                        "relative cursor-pointer transition-all duration-300 border-2 overflow-hidden",
+                        plan.highlight && "ring-2 ring-amber-500/50 shadow-[0_0_30px_rgba(245,158,11,0.15)]",
                         selectedPlan === plan.id 
                           ? "border-primary shadow-lg scale-[1.02]" 
-                          : "border-transparent hover:border-primary/30"
+                          : plan.highlight 
+                            ? "border-amber-500/50 hover:border-amber-500" 
+                            : "border-transparent hover:border-primary/30"
                       )}
                     >
-                      {plan.popular && (
-                        <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground shadow-lg">
-                          Mais Popular
+                      {/* Highlight Glow Effect */}
+                      {plan.highlight && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-orange-500/5 pointer-events-none" />
+                      )}
+                      
+                      {plan.badge && (
+                        <Badge className={cn(
+                          "absolute -top-2.5 left-1/2 -translate-x-1/2 shadow-lg",
+                          plan.highlight 
+                            ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0" 
+                            : "bg-primary text-primary-foreground"
+                        )}>
+                          {plan.badge}
                         </Badge>
                       )}
-                      <CardContent className="p-4">
-                        <div className="flex items-center gap-4">
+                      
+                      <CardContent className="p-4 relative">
+                        <div className="flex items-start gap-4">
                           <div className={cn("w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center shrink-0", plan.gradient)}>
                             <plan.icon className="w-6 h-6 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-baseline gap-2 flex-wrap">
                               <h3 className="font-bold text-lg">{plan.name}</h3>
-                              <span className="text-xl font-bold text-primary">{plan.price}</span>
+                              {plan.originalPrice && (
+                                <span className="text-sm text-muted-foreground line-through">R$ {plan.originalPrice}</span>
+                              )}
+                              <span className={cn(
+                                "text-xl font-bold",
+                                plan.highlight ? "text-amber-600" : "text-primary"
+                              )}>R$ {plan.price}</span>
                               <span className="text-sm text-muted-foreground">{plan.period}</span>
                             </div>
                             <p className="text-sm text-muted-foreground">{plan.description}</p>
+                            {plan.savings && (
+                              <Badge variant="secondary" className="mt-2 bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                                <Sparkles className="w-3 h-3 mr-1" />
+                                {plan.savings}
+                              </Badge>
+                            )}
                           </div>
                           <div className={cn(
-                            "w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all",
+                            "w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all mt-1",
                             selectedPlan === plan.id 
-                              ? "border-primary bg-primary" 
+                              ? plan.highlight ? "border-amber-500 bg-amber-500" : "border-primary bg-primary"
                               : "border-muted-foreground/30"
                           )}>
-                            {selectedPlan === plan.id && <Check className="w-4 h-4 text-primary-foreground" />}
+                            {selectedPlan === plan.id && <Check className="w-4 h-4 text-white" />}
                           </div>
                         </div>
                         
-                        {selectedPlan === plan.id && (
-                          <div className="mt-4 pt-4 border-t flex flex-wrap gap-2 animate-fade-in">
-                            {plan.features.map((feature, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs font-normal">
-                                <Check className="w-3 h-3 mr-1" />
-                                {feature}
-                              </Badge>
-                            ))}
+                        {/* Features List - Always visible */}
+                        <div className="mt-4 pt-4 border-t space-y-2">
+                          {plan.features.map((feature, index) => (
+                            <div 
+                              key={index} 
+                              className={cn(
+                                "flex items-center gap-2 text-sm",
+                                feature.included ? "text-foreground" : "text-muted-foreground/50"
+                              )}
+                            >
+                              {feature.included ? (
+                                <Check className={cn(
+                                  "w-4 h-4 shrink-0",
+                                  plan.highlight ? "text-amber-500" : "text-emerald-500"
+                                )} />
+                              ) : (
+                                <X className="w-4 h-4 text-muted-foreground/30 shrink-0" />
+                              )}
+                              <span className={!feature.included ? "line-through" : ""}>{feature.text}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Enterprise Exclusive Benefits */}
+                        {plan.highlight && (
+                          <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
+                            <div className="flex items-center gap-2 text-sm font-medium text-amber-700 mb-2">
+                              <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+                              Exclusivo Enterprise
+                            </div>
+                            <ul className="space-y-1 text-xs text-muted-foreground">
+                              <li className="flex items-center gap-1.5">
+                                <Zap className="w-3 h-3 text-amber-500" />
+                                Onboarding personalizado gratuito
+                              </li>
+                              <li className="flex items-center gap-1.5">
+                                <Shield className="w-3 h-3 text-amber-500" />
+                                Migração de dados sem custo
+                              </li>
+                              <li className="flex items-center gap-1.5">
+                                <Clock className="w-3 h-3 text-amber-500" />
+                                Suporte 24/7 com SLA de 1h
+                              </li>
+                            </ul>
                           </div>
                         )}
                       </CardContent>
                     </Card>
                   ))}
+                </div>
+
+                {/* Social Proof */}
+                <div className="flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-blue-600 border-2 border-background flex items-center justify-center">
+                        <User className="w-3 h-3 text-white" />
+                      </div>
+                    ))}
+                  </div>
+                  <span>+2.847 clínicas já usam o plano Enterprise</span>
                 </div>
 
                 {/* Coupon Section */}
