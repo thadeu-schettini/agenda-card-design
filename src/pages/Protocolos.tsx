@@ -31,6 +31,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { NewProtocolModal } from "@/components/protocolos/NewProtocolModal";
+import { ProtocolEditModal } from "@/components/protocolos/ProtocolEditModal";
+import { ProtocolPatientsModal } from "@/components/protocolos/ProtocolPatientsModal";
+import { ProtocolHistoryModal } from "@/components/protocolos/ProtocolHistoryModal";
 import { toast } from "sonner";
 
 const mockProtocolos = [
@@ -100,6 +103,10 @@ const Protocolos = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [protocols, setProtocols] = useState(mockProtocolos);
   const [showNewProtocolModal, setShowNewProtocolModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showPatientsModal, setShowPatientsModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [selectedProtocol, setSelectedProtocol] = useState<typeof mockProtocolos[0] | null>(null);
 
   const handleToggleProtocol = (id: number) => {
     setProtocols(protocols.map(p => 
@@ -112,11 +119,18 @@ const Protocolos = () => {
   };
 
   const handleViewPatients = (protocol: typeof mockProtocolos[0]) => {
-    toast.info(`Visualizando ${protocol.patientsEnrolled} pacientes do protocolo "${protocol.name}"`);
+    setSelectedProtocol(protocol);
+    setShowPatientsModal(true);
   };
 
   const handleViewHistory = (protocol: typeof mockProtocolos[0]) => {
-    toast.info(`Histórico do protocolo "${protocol.name}"`);
+    setSelectedProtocol(protocol);
+    setShowHistoryModal(true);
+  };
+
+  const handleEditProtocol = (protocol: typeof mockProtocolos[0]) => {
+    setSelectedProtocol(protocol);
+    setShowEditModal(true);
   };
 
   const stats = [
@@ -216,8 +230,8 @@ const Protocolos = () => {
                               <MoreVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
+                            <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEditProtocol(protocol)}>
                               <Settings2 className="h-4 w-4 mr-2" />
                               Editar
                             </DropdownMenuItem>
@@ -284,10 +298,10 @@ const Protocolos = () => {
       </ScrollArea>
       </PageContent>
 
-      <NewProtocolModal 
-        open={showNewProtocolModal} 
-        onOpenChange={setShowNewProtocolModal} 
-      />
+      <NewProtocolModal open={showNewProtocolModal} onOpenChange={setShowNewProtocolModal} />
+      <ProtocolEditModal open={showEditModal} onOpenChange={setShowEditModal} protocol={selectedProtocol} />
+      <ProtocolPatientsModal open={showPatientsModal} onOpenChange={setShowPatientsModal} protocol={selectedProtocol} />
+      <ProtocolHistoryModal open={showHistoryModal} onOpenChange={setShowHistoryModal} protocol={selectedProtocol} />
     </PageContainer>
   );
 };

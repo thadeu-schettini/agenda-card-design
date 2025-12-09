@@ -27,6 +27,8 @@ import {
   Eye
 } from "lucide-react";
 import { NewInterconsultaModal } from "@/components/interconsulta/NewInterconsultaModal";
+import { InterconsultaDetailModal } from "@/components/interconsulta/InterconsultaDetailModal";
+import { InterconsultaMessageModal } from "@/components/interconsulta/InterconsultaMessageModal";
 import { toast } from "sonner";
 
 const mockInterconsultas = [
@@ -98,6 +100,9 @@ const Interconsulta = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("received");
   const [showNewInterconsultaModal, setShowNewInterconsultaModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [selectedInterconsulta, setSelectedInterconsulta] = useState<typeof mockInterconsultas[0] | null>(null);
 
   const stats = [
     { label: "Recebidas", value: 8, icon: ArrowRight, color: "text-primary" },
@@ -111,11 +116,13 @@ const Interconsulta = () => {
   };
 
   const handleViewDetails = (interconsulta: typeof mockInterconsultas[0]) => {
-    toast.info(`Visualizando detalhes da interconsulta de ${interconsulta.patient}`);
+    setSelectedInterconsulta(interconsulta);
+    setShowDetailModal(true);
   };
 
   const handleSendMessage = (interconsulta: typeof mockInterconsultas[0]) => {
-    toast.info(`Abrindo mensagem para ${interconsulta.fromDoctor}`);
+    setSelectedInterconsulta(interconsulta);
+    setShowMessageModal(true);
   };
 
   return (
@@ -318,10 +325,9 @@ const Interconsulta = () => {
       </Tabs>
       </PageContent>
 
-      <NewInterconsultaModal 
-        open={showNewInterconsultaModal} 
-        onOpenChange={setShowNewInterconsultaModal} 
-      />
+      <NewInterconsultaModal open={showNewInterconsultaModal} onOpenChange={setShowNewInterconsultaModal} />
+      <InterconsultaDetailModal open={showDetailModal} onOpenChange={setShowDetailModal} interconsulta={selectedInterconsulta} />
+      <InterconsultaMessageModal open={showMessageModal} onOpenChange={setShowMessageModal} interconsulta={selectedInterconsulta} />
     </PageContainer>
   );
 };
