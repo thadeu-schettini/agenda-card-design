@@ -36,6 +36,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { ServiceDetailModal } from "@/components/servicos/ServiceDetailModal";
 
 const categories = [
   { id: "all", name: "Todos", count: 24 },
@@ -167,6 +168,7 @@ export default function Servicos() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isNewServiceOpen, setIsNewServiceOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<typeof services[0] | null>(null);
 
   const filteredServices = services.filter(service => {
     const matchesSearch = service.name.toLowerCase().includes(search.toLowerCase());
@@ -394,7 +396,10 @@ export default function Servicos() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem className="gap-2">
+                        <DropdownMenuItem 
+                          className="gap-2"
+                          onClick={() => setSelectedService(service)}
+                        >
                           <Eye className="h-4 w-4" />
                           Visualizar
                         </DropdownMenuItem>
@@ -527,6 +532,12 @@ export default function Servicos() {
           </Table>
         </Card>
       )}
+
+      <ServiceDetailModal 
+        open={!!selectedService} 
+        onOpenChange={(open) => !open && setSelectedService(null)} 
+        service={selectedService}
+      />
       </PageContent>
     </PageContainer>
   );
