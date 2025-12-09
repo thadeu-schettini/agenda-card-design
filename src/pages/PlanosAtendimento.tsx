@@ -35,6 +35,7 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { PlanPatientModal } from "@/components/planos/PlanPatientModal";
 import { PlanEditModal } from "@/components/planos/PlanEditModal";
+import { PlanDetailModal } from "@/components/planos/PlanDetailModal";
 
 const plans = [
   {
@@ -410,103 +411,16 @@ export default function PlanosAtendimento() {
       </div>
 
       {/* Plan Detail Modal */}
-      <Dialog open={!!selectedPlan} onOpenChange={() => setSelectedPlan(null)}>
-        <DialogContent className="max-w-3xl">
-          {selectedPlan && (
-            <>
-              <DialogHeader>
-                <div className="flex items-center gap-4">
-                  <div className={cn(
-                    "p-3 rounded-2xl bg-gradient-to-br shadow-lg",
-                    selectedPlan.color
-                  )}>
-                    <Layers className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <DialogTitle className="text-xl">{selectedPlan.name}</DialogTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {selectedPlan.description}
-                    </p>
-                  </div>
-                </div>
-              </DialogHeader>
-
-              <div className="grid md:grid-cols-2 gap-6 py-4">
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="font-medium mb-3 flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                      Serviços Inclusos
-                    </h4>
-                    <div className="space-y-2">
-                      {selectedPlan.services.map((service, idx) => (
-                        <div 
-                          key={idx}
-                          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50"
-                        >
-                          <div className="w-2 h-2 rounded-full bg-primary" />
-                          <span className="text-sm">{service}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl bg-muted/50 text-center">
-                      <Calendar className="h-5 w-5 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-2xl font-bold">{selectedPlan.sessions}</p>
-                      <p className="text-xs text-muted-foreground">Sessões</p>
-                    </div>
-                    <div className="p-4 rounded-xl bg-muted/50 text-center">
-                      <Users className="h-5 w-5 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-2xl font-bold">{selectedPlan.patients}</p>
-                      <p className="text-xs text-muted-foreground">Pacientes</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="p-6 rounded-xl border border-border/50 bg-card">
-                    <div className="text-center mb-4">
-                      <p className="text-sm text-muted-foreground mb-1">Valor do Plano</p>
-                      {selectedPlan.price > 0 ? (
-                        <p className="text-3xl font-bold">
-                          R$ {selectedPlan.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                        </p>
-                      ) : (
-                        <p className="text-2xl font-bold text-emerald-500">Gratuito</p>
-                      )}
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Taxa de conclusão</span>
-                        <span className="font-medium">{selectedPlan.completion}%</span>
-                      </div>
-                      <Progress value={selectedPlan.completion} className="h-3" />
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button className="flex-1 gap-2" onClick={() => {
-                      setIsAddPatientOpen(true);
-                    }}>
-                      <Users className="h-4 w-4" />
-                      Adicionar Paciente
-                    </Button>
-                    <Button variant="outline" className="gap-2" onClick={() => {
-                      setPlanToEdit(selectedPlan);
-                      setIsEditPlanOpen(true);
-                    }}>
-                      <Edit2 className="h-4 w-4" />
-                      Editar
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      <PlanDetailModal
+        open={!!selectedPlan}
+        onOpenChange={() => setSelectedPlan(null)}
+        plan={selectedPlan}
+        onAddPatient={() => setIsAddPatientOpen(true)}
+        onEditPlan={() => {
+          setPlanToEdit(selectedPlan);
+          setIsEditPlanOpen(true);
+        }}
+      />
 
       <PlanPatientModal 
         open={isAddPatientOpen} 
