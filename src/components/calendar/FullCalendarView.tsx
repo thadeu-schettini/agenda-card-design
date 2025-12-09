@@ -170,16 +170,27 @@ export const FullCalendarView = () => {
   // Force day view on mobile
   const effectiveView = isMobile ? "timeGridDay" : currentView;
 
-  // Sync calendar view when mobile state changes and scroll to current time
+  // Sync calendar view when mobile state changes and scroll to current time centered
   useEffect(() => {
     if (calendarRef.current) {
       const api = calendarRef.current.getApi();
       api.changeView(effectiveView);
       
-      // Scroll to current time after a small delay to ensure DOM is ready
+      // Scroll to current time positioned in the middle of the viewport
       setTimeout(() => {
-        api.scrollToTime({ hour: new Date().getHours() - 2, minute: 0 });
-      }, 100);
+        const scrollerEl = document.querySelector('.fc-scroller-liquid-absolute') as HTMLElement;
+        if (scrollerEl) {
+          const currentHour = new Date().getHours();
+          const slotHeight = 48; // Default slot height in pixels
+          const viewportHeight = scrollerEl.clientHeight;
+          const currentTimePosition = currentHour * slotHeight;
+          const centeredScroll = Math.max(0, currentTimePosition - (viewportHeight / 2));
+          scrollerEl.scrollTop = centeredScroll;
+        } else {
+          // Fallback to API method
+          api.scrollToTime({ hour: Math.max(0, new Date().getHours() - 3), minute: 0 });
+        }
+      }, 150);
     }
   }, [isMobile, effectiveView]);
 
