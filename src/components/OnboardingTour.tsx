@@ -88,6 +88,9 @@ interface OnboardingTourProps {
 }
 
 export function OnboardingTour({ onComplete, steps = defaultSteps }: OnboardingTourProps) {
+  // Tour temporariamente desativado
+  return null;
+  
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [hasSeenTour, setHasSeenTour] = useState(false);

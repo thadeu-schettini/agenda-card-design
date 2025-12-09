@@ -21,6 +21,9 @@ import Notificacoes from "./pages/Notificacoes";
 import Servicos from "./pages/Servicos";
 import PlanosAtendimento from "./pages/PlanosAtendimento";
 import Telemedicina from "./pages/Telemedicina";
+import Relatorios from "./pages/Relatorios";
+import Analises from "./pages/Analises";
+import Avaliacoes from "./pages/Avaliacoes";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
@@ -57,6 +60,9 @@ const App = () => (
               <Route path="/servicos" element={<Servicos />} />
               <Route path="/planos-atendimento" element={<PlanosAtendimento />} />
               <Route path="/telemedicina" element={<Telemedicina />} />
+              <Route path="/relatorios" element={<Relatorios />} />
+              <Route path="/analises" element={<Analises />} />
+              <Route path="/avaliacoes" element={<Avaliacoes />} />
             </Route>
             
             {/* Catch-all route */}

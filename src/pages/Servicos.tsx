@@ -22,7 +22,7 @@ import {
   ArrowUpRight
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
-import { PageContainer } from "@/components/ui/page-container";
+import { PageContainer, PageContent } from "@/components/ui/page-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +56,7 @@ const services = [
     active: true,
     popular: true,
     uses: 248,
+    tussCode: "10101012",
     color: "from-rose-500 to-pink-500"
   },
   { 
@@ -69,6 +70,7 @@ const services = [
     active: true,
     popular: true,
     uses: 186,
+    tussCode: "10101020",
     color: "from-violet-500 to-purple-500"
   },
   { 
@@ -108,6 +110,7 @@ const services = [
     active: true,
     popular: true,
     uses: 312,
+    tussCode: "40301010",
     color: "from-emerald-500 to-green-500"
   },
   { 
@@ -243,8 +246,9 @@ export default function Servicos() {
         }
       />
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <PageContent>
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <Card key={stat.label} className="group relative overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
             <div className={cn("absolute inset-0 opacity-5 bg-gradient-to-br", stat.color)} />
@@ -523,6 +527,7 @@ export default function Servicos() {
           </Table>
         </Card>
       )}
+      </PageContent>
     </PageContainer>
   );
 }
