@@ -142,12 +142,30 @@ const services = [
   },
 ];
 
-const stats = [
-  { label: "Total de Serviços", value: 24, icon: Stethoscope, change: "+3" },
-  { label: "Serviços Ativos", value: 21, icon: Activity, change: "+2" },
-  { label: "Receita Média", value: "R$ 215", icon: DollarSign, change: "+8%" },
-  { label: "Mais Utilizado", value: "ECG", icon: Star, change: "312x" },
+type AccentColor = "primary" | "teal" | "purple" | "amber" | "emerald" | "rose";
+
+const stats: Array<{ label: string; value: string | number; icon: React.ElementType; change: string; accent: AccentColor }> = [
+  { label: "Total de Serviços", value: 24, icon: Stethoscope, change: "+3", accent: "primary" },
+  { label: "Serviços Ativos", value: 21, icon: Activity, change: "+2", accent: "emerald" },
+  { label: "Receita Média", value: "R$ 215", icon: DollarSign, change: "+8%", accent: "teal" },
+  { label: "Mais Utilizado", value: "ECG", icon: Star, change: "312x", accent: "amber" },
 ];
+
+const accentStyles: Record<AccentColor, { bg: string; text: string }> = {
+  primary: { bg: "bg-primary/10", text: "text-primary" },
+  teal: { bg: "bg-accent-teal/10", text: "text-accent-teal" },
+  purple: { bg: "bg-accent-purple/10", text: "text-accent-purple" },
+  amber: { bg: "bg-accent-amber/10", text: "text-accent-amber" },
+  emerald: { bg: "bg-accent-emerald/10", text: "text-accent-emerald" },
+  rose: { bg: "bg-accent-rose/10", text: "text-accent-rose" },
+
+};
+
+const categoryAccents: Record<string, AccentColor> = {
+  consulta: "primary",
+  exame: "teal",
+  procedimento: "purple",
+};
 
 export default function Servicos() {
   const [view, setView] = useState<"grid" | "table">("grid");
@@ -238,24 +256,27 @@ export default function Servicos() {
       />
 
       <PageContent>
-        {/* Stats - Clean, monochromatic design */}
+        {/* Stats - Elegant colored accents */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat) => (
-            <Card key={stat.label} className="border-border/50 hover:border-border transition-colors">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <stat.icon className="h-4 w-4 text-primary" />
+          {stats.map((stat) => {
+            const styles = accentStyles[stat.accent];
+            return (
+              <Card key={stat.label} className="border-border/50 hover:border-border transition-colors">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className={cn("p-2 rounded-lg", styles.bg)}>
+                      <stat.icon className={cn("h-4 w-4", styles.text)} />
+                    </div>
+                    <Badge variant="secondary" className="text-xs font-medium text-success">
+                      {stat.change}
+                    </Badge>
                   </div>
-                  <Badge variant="secondary" className="text-xs font-medium text-success">
-                    {stat.change}
-                  </Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-                <p className="text-2xl font-bold">{stat.value}</p>
-              </CardContent>
-            </Card>
-          ))}
+                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                  <p className="text-2xl font-bold">{stat.value}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Filters Bar */}
@@ -353,23 +374,27 @@ export default function Servicos() {
           </Badge>
         </div>
 
-        {/* Grid View - Clean monochromatic cards */}
+        {/* Grid View - Elegant colored category accents */}
         {view === "grid" && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredServices.map((service) => (
-              <Card 
-                key={service.id}
-                className={cn(
-                  "group border-border/50 hover:border-border transition-all duration-200 hover:shadow-sm cursor-pointer",
-                  !service.active && "opacity-60"
-                )}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="p-2 rounded-lg bg-primary/10">
-                      <Stethoscope className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex items-center gap-2">
+            {filteredServices.map((service) => {
+              const accent = categoryAccents[service.category] || "primary";
+              const styles = accentStyles[accent];
+              
+              return (
+                <Card 
+                  key={service.id}
+                  className={cn(
+                    "group border-border/50 hover:border-border transition-all duration-200 hover:shadow-sm cursor-pointer",
+                    !service.active && "opacity-60"
+                  )}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={cn("p-2 rounded-lg", styles.bg)}>
+                        <Stethoscope className={cn("h-4 w-4", styles.text)} />
+                      </div>
+                      <div className="flex items-center gap-2">
                       {service.popular && (
                         <Badge variant="secondary" className="gap-1 text-xs">
                           <Star className="h-3 w-3" />
@@ -439,7 +464,8 @@ export default function Servicos() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
         )}
 

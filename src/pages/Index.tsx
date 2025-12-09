@@ -66,6 +66,7 @@ const Index = () => {
                   icon={Calendar}
                   description="vs. semana passada"
                   index={0}
+                  accent="primary"
                 />
                 <MetricCard
                   title="Pacientes Ativos"
@@ -75,6 +76,7 @@ const Index = () => {
                   icon={Users}
                   description="este mês"
                   index={1}
+                  accent="teal"
                 />
                 <MetricCard
                   title="Receita Mensal"
@@ -84,6 +86,7 @@ const Index = () => {
                   icon={DollarSign}
                   description="vs. mês anterior"
                   index={2}
+                  accent="emerald"
                 />
                 <MetricCard
                   title="Taxa de Ocupação"
@@ -93,6 +96,7 @@ const Index = () => {
                   icon={TrendingUp}
                   description="capacidade utilizada"
                   index={3}
+                  accent="purple"
                 />
                 <MetricCard
                   title="Tempo Médio Espera"
@@ -102,6 +106,7 @@ const Index = () => {
                   icon={Clock}
                   description="vs. média anterior"
                   index={4}
+                  accent="amber"
                 />
                 <MetricCard
                   title="Taxa Comparecimento"
@@ -111,6 +116,7 @@ const Index = () => {
                   icon={UserCheck}
                   description="no-show reduzido"
                   index={5}
+                  accent="rose"
                 />
               </div>
               <div className="lg:col-span-1">
