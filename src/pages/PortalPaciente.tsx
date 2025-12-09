@@ -116,7 +116,7 @@ export default function PortalPaciente() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 px-2 sm:px-0">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-xl border-b">
         <div className="container mx-auto px-4 py-3">

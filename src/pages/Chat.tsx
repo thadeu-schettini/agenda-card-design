@@ -203,7 +203,7 @@ export default function Chat() {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className="px-4 sm:px-6">
       <PageHeader
         icon={MessageSquare}
         iconGradient="from-emerald-500 to-teal-600"

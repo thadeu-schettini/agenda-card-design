@@ -102,6 +102,56 @@ export function ScheduleReportModal({ open, onOpenChange }: ScheduleReportModalP
   const [notifyApp, setNotifyApp] = useState(true);
   const [notifyEmail, setNotifyEmail] = useState(true);
   const [previewReport, setPreviewReport] = useState<string | null>(null);
+  const [step, setStep] = useState<"config" | "success">("config");
+  const [isCreating, setIsCreating] = useState(false);
+
+  const handleCreateSchedule = () => {
+    setIsCreating(true);
+    setTimeout(() => {
+      setIsCreating(false);
+      setStep("success");
+    }, 1500);
+  };
+
+  const handleClose = () => {
+    onOpenChange(false);
+    setTimeout(() => setStep("config"), 300);
+  };
+
+  if (step === "success") {
+    return (
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent className="max-w-md">
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <div className="p-4 rounded-full bg-emerald-500/10 mb-4 animate-scale-in">
+              <CheckCircle2 className="h-12 w-12 text-emerald-500" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">Agendamento Criado!</h3>
+            <p className="text-muted-foreground mb-6">
+              Seus relatórios serão enviados automaticamente conforme configurado.
+            </p>
+            <div className="p-4 rounded-xl bg-muted/30 w-full mb-6">
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="text-muted-foreground">Relatórios:</span>
+                <span className="font-medium">{selectedReports.length} selecionado(s)</span>
+              </div>
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="text-muted-foreground">Frequência:</span>
+                <span className="font-medium">{frequencies.find(f => f.id === frequency)?.name}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Destinatários:</span>
+                <span className="font-medium">{recipients.length}</span>
+              </div>
+            </div>
+            <Button onClick={handleClose} className="w-full">
+              Concluir
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   const toggleReport = (reportId: string) => {
     setSelectedReports(prev =>
