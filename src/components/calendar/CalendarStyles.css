@@ -75,15 +75,32 @@
   box-shadow: 0 0 0 2px hsl(var(--primary) / 0.3);
 }
 
-/* Now Indicator */
+/* Now Indicator - Red line for current time */
 .calendar-container .fc .fc-timegrid-now-indicator-line {
-  border-color: hsl(var(--primary));
+  border-color: hsl(0, 84%, 60%);
   border-width: 2px;
+  box-shadow: 0 0 8px hsl(0, 84%, 60% / 0.5);
+  z-index: 10;
 }
 
 .calendar-container .fc .fc-timegrid-now-indicator-arrow {
-  border-color: hsl(var(--primary));
+  border-color: hsl(0, 84%, 60%);
   border-width: 6px;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+/* Now indicator dot/circle */
+.calendar-container .fc .fc-timegrid-now-indicator-line::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  background: hsl(0, 84%, 60%);
+  border-radius: 50%;
+  box-shadow: 0 0 8px hsl(0, 84%, 60% / 0.6);
 }
 
 /* Day Grid (Month View) */
