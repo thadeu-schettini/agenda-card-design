@@ -17,7 +17,9 @@ import {
   Users,
   RefreshCw,
   ArrowUpRight,
-  Sparkles
+  Sparkles,
+  Edit2,
+  Eye
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageContainer, PageContent } from "@/components/ui/page-container";
@@ -32,6 +34,8 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
 import { NewCampaignModal } from "@/components/notificacoes/NewCampaignModal";
+import { TemplateModal } from "@/components/notificacoes/TemplateModal";
+import { ActivityListModal } from "@/components/notificacoes/ActivityListModal";
 
 const channelData = [
   { name: "Push", icon: Bell, sent: 1247, delivered: 1189, failed: 58, rate: 95.3, color: "from-amber-500 to-orange-500" },
@@ -75,6 +79,9 @@ export default function Notificacoes() {
   const [selectedChannels, setSelectedChannels] = useState<string[]>(["push"]);
   const [notificationType, setNotificationType] = useState("lembrete");
   const [isNewCampaignOpen, setIsNewCampaignOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<typeof templates[0] | null>(null);
+  const [isNewTemplateOpen, setIsNewTemplateOpen] = useState(false);
+  const [isActivityListOpen, setIsActivityListOpen] = useState(false);
 
   const toggleChannel = (channel: string) => {
     setSelectedChannels(prev => 
@@ -276,7 +283,7 @@ export default function Notificacoes() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-semibold">Atividade Recente</CardTitle>
-                <Button variant="ghost" size="sm" className="gap-2">
+                <Button variant="ghost" size="sm" className="gap-2" onClick={() => setIsActivityListOpen(true)}>
                   Ver Todas
                   <ArrowUpRight className="h-4 w-4" />
                 </Button>
@@ -521,7 +528,7 @@ export default function Notificacoes() {
               <h3 className="text-lg font-semibold">Templates de Mensagem</h3>
               <p className="text-sm text-muted-foreground">Gerencie seus modelos de notificação</p>
             </div>
-            <Button className="gap-2">
+            <Button className="gap-2" onClick={() => setIsNewTemplateOpen(true)}>
               <Plus className="h-4 w-4" />
               Novo Template
             </Button>
@@ -532,15 +539,29 @@ export default function Notificacoes() {
               <Card 
                 key={template.id}
                 className="group border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300 cursor-pointer"
+                onClick={() => setSelectedTemplate(template)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-4">
                     <div className="p-2.5 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
                       <Sparkles className="h-5 w-5 text-primary" />
                     </div>
-                    <Badge variant="outline" className="text-xs">
-                      {template.channel}
-                    </Badge>
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline" className="text-xs">
+                        {template.channel}
+                      </Badge>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedTemplate(template);
+                        }}
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                   </div>
                   <h4 className="font-semibold mb-2 group-hover:text-primary transition-colors">
                     {template.name}
@@ -558,6 +579,21 @@ export default function Notificacoes() {
       </PageContent>
 
       <NewCampaignModal open={isNewCampaignOpen} onOpenChange={setIsNewCampaignOpen} />
+      <TemplateModal 
+        open={!!selectedTemplate || isNewTemplateOpen} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedTemplate(null);
+            setIsNewTemplateOpen(false);
+          }
+        }}
+        template={selectedTemplate}
+        mode={selectedTemplate ? "view" : "create"}
+      />
+      <ActivityListModal 
+        open={isActivityListOpen} 
+        onOpenChange={setIsActivityListOpen}
+      />
     </PageContainer>
   );
 }

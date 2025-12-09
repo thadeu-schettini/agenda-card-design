@@ -33,6 +33,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { PlanPatientModal } from "@/components/planos/PlanPatientModal";
+import { PlanEditModal } from "@/components/planos/PlanEditModal";
 
 const plans = [
   {
@@ -113,6 +115,9 @@ export default function PlanosAtendimento() {
   const [search, setSearch] = useState("");
   const [isNewPlanOpen, setIsNewPlanOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
+  const [isAddPatientOpen, setIsAddPatientOpen] = useState(false);
+  const [isEditPlanOpen, setIsEditPlanOpen] = useState(false);
+  const [planToEdit, setPlanToEdit] = useState<typeof plans[0] | null>(null);
 
   const filteredPlans = plans.filter(plan => 
     plan.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -482,11 +487,16 @@ export default function PlanosAtendimento() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button className="flex-1 gap-2">
+                    <Button className="flex-1 gap-2" onClick={() => {
+                      setIsAddPatientOpen(true);
+                    }}>
                       <Users className="h-4 w-4" />
                       Adicionar Paciente
                     </Button>
-                    <Button variant="outline" className="gap-2">
+                    <Button variant="outline" className="gap-2" onClick={() => {
+                      setPlanToEdit(selectedPlan);
+                      setIsEditPlanOpen(true);
+                    }}>
                       <Edit2 className="h-4 w-4" />
                       Editar
                     </Button>
@@ -497,6 +507,17 @@ export default function PlanosAtendimento() {
           )}
         </DialogContent>
       </Dialog>
+
+      <PlanPatientModal 
+        open={isAddPatientOpen} 
+        onOpenChange={setIsAddPatientOpen}
+        plan={selectedPlan}
+      />
+      <PlanEditModal 
+        open={isEditPlanOpen} 
+        onOpenChange={setIsEditPlanOpen}
+        plan={planToEdit}
+      />
       </PageContent>
     </PageContainer>
   );
