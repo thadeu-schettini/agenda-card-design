@@ -101,15 +101,15 @@ export default function PortalPaciente() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed":
-        return <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">Confirmado</Badge>;
+        return <Badge className="bg-status-confirmed/10 text-status-confirmed border-status-confirmed/20">Confirmado</Badge>;
       case "pending":
-        return <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20">Pendente</Badge>;
+        return <Badge className="bg-status-pending/10 text-status-pending border-status-pending/20">Pendente</Badge>;
       case "scheduled":
-        return <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20">Agendado</Badge>;
+        return <Badge className="bg-info/10 text-info border-info/20">Agendado</Badge>;
       case "completed":
         return <Badge className="bg-muted text-muted-foreground">Realizado</Badge>;
       case "paid":
-        return <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">Pago</Badge>;
+        return <Badge className="bg-status-confirmed/10 text-status-confirmed border-status-confirmed/20">Pago</Badge>;
       default:
         return null;
     }

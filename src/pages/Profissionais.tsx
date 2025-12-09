@@ -8,6 +8,15 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageContainer, PageContent } from "@/components/ui/page-container";
 import { PageHeader } from "@/components/ui/page-header";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { NewProfessionalModal } from "@/components/profissionais/NewProfessionalModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   Search, 
   UserPlus, 
@@ -20,13 +29,17 @@ import {
   Settings,
   TrendingUp,
   CheckCircle2,
-  UserCog
+  UserCog,
+  MoreVertical,
+  Edit,
+  Trash2
 } from "lucide-react";
 import { ProfessionalGeneralTab } from "@/components/profissionais/ProfessionalGeneralTab";
 import { ProfessionalScheduleTab } from "@/components/profissionais/ProfessionalScheduleTab";
 import { ProfessionalDocumentsTab } from "@/components/profissionais/ProfessionalDocumentsTab";
 import { ProfessionalMetricsTab } from "@/components/profissionais/ProfessionalMetricsTab";
 import { ProfessionalSettingsTab } from "@/components/profissionais/ProfessionalSettingsTab";
+import { toast } from "sonner";
 
 interface Professional {
   id: string;
@@ -126,18 +139,18 @@ const mockProfessionals: Professional[] = [
 const statusConfig = {
   "disponivel": {
     label: "Disponível",
-    color: "bg-green-500/10 text-green-600 border-green-500/20",
-    dotColor: "bg-green-500"
+    color: "bg-status-available/10 text-status-available border-status-available/20",
+    dotColor: "bg-status-available"
   },
   "em-consulta": {
     label: "Em Consulta",
-    color: "bg-orange-500/10 text-orange-600 border-orange-500/20",
-    dotColor: "bg-orange-500"
+    color: "bg-status-busy/10 text-status-busy border-status-busy/20",
+    dotColor: "bg-status-busy"
   },
   "ausente": {
     label: "Ausente",
-    color: "bg-gray-500/10 text-gray-600 border-gray-500/20",
-    dotColor: "bg-gray-500"
+    color: "bg-status-away/10 text-status-away border-status-away/20",
+    dotColor: "bg-status-away"
   }
 };
 
@@ -145,6 +158,9 @@ const Profissionais = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [newModalOpen, setNewModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [professionalToDelete, setProfessionalToDelete] = useState<Professional | null>(null);
 
   const filteredProfessionals = mockProfessionals.filter(prof =>
     prof.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -157,6 +173,26 @@ const Profissionais = () => {
     setSheetOpen(true);
   };
 
+  const handleEdit = (e: React.MouseEvent, professional: Professional) => {
+    e.stopPropagation();
+    setSelectedProfessional(professional);
+    setSheetOpen(true);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent, professional: Professional) => {
+    e.stopPropagation();
+    setProfessionalToDelete(professional);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (professionalToDelete) {
+      toast.success(`Profissional ${professionalToDelete.name} removido com sucesso`);
+      setDeleteDialogOpen(false);
+      setProfessionalToDelete(null);
+    }
+  };
+
   return (
     <PageContainer>
       <PageHeader
@@ -165,7 +201,7 @@ const Profissionais = () => {
         icon={UserCog}
         iconColor="from-indigo-500 to-blue-600"
       >
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setNewModalOpen(true)}>
           <UserPlus className="h-4 w-4" />
           <span className="hidden sm:inline">Adicionar Profissional</span>
         </Button>
@@ -185,10 +221,11 @@ const Profissionais = () => {
 
         {/* Grid de Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredProfessionals.map((professional) => (
+          {filteredProfessionals.map((professional, index) => (
             <Card
               key={professional.id}
-              className="p-4 cursor-pointer hover:shadow-md hover:border-primary/20 transition-all"
+              className="p-4 cursor-pointer hover:shadow-md hover:border-primary/20 transition-all animate-fade-in"
+              style={{ animationDelay: `${index * 50}ms` }}
               onClick={() => handleCardClick(professional)}
             >
               <div className="flex items-start gap-4">
@@ -207,6 +244,29 @@ const Profissionais = () => {
                   <p className="text-sm text-muted-foreground">{professional.specialty}</p>
                   <p className="text-xs text-muted-foreground mt-1">{professional.crm}</p>
                 </div>
+
+                {/* Actions Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={(e) => handleEdit(e as any, professional)}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editar
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onClick={(e) => handleDeleteClick(e as any, professional)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Excluir
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <div className="mt-4 flex items-center justify-between">
@@ -284,6 +344,22 @@ const Profissionais = () => {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* New Professional Modal */}
+      <NewProfessionalModal
+        open={newModalOpen}
+        onOpenChange={setNewModalOpen}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Excluir Profissional"
+        description={`Tem certeza que deseja excluir ${professionalToDelete?.name}? Esta ação não pode ser desfeita.`}
+        confirmText="Excluir"
+        onConfirm={handleConfirmDelete}
+      />
     </PageContainer>
   );
 };
