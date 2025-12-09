@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { NewItemModal } from "@/components/estoque/NewItemModal";
 import { StockMovementModal } from "@/components/estoque/StockMovementModal";
+import { PurchaseOrderModal } from "@/components/estoque/PurchaseOrderModal";
 
 const mockItems = [
   {
@@ -131,6 +132,7 @@ const Estoque = () => {
   const [showMovementModal, setShowMovementModal] = useState(false);
   const [movementType, setMovementType] = useState<"entry" | "exit">("entry");
   const [selectedItem, setSelectedItem] = useState<typeof mockItems[0] | null>(null);
+  const [showPurchaseOrderModal, setShowPurchaseOrderModal] = useState(false);
 
   const stats = [
     { label: "Total de Itens", value: 234, icon: Package, color: "text-primary" },
@@ -157,7 +159,7 @@ const Estoque = () => {
         icon={Package}
         actions={
           <div className="flex gap-2">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2" onClick={() => setShowPurchaseOrderModal(true)}>
               <ShoppingCart className="h-4 w-4" />
               Pedido de Compra
             </Button>
@@ -402,6 +404,7 @@ const Estoque = () => {
         item={selectedItem}
         type={movementType}
       />
+      <PurchaseOrderModal open={showPurchaseOrderModal} onOpenChange={setShowPurchaseOrderModal} />
     </PageContainer>
   );
 };

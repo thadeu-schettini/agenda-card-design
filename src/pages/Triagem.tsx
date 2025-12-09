@@ -3,6 +3,11 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageContainer, PageContent } from "@/components/ui/page-container";
 import { NewTriagemModal } from "@/components/triagem/NewTriagemModal";
 import { TemplatePreviewModal } from "@/components/triagem/TemplatePreviewModal";
+import { TriagemResponseModal } from "@/components/triagem/TriagemResponseModal";
+import { TemplateEditorModal } from "@/components/triagem/TemplateEditorModal";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreVertical, Edit, Copy, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -87,6 +92,37 @@ const Triagem = () => {
   const [showNewTriagemModal, setShowNewTriagemModal] = useState(false);
   const [showTemplatePreview, setShowTemplatePreview] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof mockTemplates[0] | null>(null);
+  const [showTriagemResponse, setShowTriagemResponse] = useState(false);
+  const [selectedTriagem, setSelectedTriagem] = useState<typeof mockTriagens[0] | null>(null);
+  const [showTemplateEditor, setShowTemplateEditor] = useState(false);
+  const [templateEditorMode, setTemplateEditorMode] = useState<"create" | "edit" | "duplicate">("create");
+
+  const handleViewTriagem = (triagem: typeof mockTriagens[0]) => {
+    setSelectedTriagem(triagem);
+    setShowTriagemResponse(true);
+  };
+
+  const handleEditTemplate = (template: typeof mockTemplates[0]) => {
+    setSelectedTemplate(template);
+    setTemplateEditorMode("edit");
+    setShowTemplateEditor(true);
+  };
+
+  const handleDuplicateTemplate = (template: typeof mockTemplates[0]) => {
+    setSelectedTemplate(template);
+    setTemplateEditorMode("duplicate");
+    setShowTemplateEditor(true);
+  };
+
+  const handleDeleteTemplate = (template: typeof mockTemplates[0]) => {
+    toast.success(`Template "${template.name}" excluído`);
+  };
+
+  const handleNewTemplate = () => {
+    setSelectedTemplate(null);
+    setTemplateEditorMode("create");
+    setShowTemplateEditor(true);
+  };
 
   const stats = [
     { label: "Enviadas Hoje", value: 12, icon: Send, color: "text-primary" },
@@ -103,7 +139,7 @@ const Triagem = () => {
         icon={ClipboardCheck}
         actions={
           <div className="flex gap-2">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2" onClick={handleNewTemplate}>
               <Plus className="h-4 w-4" />
               Novo Template
             </Button>
@@ -220,7 +256,7 @@ const Triagem = () => {
                           </Badge>
 
                           <div className="flex gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleViewTriagem(triagem)}>
                               <Eye className="h-4 w-4" />
                             </Button>
                             {triagem.status === "not_sent" && (
@@ -259,6 +295,27 @@ const Triagem = () => {
                         </Badge>
                       </div>
                     </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEditTemplate(template)}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDuplicateTemplate(template)}>
+                          <Copy className="h-4 w-4 mr-2" />
+                          Duplicar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteTemplate(template)}>
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
@@ -289,6 +346,8 @@ const Triagem = () => {
 
       <NewTriagemModal open={showNewTriagemModal} onOpenChange={setShowNewTriagemModal} />
       <TemplatePreviewModal open={showTemplatePreview} onOpenChange={setShowTemplatePreview} template={selectedTemplate} />
+      <TriagemResponseModal open={showTriagemResponse} onOpenChange={setShowTriagemResponse} triagem={selectedTriagem} />
+      <TemplateEditorModal open={showTemplateEditor} onOpenChange={setShowTemplateEditor} template={selectedTemplate} mode={templateEditorMode} />
     </PageContainer>
   );
 };

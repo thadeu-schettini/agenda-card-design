@@ -33,6 +33,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { NewReminderModal } from "@/components/lembretes/NewReminderModal";
+import { ReminderEditModal } from "@/components/lembretes/ReminderEditModal";
+import { ReminderHistoryModal } from "@/components/lembretes/ReminderHistoryModal";
+import { DeleteReminderDialog } from "@/components/lembretes/DeleteReminderDialog";
 import { toast } from "sonner";
 
 const mockReminders = [
@@ -108,6 +111,10 @@ const LembretesMedicacao = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("reminders");
   const [showNewReminderModal, setShowNewReminderModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedReminder, setSelectedReminder] = useState<typeof mockReminders[0] | null>(null);
 
   const stats = [
     { label: "Lembretes Ativos", value: 156, icon: Bell, color: "text-primary" },
@@ -118,6 +125,21 @@ const LembretesMedicacao = () => {
 
   const handleSendNow = (reminder: typeof mockReminders[0]) => {
     toast.success(`Lembrete enviado para ${reminder.patient}`);
+  };
+
+  const handleEdit = (reminder: typeof mockReminders[0]) => {
+    setSelectedReminder(reminder);
+    setShowEditModal(true);
+  };
+
+  const handleHistory = (reminder: typeof mockReminders[0]) => {
+    setSelectedReminder(reminder);
+    setShowHistoryModal(true);
+  };
+
+  const handleDelete = (reminder: typeof mockReminders[0]) => {
+    setSelectedReminder(reminder);
+    setShowDeleteDialog(true);
   };
 
   return (
@@ -250,12 +272,12 @@ const LembretesMedicacao = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>Editar</DropdownMenuItem>
-                              <DropdownMenuItem>Ver Histórico</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleEdit(reminder)}>Editar</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleHistory(reminder)}>Ver Histórico</DropdownMenuItem>
                               <DropdownMenuItem onClick={() => handleSendNow(reminder)}>
                                 Enviar Agora
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive">Excluir</DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(reminder)}>Excluir</DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
@@ -318,10 +340,10 @@ const LembretesMedicacao = () => {
       </Tabs>
       </PageContent>
 
-      <NewReminderModal 
-        open={showNewReminderModal} 
-        onOpenChange={setShowNewReminderModal} 
-      />
+      <NewReminderModal open={showNewReminderModal} onOpenChange={setShowNewReminderModal} />
+      <ReminderEditModal open={showEditModal} onOpenChange={setShowEditModal} reminder={selectedReminder} />
+      <ReminderHistoryModal open={showHistoryModal} onOpenChange={setShowHistoryModal} reminder={selectedReminder} />
+      <DeleteReminderDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} reminder={selectedReminder} />
     </PageContainer>
   );
 };
