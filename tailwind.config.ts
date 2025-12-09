@@ -50,6 +50,19 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        status: {
+          confirmed: "hsl(var(--status-confirmed))",
+          pending: "hsl(var(--status-pending))",
+          completed: "hsl(var(--status-completed))",
+          cancelled: "hsl(var(--status-cancelled))",
+          available: "hsl(var(--status-available))",
+          busy: "hsl(var(--status-busy))",
+          away: "hsl(var(--status-away))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
