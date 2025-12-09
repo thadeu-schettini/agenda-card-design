@@ -20,6 +20,10 @@ import {
   Stethoscope,
   Layers,
   Video,
+  BarChart3,
+  Brain,
+  Star,
+  FileBarChart,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -65,6 +69,9 @@ const managementItems = [
 const otherItems = [
   { title: "Notificações", url: "/notificacoes", icon: Bell },
   { title: "Telemedicina", url: "/telemedicina", icon: Video },
+  { title: "Relatórios", url: "/relatorios", icon: FileBarChart },
+  { title: "Análises", url: "/analises", icon: Brain },
+  { title: "Avaliações", url: "/avaliacoes", icon: Star },
   { title: "Financeiro", url: "/financeiro", icon: DollarSign },
   { title: "Indicações", url: "/indicacoes", icon: Gift },
   { title: "Faturamento", url: "/billing", icon: CreditCard },
