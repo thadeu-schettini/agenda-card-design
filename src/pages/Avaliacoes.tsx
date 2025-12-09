@@ -35,6 +35,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { ReviewResponseModal } from "@/components/avaliacoes/ReviewResponseModal";
+import { ReviewDetailModal } from "@/components/avaliacoes/ReviewDetailModal";
 import { AIAnalysisModal } from "@/components/avaliacoes/AIAnalysisModal";
 
 const satisfactionData = [
@@ -142,6 +143,7 @@ export default function Avaliacoes() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedReview, setSelectedReview] = useState<typeof reviews[0] | null>(null);
   const [isResponseModalOpen, setIsResponseModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isAIAnalysisOpen, setIsAIAnalysisOpen] = useState(false);
 
   const filteredReviews = reviews.filter(review => {
@@ -353,11 +355,23 @@ export default function Avaliacoes() {
                                 <Reply className="h-4 w-4" />
                                 Responder
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="gap-2">
+                              <DropdownMenuItem 
+                                className="gap-2"
+                                onClick={() => {
+                                  setSelectedReview(review);
+                                  setIsDetailModalOpen(true);
+                                }}
+                              >
                                 <Eye className="h-4 w-4" />
                                 Ver Detalhes
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="gap-2">
+                              <DropdownMenuItem 
+                                className="gap-2"
+                                onClick={() => {
+                                  setSelectedReview(review);
+                                  setIsDetailModalOpen(true);
+                                }}
+                              >
                                 <Flag className="h-4 w-4" />
                                 Marcar
                               </DropdownMenuItem>
@@ -530,6 +544,17 @@ export default function Avaliacoes() {
         review={selectedReview}
         open={isResponseModalOpen}
         onOpenChange={setIsResponseModalOpen}
+      />
+
+      {/* Detail Modal */}
+      <ReviewDetailModal
+        review={selectedReview}
+        open={isDetailModalOpen}
+        onOpenChange={setIsDetailModalOpen}
+        onRespond={() => {
+          setIsDetailModalOpen(false);
+          setIsResponseModalOpen(true);
+        }}
       />
 
       <AIAnalysisModal open={isAIAnalysisOpen} onOpenChange={setIsAIAnalysisOpen} />

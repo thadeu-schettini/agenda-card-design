@@ -34,9 +34,11 @@ import {
   ArrowRightLeft,
   Clock,
   Play,
+  Plus,
 } from "lucide-react";
 import { UpgradeCelebrationModal } from "@/components/UpgradeCelebrationModal";
 import { FeaturePreviewModal } from "@/components/FeaturePreviewModal";
+import { AddPaymentMethodModal } from "@/components/financeiro/AddPaymentMethodModal";
 import { useToast } from "@/hooks/use-toast";
 import { PageContainer, PageContent } from "@/components/ui/page-container";
 import { PageHeader } from "@/components/ui/page-header";
@@ -55,6 +57,7 @@ const Billing = () => {
   const [trialActive, setTrialActive] = useState(false);
   const [trialEndDate, setTrialEndDate] = useState<Date | null>(null);
   const [trialDaysLeft, setTrialDaysLeft] = useState(0);
+  const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
 
   // Calculate trial days remaining
   useEffect(() => {
@@ -782,8 +785,8 @@ const Billing = () => {
                     </div>
                   </div>
                   <div className="border-2 border-dashed rounded-lg p-4 flex items-center justify-center">
-                    <Button variant="outline" className="gap-2">
-                      <CreditCard className="h-4 w-4" />
+                    <Button variant="outline" className="gap-2" onClick={() => setIsAddPaymentOpen(true)}>
+                      <Plus className="h-4 w-4" />
                       Adicionar Método
                     </Button>
                   </div>
@@ -894,6 +897,12 @@ const Billing = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Add Payment Method Modal */}
+        <AddPaymentMethodModal
+          open={isAddPaymentOpen}
+          onOpenChange={setIsAddPaymentOpen}
+        />
       </PageContent>
     </PageContainer>
   );
