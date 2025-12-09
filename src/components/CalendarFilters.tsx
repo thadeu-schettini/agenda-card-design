@@ -18,6 +18,7 @@ export const CalendarFilters = () => {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [showExternal, setShowExternal] = useState(false);
   const [showBlocks, setShowBlocks] = useState(false);
+  const [hideUpcoming, setHideUpcoming] = useState(true); // Hidden by default
 
   const toggleFilter = (filter: string) => {
     if (activeFilters.includes(filter)) {
@@ -37,12 +38,17 @@ export const CalendarFilters = () => {
       <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 overflow-x-auto scrollbar-hide">
         {/* Quick action button */}
         <Button 
-          variant="outline" 
+          variant={hideUpcoming ? "default" : "outline"}
           size="sm"
-          className="h-8 sm:h-9 px-2.5 sm:px-4 text-xs sm:text-sm font-semibold hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-300 group flex-shrink-0"
+          onClick={() => setHideUpcoming(!hideUpcoming)}
+          className={`h-8 sm:h-9 px-2.5 sm:px-4 text-xs sm:text-sm font-semibold transition-all duration-300 group flex-shrink-0 ${
+            hideUpcoming 
+              ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+              : "hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+          }`}
         >
           <Filter className="h-3.5 w-3.5 sm:mr-2 group-hover:rotate-12 transition-transform duration-300" />
-          <span className="hidden sm:inline">Ocultar próximos</span>
+          <span className="hidden sm:inline">{hideUpcoming ? "Mostrar próximos" : "Ocultar próximos"}</span>
         </Button>
 
         <div className="hidden sm:block h-6 w-px bg-border/50 flex-shrink-0" />
