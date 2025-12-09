@@ -46,6 +46,7 @@ interface ServiceEditModalProps {
     popular?: boolean;
     uses: number;
     tussCode?: string;
+    color: string;
   } | null;
 }
 
@@ -107,8 +108,11 @@ export function ServiceEditModal({ open, onOpenChange, service }: ServiceEditMod
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-primary/10">
-              <Stethoscope className="h-6 w-6 text-primary" />
+            <div className={cn(
+              "p-3 rounded-2xl bg-gradient-to-br shadow-lg",
+              service.color
+            )}>
+              <Stethoscope className="h-6 w-6 text-white" />
             </div>
             <div>
               <DialogTitle className="text-xl">Editar Serviço</DialogTitle>

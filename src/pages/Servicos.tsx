@@ -3,6 +3,7 @@ import {
   Stethoscope, 
   Plus, 
   Search, 
+  Filter, 
   Clock, 
   DollarSign, 
   Users, 
@@ -11,20 +12,25 @@ import {
   Trash2,
   Copy,
   Eye,
+  TrendingUp,
   Star,
+  Zap,
   LayoutGrid,
   List,
-  Activity
+  ChevronDown,
+  Settings2,
+  ArrowUpRight
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageContainer, PageContent } from "@/components/ui/page-container";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
@@ -53,6 +59,7 @@ const services = [
     popular: true,
     uses: 248,
     tussCode: "10101012",
+    color: "from-rose-500 to-pink-500"
   },
   { 
     id: 2, 
@@ -66,6 +73,7 @@ const services = [
     popular: true,
     uses: 186,
     tussCode: "10101020",
+    color: "from-violet-500 to-purple-500"
   },
   { 
     id: 3, 
@@ -78,6 +86,7 @@ const services = [
     active: true,
     popular: false,
     uses: 142,
+    color: "from-pink-500 to-rose-500"
   },
   { 
     id: 4, 
@@ -90,6 +99,7 @@ const services = [
     active: true,
     popular: false,
     uses: 98,
+    color: "from-blue-500 to-cyan-500"
   },
   { 
     id: 5, 
@@ -103,6 +113,7 @@ const services = [
     popular: true,
     uses: 312,
     tussCode: "40301010",
+    color: "from-emerald-500 to-green-500"
   },
   { 
     id: 6, 
@@ -115,6 +126,7 @@ const services = [
     active: true,
     popular: false,
     uses: 87,
+    color: "from-teal-500 to-cyan-500"
   },
   { 
     id: 7, 
@@ -127,6 +139,7 @@ const services = [
     active: false,
     popular: false,
     uses: 64,
+    color: "from-amber-500 to-orange-500"
   },
   { 
     id: 8, 
@@ -139,33 +152,16 @@ const services = [
     active: true,
     popular: false,
     uses: 23,
+    color: "from-red-500 to-rose-500"
   },
 ];
 
-type AccentColor = "primary" | "teal" | "purple" | "amber" | "emerald" | "rose";
-
-const stats: Array<{ label: string; value: string | number; icon: React.ElementType; change: string; accent: AccentColor }> = [
-  { label: "Total de Serviços", value: 24, icon: Stethoscope, change: "+3", accent: "primary" },
-  { label: "Serviços Ativos", value: 21, icon: Activity, change: "+2", accent: "emerald" },
-  { label: "Receita Média", value: "R$ 215", icon: DollarSign, change: "+8%", accent: "teal" },
-  { label: "Mais Utilizado", value: "ECG", icon: Star, change: "312x", accent: "amber" },
+const stats = [
+  { label: "Total de Serviços", value: 24, icon: Stethoscope, change: "+3", color: "from-blue-500 to-cyan-500" },
+  { label: "Serviços Ativos", value: 21, icon: Zap, change: "+2", color: "from-emerald-500 to-green-500" },
+  { label: "Receita Média", value: "R$ 215", icon: DollarSign, change: "+8%", color: "from-amber-500 to-orange-500" },
+  { label: "Mais Utilizado", value: "ECG", icon: Star, change: "312x", color: "from-violet-500 to-purple-500" },
 ];
-
-const accentStyles: Record<AccentColor, { bg: string; text: string }> = {
-  primary: { bg: "bg-primary/10", text: "text-primary" },
-  teal: { bg: "bg-accent-teal/10", text: "text-accent-teal" },
-  purple: { bg: "bg-accent-purple/10", text: "text-accent-purple" },
-  amber: { bg: "bg-accent-amber/10", text: "text-accent-amber" },
-  emerald: { bg: "bg-accent-emerald/10", text: "text-accent-emerald" },
-  rose: { bg: "bg-accent-rose/10", text: "text-accent-rose" },
-
-};
-
-const categoryAccents: Record<string, AccentColor> = {
-  consulta: "primary",
-  exame: "teal",
-  procedimento: "purple",
-};
 
 export default function Servicos() {
   const [view, setView] = useState<"grid" | "table">("grid");
@@ -188,7 +184,7 @@ export default function Servicos() {
     <PageContainer>
       <PageHeader
         icon={Stethoscope}
-        iconGradient="from-primary to-primary/70"
+        iconGradient="from-blue-500 to-cyan-500"
         title="Serviços"
         description="Gerencie os serviços oferecidos pela sua clínica"
         actions={
@@ -256,311 +252,309 @@ export default function Servicos() {
       />
 
       <PageContent>
-        {/* Stats - Elegant colored accents */}
+        {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat) => {
-            const styles = accentStyles[stat.accent];
-            return (
-              <Card key={stat.label} className="border-border/50 hover:border-border transition-colors">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className={cn("p-2 rounded-lg", styles.bg)}>
-                      <stat.icon className={cn("h-4 w-4", styles.text)} />
-                    </div>
-                    <Badge variant="secondary" className="text-xs font-medium text-success">
-                      {stat.change}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  <p className="text-2xl font-bold">{stat.value}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* Filters Bar */}
-        <Card className="border-border/50">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Switch 
-                    checked={onlyActive} 
-                    onCheckedChange={setOnlyActive}
-                    id="active-filter"
-                  />
-                  <Label htmlFor="active-filter" className="text-sm cursor-pointer">
-                    Somente ativos
-                  </Label>
+        {stats.map((stat) => (
+          <Card key={stat.label} className="group relative overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
+            <div className={cn("absolute inset-0 opacity-5 bg-gradient-to-br", stat.color)} />
+            <CardContent className="p-4 relative">
+              <div className="flex items-start justify-between mb-3">
+                <div className={cn("p-2.5 rounded-xl bg-gradient-to-br shadow-lg", stat.color)}>
+                  <stat.icon className="h-5 w-5 text-white" />
                 </div>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    placeholder="Buscar serviços..." 
-                    className="pl-9 w-[200px]"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </div>
+                <Badge variant="secondary" className="text-xs font-medium text-emerald-600">
+                  {stat.change}
+                </Badge>
               </div>
-              
+              <p className="text-sm text-muted-foreground">{stat.label}</p>
+              <p className="text-2xl font-bold">{stat.value}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Filters Bar */}
+      <Card className="border-border/50">
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
-                {/* Categories */}
-                <div className="hidden md:flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
-                  {categories.map((cat) => (
-                    <Button
-                      key={cat.id}
-                      variant={selectedCategory === cat.id ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setSelectedCategory(cat.id)}
-                      className="h-8 px-3"
-                    >
-                      {cat.name}
-                      <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-xs">
-                        {cat.count}
-                      </Badge>
-                    </Button>
-                  ))}
-                </div>
-                
-                {/* View Toggle */}
-                <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
-                  <Button
-                    variant={view === "grid" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setView("grid")}
-                    className="h-8 w-8 p-0"
-                  >
-                    <LayoutGrid className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={view === "table" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setView("table")}
-                    className="h-8 w-8 p-0"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
+                <Switch 
+                  checked={onlyActive} 
+                  onCheckedChange={setOnlyActive}
+                  id="active-filter"
+                />
+                <Label htmlFor="active-filter" className="text-sm cursor-pointer">
+                  Somente ativos
+                </Label>
+              </div>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Buscar serviços..." 
+                  className="pl-9 w-[200px]"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </div>
             </div>
-
-            {/* Mobile Categories */}
-            <div className="md:hidden mt-4">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Categoria" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name} ({cat.count})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Results Count */}
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {filteredServices.length} serviço{filteredServices.length !== 1 ? 's' : ''} encontrado{filteredServices.length !== 1 ? 's' : ''}
-          </p>
-          <Badge variant="outline" className="gap-1">
-            Ativos: {services.filter(s => s.active).length} · Inativos: {services.filter(s => !s.active).length}
-          </Badge>
-        </div>
-
-        {/* Grid View - Elegant colored category accents */}
-        {view === "grid" && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredServices.map((service) => {
-              const accent = categoryAccents[service.category] || "primary";
-              const styles = accentStyles[accent];
+            
+            <div className="flex items-center gap-2">
+              {/* Categories */}
+              <div className="hidden md:flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
+                {categories.map((cat) => (
+                  <Button
+                    key={cat.id}
+                    variant={selectedCategory === cat.id ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className="h-8 px-3"
+                  >
+                    {cat.name}
+                    <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-xs">
+                      {cat.count}
+                    </Badge>
+                  </Button>
+                ))}
+              </div>
               
-              return (
-                <Card 
-                  key={service.id}
-                  className={cn(
-                    "group border-border/50 hover:border-border transition-all duration-200 hover:shadow-sm cursor-pointer",
-                    !service.active && "opacity-60"
-                  )}
+              {/* View Toggle */}
+              <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
+                <Button
+                  variant={view === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setView("grid")}
+                  className="h-8 w-8 p-0"
                 >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className={cn("p-2 rounded-lg", styles.bg)}>
-                        <Stethoscope className={cn("h-4 w-4", styles.text)} />
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={view === "table" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setView("table")}
+                  className="h-8 w-8 p-0"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Categories */}
+          <div className="md:hidden mt-4">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Categoria" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name} ({cat.count})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Results Count */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          {filteredServices.length} serviço{filteredServices.length !== 1 ? 's' : ''} encontrado{filteredServices.length !== 1 ? 's' : ''}
+        </p>
+        <Badge variant="outline" className="gap-1">
+          Ativos: {services.filter(s => s.active).length} · Inativos: {services.filter(s => !s.active).length}
+        </Badge>
+      </div>
+
+      {/* Grid View */}
+      {view === "grid" && (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {filteredServices.map((service) => (
+            <Card 
+              key={service.id}
+              className={cn(
+                "group relative overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg cursor-pointer",
+                !service.active && "opacity-60"
+              )}
+            >
+              <div className={cn("absolute inset-0 opacity-5 bg-gradient-to-br", service.color)} />
+              <CardContent className="p-4 relative">
+                <div className="flex items-start justify-between mb-4">
+                  <div className={cn("p-2.5 rounded-xl bg-gradient-to-br shadow-lg group-hover:scale-110 transition-transform", service.color)}>
+                    <Stethoscope className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {service.popular && (
+                      <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 gap-1">
+                        <Star className="h-3 w-3 fill-amber-500" />
+                        Popular
+                      </Badge>
+                    )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem 
+                          className="gap-2"
+                          onClick={() => setSelectedService(service)}
+                        >
+                          <Eye className="h-4 w-4" />
+                          Visualizar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2" onClick={() => {
+                          setServiceToEdit(service);
+                          setIsEditServiceOpen(true);
+                        }}>
+                          <Edit2 className="h-4 w-4" />
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2">
+                          <Copy className="h-4 w-4" />
+                          Duplicar
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="gap-2 text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                          Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+
+                <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">
+                  {service.name}
+                </h3>
+                <p className="text-xs text-muted-foreground mb-4 line-clamp-2">
+                  {service.description}
+                </p>
+
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    <span>{service.duration} min</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Users className="h-4 w-4" />
+                    <span>{service.professionals} prof.</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                  <span className="text-lg font-bold">
+                    R$ {service.price.toFixed(2)}
+                  </span>
+                  <Badge variant={service.active ? "default" : "secondary"}>
+                    {service.active ? "Ativo" : "Inativo"}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Table View */}
+      {view === "table" && (
+        <Card className="border-border/50">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome</TableHead>
+                <TableHead className="hidden md:table-cell">Profissionais</TableHead>
+                <TableHead>Duração</TableHead>
+                <TableHead>Preço</TableHead>
+                <TableHead className="hidden sm:table-cell">Usos</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredServices.map((service) => (
+                <TableRow key={service.id} className={cn(!service.active && "opacity-60")}>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <div className={cn("p-2 rounded-lg bg-gradient-to-br", service.color)}>
+                        <Stethoscope className="h-4 w-4 text-white" />
                       </div>
-                      <div className="flex items-center gap-2">
-                      {service.popular && (
-                        <Badge variant="secondary" className="gap-1 text-xs">
-                          <Star className="h-3 w-3" />
-                          Popular
-                        </Badge>
-                      )}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem 
-                            className="gap-2"
-                            onClick={() => setSelectedService(service)}
-                          >
-                            <Eye className="h-4 w-4" />
-                            Visualizar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2" onClick={() => {
-                            setServiceToEdit(service);
-                            setIsEditServiceOpen(true);
-                          }}>
-                            <Edit2 className="h-4 w-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2">
-                            <Copy className="h-4 w-4" />
-                            Duplicar
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="gap-2 text-destructive">
-                            <Trash2 className="h-4 w-4" />
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <div>
+                        <p className="font-medium flex items-center gap-2">
+                          {service.name}
+                          {service.popular && (
+                            <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                          )}
+                        </p>
+                        <p className="text-xs text-muted-foreground hidden sm:block">
+                          {service.description}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-
-                  <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">
-                    {service.name}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mb-4 line-clamp-2">
-                    {service.description}
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-2 mb-4">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>{service.duration} min</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Users className="h-3.5 w-3.5" />
-                      <span>{service.professionals} prof.</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-border/50">
-                    <span className="text-lg font-bold">
-                      R$ {service.price.toFixed(2)}
-                    </span>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <Badge variant="outline">{service.professionals}</Badge>
+                  </TableCell>
+                  <TableCell>{service.duration} min</TableCell>
+                  <TableCell className="font-medium">R$ {service.price.toFixed(2)}</TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <span className="text-muted-foreground">{service.uses}x</span>
+                  </TableCell>
+                  <TableCell>
                     <Badge variant={service.active ? "default" : "secondary"}>
                       {service.active ? "Ativo" : "Inativo"}
                     </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Table View */}
-        {view === "table" && (
-          <Card className="border-border/50">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Serviço</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Duração</TableHead>
-                  <TableHead>Preço</TableHead>
-                  <TableHead>Profissionais</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem className="gap-2">
+                          <Edit2 className="h-4 w-4" />
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2">
+                          <Copy className="h-4 w-4" />
+                          Duplicar
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="gap-2 text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                          Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredServices.map((service) => (
-                  <TableRow key={service.id} className={cn(!service.active && "opacity-60")}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="p-1.5 rounded-lg bg-primary/10">
-                          <Stethoscope className="h-3.5 w-3.5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium">{service.name}</p>
-                          <p className="text-xs text-muted-foreground">{service.description}</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="capitalize">
-                        {service.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{service.duration} min</TableCell>
-                    <TableCell className="font-medium">R$ {service.price.toFixed(2)}</TableCell>
-                    <TableCell>{service.professionals}</TableCell>
-                    <TableCell>
-                      <Badge variant={service.active ? "default" : "secondary"}>
-                        {service.active ? "Ativo" : "Inativo"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="gap-2" onClick={() => setSelectedService(service)}>
-                            <Eye className="h-4 w-4" />
-                            Visualizar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2" onClick={() => {
-                            setServiceToEdit(service);
-                            setIsEditServiceOpen(true);
-                          }}>
-                            <Edit2 className="h-4 w-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2">
-                            <Copy className="h-4 w-4" />
-                            Duplicar
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="gap-2 text-destructive">
-                            <Trash2 className="h-4 w-4" />
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Card>
-        )}
-      </PageContent>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
 
-      {/* Modals */}
-      <ServiceDetailModal
+      <ServiceDetailModal 
+        open={!!selectedService} 
+        onOpenChange={(open) => !open && setSelectedService(null)} 
         service={selectedService}
-        open={!!selectedService}
-        onOpenChange={(open) => !open && setSelectedService(null)}
+        onEdit={() => {
+          setServiceToEdit(selectedService);
+          setIsEditServiceOpen(true);
+          setSelectedService(null);
+        }}
       />
-      <ServiceEditModal
-        service={serviceToEdit}
-        open={isEditServiceOpen}
+      <ServiceEditModal 
+        open={isEditServiceOpen} 
         onOpenChange={setIsEditServiceOpen}
+        service={serviceToEdit}
       />
+      </PageContent>
     </PageContainer>
   );
 }

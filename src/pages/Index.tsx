@@ -64,9 +64,9 @@ const Index = () => {
                   change="+12%"
                   changeType="positive"
                   icon={Calendar}
+                  iconGradient="from-primary to-info"
                   description="vs. semana passada"
                   index={0}
-                  accent="primary"
                 />
                 <MetricCard
                   title="Pacientes Ativos"
@@ -74,9 +74,9 @@ const Index = () => {
                   change="+48"
                   changeType="positive"
                   icon={Users}
+                  iconGradient="from-violet-500 to-purple-500"
                   description="este mês"
                   index={1}
-                  accent="teal"
                 />
                 <MetricCard
                   title="Receita Mensal"
@@ -84,9 +84,9 @@ const Index = () => {
                   change="+8.2%"
                   changeType="positive"
                   icon={DollarSign}
+                  iconGradient="from-success to-success"
                   description="vs. mês anterior"
                   index={2}
-                  accent="emerald"
                 />
                 <MetricCard
                   title="Taxa de Ocupação"
@@ -94,9 +94,9 @@ const Index = () => {
                   change="-3%"
                   changeType="negative"
                   icon={TrendingUp}
+                  iconGradient="from-warning to-warning"
                   description="capacidade utilizada"
                   index={3}
-                  accent="purple"
                 />
                 <MetricCard
                   title="Tempo Médio Espera"
@@ -104,9 +104,9 @@ const Index = () => {
                   change="-2min"
                   changeType="positive"
                   icon={Clock}
+                  iconGradient="from-info to-primary"
                   description="vs. média anterior"
                   index={4}
-                  accent="amber"
                 />
                 <MetricCard
                   title="Taxa Comparecimento"
@@ -114,9 +114,9 @@ const Index = () => {
                   change="+2%"
                   changeType="positive"
                   icon={UserCheck}
+                  iconGradient="from-success to-success"
                   description="no-show reduzido"
                   index={5}
-                  accent="rose"
                 />
               </div>
               <div className="lg:col-span-1">

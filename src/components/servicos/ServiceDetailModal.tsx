@@ -47,6 +47,7 @@ interface ServiceDetailModalProps {
     popular?: boolean;
     uses: number;
     tussCode?: string;
+    color: string;
   } | null;
   onEdit?: () => void;
 }
@@ -105,8 +106,11 @@ export function ServiceDetailModal({ open, onOpenChange, service, onEdit }: Serv
         <DialogHeader>
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-primary/10">
-                <Stethoscope className="h-6 w-6 text-primary" />
+              <div className={cn(
+                "p-3 rounded-2xl bg-gradient-to-br shadow-lg",
+                service.color
+              )}>
+                <Stethoscope className="h-6 w-6 text-white" />
               </div>
               <div>
                 <DialogTitle className="text-xl flex items-center gap-2">
