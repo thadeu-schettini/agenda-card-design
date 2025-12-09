@@ -123,7 +123,7 @@ export default function SuperAdmin() {
       case "Enterprise":
         return <Badge className="bg-purple-500/10 text-purple-600 border-purple-500/20">Enterprise</Badge>;
       case "Business":
-        return <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">Business</Badge>;
+        return <Badge className="bg-success/10 text-success border-success/20">Business</Badge>;
       case "Pro":
         return <Badge className="bg-primary/10 text-primary border-primary/20">Pro</Badge>;
       default:
@@ -134,11 +134,11 @@ export default function SuperAdmin() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 gap-1"><CheckCircle2 className="h-3 w-3" />Ativo</Badge>;
+        return <Badge className="bg-status-confirmed/10 text-status-confirmed border-status-confirmed/20 gap-1"><CheckCircle2 className="h-3 w-3" />Ativo</Badge>;
       case "trial":
-        return <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20">Trial</Badge>;
+        return <Badge className="bg-info/10 text-info border-info/20">Trial</Badge>;
       case "suspended":
-        return <Badge className="bg-red-500/10 text-red-600 border-red-500/20 gap-1"><Ban className="h-3 w-3" />Suspenso</Badge>;
+        return <Badge className="bg-destructive/10 text-destructive border-destructive/20 gap-1"><Ban className="h-3 w-3" />Suspenso</Badge>;
       default:
         return null;
     }
@@ -147,22 +147,22 @@ export default function SuperAdmin() {
   const getTicketPriority = (priority: string) => {
     switch (priority) {
       case "high":
-        return <Badge className="bg-red-500/10 text-red-600 border-red-500/20">Alta</Badge>;
+        return <Badge className="bg-destructive/10 text-destructive border-destructive/20">Alta</Badge>;
       case "medium":
-        return <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20">Média</Badge>;
+        return <Badge className="bg-warning/10 text-warning border-warning/20">Média</Badge>;
       default:
-        return <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20">Baixa</Badge>;
+        return <Badge className="bg-info/10 text-info border-info/20">Baixa</Badge>;
     }
   };
 
   const getTicketStatus = (status: string) => {
     switch (status) {
       case "open":
-        return <Badge variant="outline" className="text-red-600 border-red-500/30">Aberto</Badge>;
+        return <Badge variant="outline" className="text-destructive border-destructive/30">Aberto</Badge>;
       case "in_progress":
-        return <Badge variant="outline" className="text-amber-600 border-amber-500/30">Em Andamento</Badge>;
+        return <Badge variant="outline" className="text-warning border-warning/30">Em Andamento</Badge>;
       case "resolved":
-        return <Badge variant="outline" className="text-emerald-600 border-emerald-500/30">Resolvido</Badge>;
+        return <Badge variant="outline" className="text-success border-success/30">Resolvido</Badge>;
       default:
         return null;
     }
