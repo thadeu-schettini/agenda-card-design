@@ -317,10 +317,10 @@ export const FullCalendarView = ({ isFullscreen, onToggleFullscreen }: FullCalen
     const end = eventInfo.event.end;
     const durationMinutes = start && end ? (end.getTime() - start.getTime()) / (1000 * 60) : 30;
     
-    // Determine content level based on duration
-    const isCompact = durationMinutes <= 20;
-    const isMedium = durationMinutes > 20 && durationMinutes <= 35;
-    const isLarge = durationMinutes > 35;
+    // Determine content level based on duration - adjusted to show full content for 30min+ slots
+    const isCompact = durationMinutes <= 15;
+    const isMedium = durationMinutes > 15 && durationMinutes < 25;
+    const isLarge = durationMinutes >= 25;
 
     if (isMonthView) {
       return (
