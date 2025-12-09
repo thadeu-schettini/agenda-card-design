@@ -185,7 +185,7 @@ const stats = [
 ];
 
 export default function Servicos() {
-  const [view, setView] = useState<"grid" | "table">("grid");
+  const [view, setView] = useState<"grid" | "table">("table");
   const [onlyActive, setOnlyActive] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -393,100 +393,116 @@ export default function Servicos() {
       {/* Grid View */}
       {view === "grid" && (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredServices.map((service) => (
-            <Card 
-              key={service.id}
-              className={cn(
-                "group relative overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg cursor-pointer",
-                !service.active && "opacity-60"
-              )}
-            >
-              <CardContent className="p-4 relative">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    {(() => {
-                      const CategoryIcon = getCategoryIcon(service.category);
-                      return (
-                        <div className={cn("p-1.5 rounded-lg bg-gradient-to-br", categoryColors[service.category as keyof typeof categoryColors])}>
-                          <CategoryIcon className="h-3.5 w-3.5 text-white" />
-                        </div>
-                      );
-                    })()}
-                    <Badge variant="outline" className={cn("text-xs capitalize", categoryBgColors[service.category as keyof typeof categoryBgColors])}>
-                      {service.category}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {service.popular && (
-                      <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 gap-1">
-                        <Star className="h-3 w-3 fill-amber-500" />
-                        Popular
-                      </Badge>
-                    )}
+          {filteredServices.map((service) => {
+            const CategoryIcon = getCategoryIcon(service.category);
+            const categoryColor = categoryColors[service.category as keyof typeof categoryColors] || "from-primary/70 to-primary/50";
+            
+            return (
+              <Card 
+                key={service.id}
+                className={cn(
+                  "group relative overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg cursor-pointer",
+                  !service.active && "opacity-60"
+                )}
+                onClick={() => setSelectedService(service)}
+              >
+                {/* Subtle background accent */}
+                <div 
+                  className={cn(
+                    "absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2 bg-gradient-to-br",
+                    categoryColor
+                  )} 
+                />
+                
+                <CardContent className="p-4 relative">
+                  {/* Header Row */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className={cn("p-1.5 rounded-lg bg-gradient-to-br", categoryColor)}>
+                        <CategoryIcon className="h-3.5 w-3.5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm group-hover:text-primary transition-colors line-clamp-1">
+                          {service.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground capitalize">{service.category}</p>
+                      </div>
+                    </div>
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem 
                           className="gap-2"
-                          onClick={() => setSelectedService(service)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedService(service);
+                          }}
                         >
                           <Eye className="h-4 w-4" />
                           Visualizar
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2" onClick={() => {
+                        <DropdownMenuItem className="gap-2" onClick={(e) => {
+                          e.stopPropagation();
                           setServiceToEdit(service);
                           setIsEditServiceOpen(true);
                         }}>
                           <Edit2 className="h-4 w-4" />
                           Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2">
+                        <DropdownMenuItem className="gap-2" onClick={(e) => e.stopPropagation()}>
                           <Copy className="h-4 w-4" />
                           Duplicar
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-2 text-destructive">
+                        <DropdownMenuItem className="gap-2 text-destructive" onClick={(e) => e.stopPropagation()}>
                           <Trash2 className="h-4 w-4" />
                           Excluir
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                </div>
 
-                <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">
-                  {service.name}
-                </h3>
-                <p className="text-xs text-muted-foreground mb-4 line-clamp-2">
-                  {service.description}
-                </p>
-
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4" />
-                    <span>{service.duration} min</span>
+                  {/* Quick Stats Row */}
+                  <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span>{service.duration} min</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      <span>{service.professionals} prof.</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <TrendingUp className="h-3 w-3" />
+                      <span>{service.uses}x</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Users className="h-4 w-4" />
-                    <span>{service.professionals} prof.</span>
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-border/50">
-                  <span className="text-lg font-bold">
-                    R$ {service.price.toFixed(2)}
-                  </span>
-                  <Badge variant={service.active ? "default" : "secondary"}>
-                    {service.active ? "Ativo" : "Inativo"}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  {/* Footer */}
+                  <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                    <span className="text-lg font-bold">
+                      R$ {service.price.toFixed(2)}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {service.popular && (
+                        <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 gap-1 text-xs">
+                          <Star className="h-2.5 w-2.5 fill-amber-500" />
+                          Popular
+                        </Badge>
+                      )}
+                      <Badge variant={service.active ? "default" : "secondary"} className="text-xs">
+                        {service.active ? "Ativo" : "Inativo"}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
