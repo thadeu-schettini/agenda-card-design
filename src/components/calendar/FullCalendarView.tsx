@@ -160,6 +160,12 @@ export const FullCalendarView = () => {
   const [events] = useState<CalendarEvent[]>(mockEvents);
   const [selectedAppointment, setSelectedAppointment] = useState<CalendarEvent | null>(null);
   const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
+  const [appointmentMode, setAppointmentMode] = useState<"view" | "create">("view");
+  const [newAppointmentData, setNewAppointmentData] = useState<{
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+  } | null>(null);
 
   const viewOptions = [
     { value: "timeGridDay" as ViewType, label: "Dia", icon: List },
@@ -203,13 +209,26 @@ export const FullCalendarView = () => {
         room: event.extendedProps.room
       }
     });
+    setAppointmentMode("view");
     setAppointmentModalOpen(true);
   };
 
   const handleDateSelect = (info: DateSelectArg) => {
-    toast.success("Novo agendamento", {
-      description: `Criar agendamento para ${info.start.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`
+    const formatTime = (date: Date) => {
+      return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false });
+    };
+    
+    const formatDate = (date: Date) => {
+      return date.toISOString().split('T')[0];
+    };
+
+    setNewAppointmentData({
+      date: formatDate(info.start),
+      startTime: formatTime(info.start),
+      endTime: formatTime(info.end)
     });
+    setAppointmentMode("create");
+    setAppointmentModalOpen(true);
   };
 
   const handleEventDrop = (info: EventDropArg) => {
@@ -395,7 +414,9 @@ export const FullCalendarView = () => {
       {/* Appointment Detail Modal */}
       <AppointmentCard 
         open={appointmentModalOpen} 
-        onOpenChange={setAppointmentModalOpen} 
+        onOpenChange={setAppointmentModalOpen}
+        mode={appointmentMode}
+        initialData={appointmentMode === "create" ? newAppointmentData || undefined : undefined}
       />
     </>
   );

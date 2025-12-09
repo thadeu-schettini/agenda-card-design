@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
@@ -57,9 +57,20 @@ type AppointmentStatus =
   | "cancelado_clinica"
   | "cancelado_paciente";
 
+interface AppointmentData {
+  date?: string;
+  startTime?: string;
+  endTime?: string;
+  patient?: string;
+  professional?: string;
+  service?: string;
+}
+
 interface AppointmentCardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  mode?: "view" | "create";
+  initialData?: AppointmentData;
 }
 
 const statusConfig: Record<AppointmentStatus, { label: string; color: string; icon: any }> = {
@@ -74,10 +85,10 @@ const statusConfig: Record<AppointmentStatus, { label: string; color: string; ic
   cancelado_paciente: { label: "Cancelado (paciente)", color: "bg-red-500", icon: XCircle },
 };
 
-export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) => {
+export const AppointmentCard = ({ open, onOpenChange, mode = "view", initialData }: AppointmentCardProps) => {
   const { toast } = useToast();
-  const [status, setStatus] = useState<AppointmentStatus>("realizado");
-  const [isEditing, setIsEditing] = useState(false);
+  const [status, setStatus] = useState<AppointmentStatus>(mode === "create" ? "pendente" : "realizado");
+  const [isEditing, setIsEditing] = useState(mode === "create");
   const [billingModalOpen, setBillingModalOpen] = useState(false);
   const [professionalOpen, setProfessionalOpen] = useState(false);
   const [roomLinks, setRoomLinks] = useState<{
@@ -94,20 +105,51 @@ export const AppointmentCard = ({ open, onOpenChange }: AppointmentCardProps) =>
     "Dr. Carlos Mendes",
     "Dra. Juliana Ferreira"
   ];
-  const [formData, setFormData] = useState({
-    date: "2025-11-27",
-    startTime: "12:05",
-    endTime: "12:35",
-    professional: "Dr(a). Cleta Bogisich",
-    service: "Consulta Dermatologia",
-    serviceValue: "210,00",
-    attendanceType: "Consulta Padrão",
-    mode: "online", // "online" | "presencial" | "domiciliar"
-    onlineLink: "",
-    homeAddress: "Rua Example, 123 - Bairro - Cidade/UF",
-    planSession: "",
-    observations: "Agendamento gerado automaticamente (57)"
-  });
+
+  const getDefaultFormData = () => {
+    if (mode === "create" && initialData) {
+      return {
+        date: initialData.date || new Date().toISOString().split('T')[0],
+        startTime: initialData.startTime || "08:00",
+        endTime: initialData.endTime || "08:30",
+        professional: initialData.professional || "",
+        service: "",
+        serviceValue: "",
+        attendanceType: "Consulta Padrão",
+        mode: "presencial",
+        onlineLink: "",
+        homeAddress: "",
+        planSession: "",
+        observations: ""
+      };
+    }
+    return {
+      date: "2025-11-27",
+      startTime: "12:05",
+      endTime: "12:35",
+      professional: "Dr(a). Cleta Bogisich",
+      service: "Consulta Dermatologia",
+      serviceValue: "210,00",
+      attendanceType: "Consulta Padrão",
+      mode: "online",
+      onlineLink: "",
+      homeAddress: "Rua Example, 123 - Bairro - Cidade/UF",
+      planSession: "",
+      observations: "Agendamento gerado automaticamente (57)"
+    };
+  };
+
+  const [formData, setFormData] = useState(getDefaultFormData());
+  
+  // Reset form when modal opens with new data
+  useEffect(() => {
+    if (open) {
+      setFormData(getDefaultFormData());
+      setIsEditing(mode === "create");
+      setStatus(mode === "create" ? "pendente" : "realizado");
+    }
+  }, [open, mode, initialData]);
+  
   
   const currentStatus = statusConfig[status];
   const StatusIcon = currentStatus.icon;
