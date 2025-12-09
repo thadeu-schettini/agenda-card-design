@@ -756,9 +756,22 @@ export function ScheduleReportModal({ open, onOpenChange }: ScheduleReportModalP
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button className="gap-2">
-            <Calendar className="h-4 w-4" />
-            Criar Agendamento
+          <Button 
+            className="gap-2" 
+            onClick={handleCreateSchedule}
+            disabled={isCreating || selectedReports.length === 0}
+          >
+            {isCreating ? (
+              <>
+                <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Criando...
+              </>
+            ) : (
+              <>
+                <Calendar className="h-4 w-4" />
+                Criar Agendamento
+              </>
+            )}
           </Button>
         </div>
       </DialogContent>
