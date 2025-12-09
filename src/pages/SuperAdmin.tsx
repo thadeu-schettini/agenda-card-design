@@ -169,7 +169,7 @@ export default function SuperAdmin() {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className="px-4 sm:px-6">
       <PageHeader
         icon={Shield}
         iconGradient="from-red-500 to-orange-600"

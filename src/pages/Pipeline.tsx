@@ -123,7 +123,7 @@ export default function Pipeline() {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className="px-4 sm:px-6">
       <PageHeader
         icon={Target}
         iconGradient="from-purple-500 to-pink-600"
