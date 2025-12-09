@@ -40,6 +40,11 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          teal: "hsl(var(--accent-teal))",
+          purple: "hsl(var(--accent-purple))",
+          amber: "hsl(var(--accent-amber))",
+          emerald: "hsl(var(--accent-emerald))",
+          rose: "hsl(var(--accent-rose))",
         },
         success: {
           DEFAULT: "hsl(var(--success))",

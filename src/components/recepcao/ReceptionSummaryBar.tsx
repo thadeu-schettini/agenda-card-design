@@ -1,11 +1,13 @@
 import { Users, Clock, CheckCircle2, AlertCircle, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+type AccentType = "primary" | "teal" | "emerald" | "amber" | "rose" | "muted";
+
 interface SummaryItem {
   icon: React.ElementType;
   label: string;
   value: string | number;
-  accentType?: "default" | "success" | "warning" | "muted";
+  accentType?: AccentType;
 }
 
 const summaryItems: SummaryItem[] = [
@@ -13,54 +15,58 @@ const summaryItems: SummaryItem[] = [
     icon: Users,
     label: "Sala de Espera",
     value: 4,
-    accentType: "default",
+    accentType: "primary",
   },
   {
     icon: Clock,
     label: "Em Atendimento",
     value: 2,
-    accentType: "success",
+    accentType: "emerald",
   },
   {
     icon: CheckCircle2,
     label: "Realizados",
     value: 12,
-    accentType: "muted",
+    accentType: "teal",
   },
   {
     icon: AlertCircle,
     label: "Pendentes",
     value: 5,
-    accentType: "warning",
+    accentType: "amber",
   },
   {
     icon: DollarSign,
     label: "A Cobrar",
     value: "R$ 1.2k",
-    accentType: "default",
+    accentType: "rose",
   },
 ];
 
-const accentStyles = {
-  default: {
+const accentStyles: Record<AccentType, { iconBg: string; iconColor: string }> = {
+  primary: {
     iconBg: "bg-primary/10",
     iconColor: "text-primary",
-    valueColor: "text-foreground",
   },
-  success: {
-    iconBg: "bg-success/10",
-    iconColor: "text-success",
-    valueColor: "text-foreground",
+  teal: {
+    iconBg: "bg-accent-teal/10",
+    iconColor: "text-accent-teal",
   },
-  warning: {
-    iconBg: "bg-warning/10",
-    iconColor: "text-warning",
-    valueColor: "text-foreground",
+  emerald: {
+    iconBg: "bg-accent-emerald/10",
+    iconColor: "text-accent-emerald",
+  },
+  amber: {
+    iconBg: "bg-accent-amber/10",
+    iconColor: "text-accent-amber",
+  },
+  rose: {
+    iconBg: "bg-accent-rose/10",
+    iconColor: "text-accent-rose",
   },
   muted: {
     iconBg: "bg-muted",
     iconColor: "text-muted-foreground",
-    valueColor: "text-foreground",
   },
 };
 
@@ -68,7 +74,7 @@ export function ReceptionSummaryBar() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
       {summaryItems.map((item, index) => {
-        const styles = accentStyles[item.accentType || "default"];
+        const styles = accentStyles[item.accentType || "primary"];
         
         return (
           <div
@@ -91,7 +97,7 @@ export function ReceptionSummaryBar() {
             </div>
             <div className="min-w-0">
               <p className="text-xs text-muted-foreground truncate">{item.label}</p>
-              <p className={cn("text-lg font-semibold", styles.valueColor)}>{item.value}</p>
+              <p className="text-lg font-semibold text-foreground">{item.value}</p>
             </div>
           </div>
         );

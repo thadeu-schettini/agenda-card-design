@@ -120,6 +120,13 @@ All colors MUST be HSL.
     --info: 217 91% 60%;
     --info-foreground: 0 0% 100%;
 
+    /* Accent palette for visual variety */
+    --accent-teal: 173 80% 40%;
+    --accent-purple: 262 83% 58%;
+    --accent-amber: 38 92% 50%;
+    --accent-emerald: 160 84% 39%;
+    --accent-rose: 346 77% 50%;
+
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
@@ -194,6 +201,13 @@ All colors MUST be HSL.
 
     --info: 217 91% 70%;
     --info-foreground: 0 0% 100%;
+
+    /* Accent palette for visual variety */
+    --accent-teal: 173 80% 50%;
+    --accent-purple: 262 83% 68%;
+    --accent-amber: 38 92% 55%;
+    --accent-emerald: 160 84% 49%;
+    --accent-rose: 346 77% 60%;
 
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
