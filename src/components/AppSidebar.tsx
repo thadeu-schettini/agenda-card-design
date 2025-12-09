@@ -91,37 +91,36 @@ export function AppSidebar() {
     <Sidebar
       className={cn(
         "border-r border-border/50 bg-card/50 backdrop-blur-sm transition-all duration-300",
-        collapsed ? "w-[70px]" : "w-[260px]"
+        collapsed ? "w-[72px]" : "w-[260px]"
       )}
       collapsible="icon"
     >
       {/* Header with Logo */}
-      <SidebarHeader className="border-b border-border/50 p-4">
-        <div className="flex items-center justify-between">
-          {!collapsed && (
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 shadow-lg shadow-primary/20">
+      <SidebarHeader className="border-b border-border/50 px-4 py-4">
+        <div className="flex items-center justify-center">
+          {!collapsed ? (
+            <div className="flex items-center gap-3 w-full">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 shadow-lg shadow-primary/20 shrink-0">
                 <span className="text-lg font-bold text-primary-foreground">M</span>
               </div>
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">MedClinic</h2>
-                <p className="text-xs text-muted-foreground">Sistema Médico</p>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg font-semibold text-foreground truncate">MedClinic</h2>
+                <p className="text-xs text-muted-foreground truncate">Sistema Médico</p>
               </div>
             </div>
-          )}
-          {collapsed && (
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 shadow-lg shadow-primary/20">
+          ) : (
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 shadow-lg shadow-primary/20">
               <span className="text-lg font-bold text-primary-foreground">M</span>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-3 py-4">
+      <SidebarContent className="px-2 py-4">
         {/* Main Navigation */}
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
+            <SidebarGroupLabel className="px-3 mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
               Principal
             </SidebarGroupLabel>
           )}
@@ -135,7 +134,7 @@ export function AppSidebar() {
         {/* Management */}
         <SidebarGroup className="mt-6">
           {!collapsed && (
-            <SidebarGroupLabel className="px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
+            <SidebarGroupLabel className="px-3 mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
               Gestão
             </SidebarGroupLabel>
           )}
@@ -149,7 +148,7 @@ export function AppSidebar() {
         {/* Other */}
         <SidebarGroup className="mt-6">
           {!collapsed && (
-            <SidebarGroupLabel className="px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
+            <SidebarGroupLabel className="px-3 mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
               Outros
             </SidebarGroupLabel>
           )}
