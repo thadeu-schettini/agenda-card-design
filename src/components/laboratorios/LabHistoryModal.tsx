@@ -13,6 +13,8 @@ import {
   FileText
 } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
+import { LabResultModal } from "./LabResultModal";
 
 interface LabHistoryModalProps {
   open: boolean;
@@ -21,16 +23,20 @@ interface LabHistoryModalProps {
 }
 
 const mockHistory = [
-  { id: 1, exam: "Hemograma Completo", date: "10/01/2025", lab: "Lab São Lucas", status: "ready", hasAlerts: true },
-  { id: 2, exam: "Glicemia de Jejum", date: "05/01/2025", lab: "Lab Central", status: "ready", hasAlerts: false },
-  { id: 3, exam: "TSH e T4 Livre", date: "20/12/2024", lab: "Lab São Lucas", status: "ready", hasAlerts: false },
-  { id: 4, exam: "Colesterol Total", date: "15/12/2024", lab: "Lab Diagnósticos", status: "ready", hasAlerts: true },
-  { id: 5, exam: "Hemograma Completo", date: "10/11/2024", lab: "Lab São Lucas", status: "ready", hasAlerts: false },
+  { id: 1, exam: "Hemograma Completo", date: "10/01/2025", lab: "Lab São Lucas", status: "ready", hasAlerts: true, alertDescription: "Hemoglobina abaixo do normal", requestDate: "08/01/2025", resultDate: "10/01/2025", professional: "Dr. Carlos Santos" },
+  { id: 2, exam: "Glicemia de Jejum", date: "05/01/2025", lab: "Lab Central", status: "ready", hasAlerts: false, requestDate: "03/01/2025", resultDate: "05/01/2025", professional: "Dra. Ana Lima" },
+  { id: 3, exam: "TSH e T4 Livre", date: "20/12/2024", lab: "Lab São Lucas", status: "ready", hasAlerts: false, requestDate: "18/12/2024", resultDate: "20/12/2024", professional: "Dr. Carlos Santos" },
+  { id: 4, exam: "Colesterol Total", date: "15/12/2024", lab: "Lab Diagnósticos", status: "ready", hasAlerts: true, alertDescription: "LDL acima do recomendado", requestDate: "13/12/2024", resultDate: "15/12/2024", professional: "Dra. Beatriz Rocha" },
+  { id: 5, exam: "Hemograma Completo", date: "10/11/2024", lab: "Lab São Lucas", status: "ready", hasAlerts: false, requestDate: "08/11/2024", resultDate: "10/11/2024", professional: "Dr. Carlos Santos" },
 ];
 
 export function LabHistoryModal({ open, onOpenChange, patient }: LabHistoryModalProps) {
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [selectedResult, setSelectedResult] = useState<any>(null);
+
   const handleView = (exam: typeof mockHistory[0]) => {
-    toast.info(`Visualizando ${exam.exam}`);
+    setSelectedResult({ ...exam, patient });
+    setShowResultModal(true);
   };
 
   const handleDownload = (exam: typeof mockHistory[0]) => {
@@ -117,6 +123,12 @@ export function LabHistoryModal({ open, onOpenChange, patient }: LabHistoryModal
           </Button>
         </div>
       </DialogContent>
+
+      <LabResultModal
+        open={showResultModal}
+        onOpenChange={setShowResultModal}
+        result={selectedResult}
+      />
     </Dialog>
   );
 }
