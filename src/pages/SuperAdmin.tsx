@@ -16,6 +16,18 @@ import { ClinicDetailModal } from "@/components/superadmin/ClinicDetailModal";
 import { UserDetailModal } from "@/components/superadmin/UserDetailModal";
 import { TicketDetailModal } from "@/components/superadmin/TicketDetailModal";
 import { BroadcastModal } from "@/components/superadmin/BroadcastModal";
+import { NewClinicModal } from "@/components/superadmin/NewClinicModal";
+import { ClinicPlanModal } from "@/components/superadmin/ClinicPlanModal";
+import { ClinicHistoryModal } from "@/components/superadmin/ClinicHistoryModal";
+import { ClinicEditModal } from "@/components/superadmin/ClinicEditModal";
+import { SuspendClinicModal } from "@/components/superadmin/SuspendClinicModal";
+import { UserHistoryModal } from "@/components/superadmin/UserHistoryModal";
+import { ResetPasswordModal } from "@/components/superadmin/ResetPasswordModal";
+import { NewTicketModal } from "@/components/superadmin/NewTicketModal";
+import { AuditDetailModal } from "@/components/superadmin/AuditDetailModal";
+import { FeatureFlagModal } from "@/components/superadmin/FeatureFlagModal";
+import { AnnouncementModal } from "@/components/superadmin/AnnouncementModal";
+import { ContactChurnModal } from "@/components/superadmin/ContactChurnModal";
 import { cn } from "@/lib/utils";
 import {
   Shield,
@@ -476,6 +488,24 @@ export default function SuperAdmin() {
   const [showClinicModal, setShowClinicModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showTicketModal, setShowTicketModal] = useState(false);
+  const [showNewClinicModal, setShowNewClinicModal] = useState(false);
+  const [showClinicPlanModal, setShowClinicPlanModal] = useState(false);
+  const [showClinicHistoryModal, setShowClinicHistoryModal] = useState(false);
+  const [showClinicEditModal, setShowClinicEditModal] = useState(false);
+  const [showSuspendClinicModal, setShowSuspendClinicModal] = useState(false);
+  const [showUserHistoryModal, setShowUserHistoryModal] = useState(false);
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [showNewTicketModal, setShowNewTicketModal] = useState(false);
+  const [showAuditDetailModal, setShowAuditDetailModal] = useState(false);
+  const [showFeatureFlagModal, setShowFeatureFlagModal] = useState(false);
+  const [featureFlagMode, setFeatureFlagMode] = useState<"create" | "edit">("create");
+  const [selectedFeatureFlag, setSelectedFeatureFlag] = useState<typeof featureFlags[0] | null>(null);
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [announcementMode, setAnnouncementMode] = useState<"create" | "edit">("create");
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<typeof announcements[0] | null>(null);
+  const [showContactChurnModal, setShowContactChurnModal] = useState(false);
+  const [selectedChurnClinic, setSelectedChurnClinic] = useState<{ name: string; score: number; mrr: number } | null>(null);
+  const [selectedAuditLog, setSelectedAuditLog] = useState<typeof auditLogs[0] | null>(null);
 
   const getPlanBadge = (plan: string) => {
     switch (plan) {
