@@ -975,27 +975,47 @@ export default function SuperAdmin() {
                     <Megaphone className="h-5 w-5 text-primary" />
                     <span className="text-xs">Broadcast</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-success/5 hover:border-success/30">
+                  <Button 
+                    variant="outline" 
+                    className="h-auto py-4 flex-col gap-2 hover:bg-success/5 hover:border-success/30"
+                    onClick={() => setShowNewClinicModal(true)}
+                  >
                     <UserPlus className="h-5 w-5 text-success" />
                     <span className="text-xs">Nova Clínica</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-info/5 hover:border-info/30">
+                  <Button 
+                    variant="outline" 
+                    className="h-auto py-4 flex-col gap-2 hover:bg-info/5 hover:border-info/30"
+                    onClick={() => setShowNewTicketModal(true)}
+                  >
                     <Ticket className="h-5 w-5 text-info" />
-                    <span className="text-xs">Tickets</span>
+                    <span className="text-xs">Novo Ticket</span>
                   </Button>
                   <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-warning/5 hover:border-warning/30">
                     <AlertTriangle className="h-5 w-5 text-warning" />
                     <span className="text-xs">Alertas</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-purple-500/5 hover:border-purple-500/30">
+                  <Button 
+                    variant="outline" 
+                    className="h-auto py-4 flex-col gap-2 hover:bg-purple-500/5 hover:border-purple-500/30"
+                    onClick={() => {
+                      setFeatureFlagMode("create");
+                      setSelectedFeatureFlag(null);
+                      setShowFeatureFlagModal(true);
+                    }}
+                  >
                     <Flag className="h-5 w-5 text-purple-500" />
-                    <span className="text-xs">Feature Flags</span>
+                    <span className="text-xs">Nova Flag</span>
                   </Button>
                   <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-cyan-500/5 hover:border-cyan-500/30">
                     <BarChart3 className="h-5 w-5 text-cyan-500" />
                     <span className="text-xs">Relatórios</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-orange-500/5 hover:border-orange-500/30">
+                  <Button 
+                    variant="outline" 
+                    className="h-auto py-4 flex-col gap-2 hover:bg-orange-500/5 hover:border-orange-500/30"
+                    onClick={() => setSelectedTab("system")}
+                  >
                     <Settings className="h-5 w-5 text-orange-500" />
                     <span className="text-xs">Sistema</span>
                   </Button>
@@ -1282,7 +1302,7 @@ export default function SuperAdmin() {
                     <Filter className="h-4 w-4" />
                     Mais Filtros
                   </Button>
-                  <Button className="gap-2">
+                  <Button className="gap-2" onClick={() => setShowNewClinicModal(true)}>
                     <Plus className="h-4 w-4" />
                     Nova Clínica
                   </Button>
@@ -1391,7 +1411,13 @@ export default function SuperAdmin() {
                             <Eye className="h-4 w-4" />
                             Ver detalhes
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2">
+                          <DropdownMenuItem 
+                            className="gap-2"
+                            onClick={() => {
+                              setSelectedClinic(clinic);
+                              setShowClinicEditModal(true);
+                            }}
+                          >
                             <Edit className="h-4 w-4" />
                             Editar
                           </DropdownMenuItem>
@@ -1400,22 +1426,46 @@ export default function SuperAdmin() {
                             Acessar como admin
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="gap-2">
+                          <DropdownMenuItem 
+                            className="gap-2"
+                            onClick={() => {
+                              setSelectedClinic(clinic);
+                              setShowClinicPlanModal(true);
+                            }}
+                          >
                             <CreditCard className="h-4 w-4" />
                             Gerenciar plano
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2">
+                          <DropdownMenuItem 
+                            className="gap-2"
+                            onClick={() => {
+                              setSelectedClinic(clinic);
+                              setShowClinicHistoryModal(true);
+                            }}
+                          >
                             <History className="h-4 w-4" />
                             Histórico
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           {clinic.status === "suspended" ? (
-                            <DropdownMenuItem className="gap-2 text-success">
+                            <DropdownMenuItem 
+                              className="gap-2 text-success"
+                              onClick={() => {
+                                setSelectedClinic(clinic);
+                                setShowSuspendClinicModal(true);
+                              }}
+                            >
                               <Unlock className="h-4 w-4" />
                               Reativar
                             </DropdownMenuItem>
                           ) : (
-                            <DropdownMenuItem className="gap-2 text-destructive">
+                            <DropdownMenuItem 
+                              className="gap-2 text-destructive"
+                              onClick={() => {
+                                setSelectedClinic(clinic);
+                                setShowSuspendClinicModal(true);
+                              }}
+                            >
                               <Ban className="h-4 w-4" />
                               Suspender
                             </DropdownMenuItem>
@@ -1578,15 +1628,33 @@ export default function SuperAdmin() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="gap-2">
+                          <DropdownMenuItem 
+                            className="gap-2"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowUserModal(true);
+                            }}
+                          >
                             <Eye className="h-4 w-4" />
                             Ver perfil
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2">
+                          <DropdownMenuItem 
+                            className="gap-2"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowResetPasswordModal(true);
+                            }}
+                          >
                             <KeyRound className="h-4 w-4" />
                             Resetar senha
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2">
+                          <DropdownMenuItem 
+                            className="gap-2"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowUserHistoryModal(true);
+                            }}
+                          >
                             <History className="h-4 w-4" />
                             Histórico
                           </DropdownMenuItem>
@@ -1828,7 +1896,7 @@ export default function SuperAdmin() {
                       <SelectItem value="low">Baixa</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button className="gap-2">
+                  <Button className="gap-2" onClick={() => setShowNewTicketModal(true)}>
                     <Plus className="h-4 w-4" />
                     Novo Ticket
                   </Button>
@@ -1964,7 +2032,15 @@ export default function SuperAdmin() {
                         <Globe className="h-3 w-3 mr-1" />
                         {log.ip}
                       </Badge>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => {
+                          setSelectedAuditLog(log);
+                          setShowAuditDetailModal(true);
+                        }}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
                     </div>
@@ -1988,7 +2064,14 @@ export default function SuperAdmin() {
                     <Flag className="h-5 w-5 text-primary" />
                     Feature Flags
                   </h3>
-                  <Button className="gap-2">
+                  <Button 
+                    className="gap-2"
+                    onClick={() => {
+                      setFeatureFlagMode("create");
+                      setSelectedFeatureFlag(null);
+                      setShowFeatureFlagModal(true);
+                    }}
+                  >
                     <Plus className="h-4 w-4" />
                     Nova Flag
                   </Button>
@@ -2023,7 +2106,15 @@ export default function SuperAdmin() {
                           <p className="text-xs text-muted-foreground">Rollout</p>
                         </div>
                         <Progress value={flag.rollout} className="w-20 h-2" />
-                        <Button variant="ghost" size="icon">
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => {
+                            setFeatureFlagMode("edit");
+                            setSelectedFeatureFlag(flag);
+                            setShowFeatureFlagModal(true);
+                          }}
+                        >
                           <Settings className="h-4 w-4" />
                         </Button>
                       </div>
@@ -2039,7 +2130,15 @@ export default function SuperAdmin() {
                     <Megaphone className="h-5 w-5 text-primary" />
                     Anúncios
                   </h3>
-                  <Button size="sm" className="gap-2">
+                  <Button 
+                    size="sm" 
+                    className="gap-2"
+                    onClick={() => {
+                      setAnnouncementMode("create");
+                      setSelectedAnnouncement(null);
+                      setShowAnnouncementModal(true);
+                    }}
+                  >
                     <Plus className="h-4 w-4" />
                     Novo
                   </Button>
@@ -2072,7 +2171,16 @@ export default function SuperAdmin() {
                       <p className="text-xs text-muted-foreground mt-1">{ann.message}</p>
                       <div className="flex items-center justify-between mt-2">
                         <span className="text-xs text-muted-foreground">{ann.createdAt}</span>
-                        <Button variant="ghost" size="sm" className="h-6 text-xs">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 text-xs"
+                          onClick={() => {
+                            setAnnouncementMode("edit");
+                            setSelectedAnnouncement(ann);
+                            setShowAnnouncementModal(true);
+                          }}
+                        >
                           Editar
                         </Button>
                       </div>
@@ -2351,7 +2459,15 @@ export default function SuperAdmin() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" className="gap-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="gap-1"
+                        onClick={() => {
+                          setSelectedChurnClinic({ name: clinic.name, score: clinic.risk, mrr: clinic.mrr });
+                          setShowContactChurnModal(true);
+                        }}
+                      >
                         <Mail className="h-3 w-3" />
                         Contatar
                       </Button>
@@ -2702,6 +2818,107 @@ export default function SuperAdmin() {
       <BroadcastModal
         open={showBroadcastModal}
         onOpenChange={setShowBroadcastModal}
+      />
+
+      <NewClinicModal
+        open={showNewClinicModal}
+        onOpenChange={setShowNewClinicModal}
+      />
+
+      <ClinicPlanModal
+        open={showClinicPlanModal}
+        onOpenChange={setShowClinicPlanModal}
+        clinic={selectedClinic ? {
+          id: selectedClinic.id,
+          name: selectedClinic.name,
+          currentPlan: selectedClinic.plan,
+          mrr: selectedClinic.mrr
+        } : null}
+      />
+
+      <ClinicHistoryModal
+        open={showClinicHistoryModal}
+        onOpenChange={setShowClinicHistoryModal}
+        clinic={selectedClinic ? {
+          id: selectedClinic.id,
+          name: selectedClinic.name
+        } : null}
+      />
+
+      <ClinicEditModal
+        open={showClinicEditModal}
+        onOpenChange={setShowClinicEditModal}
+        clinic={selectedClinic ? {
+          id: selectedClinic.id,
+          name: selectedClinic.name,
+          owner: selectedClinic.owner,
+          email: selectedClinic.email,
+          phone: selectedClinic.phone,
+          location: selectedClinic.location,
+          plan: selectedClinic.plan,
+          status: selectedClinic.status
+        } : null}
+      />
+
+      <SuspendClinicModal
+        open={showSuspendClinicModal}
+        onOpenChange={setShowSuspendClinicModal}
+        clinic={selectedClinic ? {
+          id: selectedClinic.id,
+          name: selectedClinic.name,
+          status: selectedClinic.status
+        } : null}
+      />
+
+      <UserHistoryModal
+        open={showUserHistoryModal}
+        onOpenChange={setShowUserHistoryModal}
+        user={selectedUser ? {
+          id: selectedUser.id,
+          name: selectedUser.name,
+          email: selectedUser.email
+        } : null}
+      />
+
+      <ResetPasswordModal
+        open={showResetPasswordModal}
+        onOpenChange={setShowResetPasswordModal}
+        user={selectedUser ? {
+          id: selectedUser.id,
+          name: selectedUser.name,
+          email: selectedUser.email
+        } : null}
+      />
+
+      <NewTicketModal
+        open={showNewTicketModal}
+        onOpenChange={setShowNewTicketModal}
+      />
+
+      <AuditDetailModal
+        open={showAuditDetailModal}
+        onOpenChange={setShowAuditDetailModal}
+        log={selectedAuditLog}
+      />
+
+      <FeatureFlagModal
+        open={showFeatureFlagModal}
+        onOpenChange={setShowFeatureFlagModal}
+        flag={selectedFeatureFlag}
+        mode={featureFlagMode}
+      />
+
+      <AnnouncementModal
+        open={showAnnouncementModal}
+        onOpenChange={setShowAnnouncementModal}
+        announcement={selectedAnnouncement}
+        mode={announcementMode}
+      />
+
+      <ContactChurnModal
+        open={showContactChurnModal}
+        onOpenChange={setShowContactChurnModal}
+        clinic={selectedChurnClinic}
       />
     </PageContainer>
   );
