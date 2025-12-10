@@ -224,46 +224,54 @@ export default function PortalPaciente() {
         </Card>
 
         {/* Quick Actions - Revolutionary Items */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-6">
           <button 
             onClick={() => setMedicationRemindersOpen(true)}
-            className="p-3 sm:p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 hover:border-purple-500/40 hover:shadow-lg active:scale-[0.98] transition-all duration-300 text-left group"
+            className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 hover:border-purple-500/40 hover:shadow-lg active:scale-[0.98] transition-all duration-300 text-left group flex items-center gap-2.5 sm:gap-3"
           >
-            <div className="p-1.5 sm:p-2 rounded-lg bg-purple-500/20 w-fit mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
+            <div className="p-1.5 sm:p-2 rounded-lg bg-purple-500/20 group-hover:scale-110 transition-transform shrink-0">
               <Pill className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500" />
             </div>
-            <p className="font-medium text-xs sm:text-sm">Medicações</p>
-            <p className="text-[10px] sm:text-xs text-muted-foreground">3 lembretes ativos</p>
+            <div className="min-w-0">
+              <p className="font-medium text-xs sm:text-sm">Medicações</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">3 lembretes</p>
+            </div>
           </button>
           <button 
             onClick={() => setHealthMetricsOpen(true)}
-            className="p-3 sm:p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 hover:border-emerald-500/40 hover:shadow-lg active:scale-[0.98] transition-all duration-300 text-left group"
+            className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 hover:border-emerald-500/40 hover:shadow-lg active:scale-[0.98] transition-all duration-300 text-left group flex items-center gap-2.5 sm:gap-3"
           >
-            <div className="p-1.5 sm:p-2 rounded-lg bg-emerald-500/20 w-fit mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
+            <div className="p-1.5 sm:p-2 rounded-lg bg-emerald-500/20 group-hover:scale-110 transition-transform shrink-0">
               <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500" />
             </div>
-            <p className="font-medium text-xs sm:text-sm">Métricas</p>
-            <p className="text-[10px] sm:text-xs text-muted-foreground">Acompanhe sua saúde</p>
+            <div className="min-w-0">
+              <p className="font-medium text-xs sm:text-sm">Métricas</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Saúde</p>
+            </div>
           </button>
           <button 
             onClick={() => setTeleconsultaConfigOpen(true)}
-            className="p-3 sm:p-4 rounded-xl bg-gradient-to-br from-info/10 to-info/5 border border-info/20 hover:border-info/40 hover:shadow-lg active:scale-[0.98] transition-all duration-300 text-left group"
+            className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-info/10 to-info/5 border border-info/20 hover:border-info/40 hover:shadow-lg active:scale-[0.98] transition-all duration-300 text-left group flex items-center gap-2.5 sm:gap-3"
           >
-            <div className="p-1.5 sm:p-2 rounded-lg bg-info/20 w-fit mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
+            <div className="p-1.5 sm:p-2 rounded-lg bg-info/20 group-hover:scale-110 transition-transform shrink-0">
               <Video className="h-4 w-4 sm:h-5 sm:w-5 text-info" />
             </div>
-            <p className="font-medium text-xs sm:text-sm">Teleconsulta</p>
-            <p className="text-[10px] sm:text-xs text-muted-foreground">Configurações</p>
+            <div className="min-w-0">
+              <p className="font-medium text-xs sm:text-sm">Teleconsulta</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Config</p>
+            </div>
           </button>
           <button 
             onClick={() => setFamilyAccessOpen(true)}
-            className="p-3 sm:p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 hover:border-amber-500/40 hover:shadow-lg active:scale-[0.98] transition-all duration-300 text-left group"
+            className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 hover:border-amber-500/40 hover:shadow-lg active:scale-[0.98] transition-all duration-300 text-left group flex items-center gap-2.5 sm:gap-3"
           >
-            <div className="p-1.5 sm:p-2 rounded-lg bg-amber-500/20 w-fit mb-1.5 sm:mb-2 group-hover:scale-110 transition-transform">
+            <div className="p-1.5 sm:p-2 rounded-lg bg-amber-500/20 group-hover:scale-110 transition-transform shrink-0">
               <Users className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
             </div>
-            <p className="font-medium text-xs sm:text-sm">Família</p>
-            <p className="text-[10px] sm:text-xs text-muted-foreground">Compartilhar acesso</p>
+            <div className="min-w-0">
+              <p className="font-medium text-xs sm:text-sm">Família</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Acesso</p>
+            </div>
           </button>
         </div>
 
