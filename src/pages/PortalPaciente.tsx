@@ -41,7 +41,9 @@ import {
   LogOut,
   Camera,
   Calendar as CalendarIcon,
-  Video
+  Video,
+  Users,
+  Sparkles
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NewAppointmentModal } from "@/components/portal/NewAppointmentModal";
@@ -52,6 +54,11 @@ import { DocumentViewerModal } from "@/components/portal/DocumentViewerModal";
 import { PasswordChangeModal } from "@/components/portal/PasswordChangeModal";
 import { PrivacySettingsModal } from "@/components/portal/PrivacySettingsModal";
 import { OnlineRoomModal } from "@/components/portal/OnlineRoomModal";
+import { MedicationRemindersModal } from "@/components/portal/MedicationRemindersModal";
+import { ClinicChatModal } from "@/components/portal/ClinicChatModal";
+import { TeleconsultaConfigModal } from "@/components/portal/TeleconsultaConfigModal";
+import { HealthMetricsModal } from "@/components/portal/HealthMetricsModal";
+import { FamilyAccessModal } from "@/components/portal/FamilyAccessModal";
 
 // Mock patient data
 const patientData = {
@@ -117,6 +124,11 @@ export default function PortalPaciente() {
   const [passwordChangeOpen, setPasswordChangeOpen] = useState(false);
   const [privacySettingsOpen, setPrivacySettingsOpen] = useState(false);
   const [onlineRoomOpen, setOnlineRoomOpen] = useState(false);
+  const [medicationRemindersOpen, setMedicationRemindersOpen] = useState(false);
+  const [clinicChatOpen, setClinicChatOpen] = useState(false);
+  const [teleconsultaConfigOpen, setTeleconsultaConfigOpen] = useState(false);
+  const [healthMetricsOpen, setHealthMetricsOpen] = useState(false);
+  const [familyAccessOpen, setFamilyAccessOpen] = useState(false);
 
   const openAppointmentDetail = (apt: any, mode: "view" | "reschedule" | "cancel") => {
     setSelectedAppointment(apt);
@@ -201,13 +213,57 @@ export default function PortalPaciente() {
                 <Plus className="h-4 w-4" />
                 Agendar Consulta
               </Button>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2" onClick={() => setClinicChatOpen(true)}>
                 <MessageSquare className="h-4 w-4" />
                 Falar com a Clínica
               </Button>
             </div>
           </div>
         </Card>
+
+        {/* Quick Actions - Revolutionary Items */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 sm:mb-6">
+          <button 
+            onClick={() => setMedicationRemindersOpen(true)}
+            className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 hover:border-purple-500/40 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-left group"
+          >
+            <div className="p-2 rounded-lg bg-purple-500/20 w-fit mb-2 group-hover:scale-110 transition-transform">
+              <Pill className="h-5 w-5 text-purple-500" />
+            </div>
+            <p className="font-medium text-sm">Medicações</p>
+            <p className="text-xs text-muted-foreground">3 lembretes ativos</p>
+          </button>
+          <button 
+            onClick={() => setHealthMetricsOpen(true)}
+            className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 hover:border-emerald-500/40 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-left group"
+          >
+            <div className="p-2 rounded-lg bg-emerald-500/20 w-fit mb-2 group-hover:scale-110 transition-transform">
+              <Activity className="h-5 w-5 text-emerald-500" />
+            </div>
+            <p className="font-medium text-sm">Métricas</p>
+            <p className="text-xs text-muted-foreground">Acompanhe sua saúde</p>
+          </button>
+          <button 
+            onClick={() => setTeleconsultaConfigOpen(true)}
+            className="p-4 rounded-xl bg-gradient-to-br from-info/10 to-info/5 border border-info/20 hover:border-info/40 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-left group"
+          >
+            <div className="p-2 rounded-lg bg-info/20 w-fit mb-2 group-hover:scale-110 transition-transform">
+              <Video className="h-5 w-5 text-info" />
+            </div>
+            <p className="font-medium text-sm">Teleconsulta</p>
+            <p className="text-xs text-muted-foreground">Configurações</p>
+          </button>
+          <button 
+            onClick={() => setFamilyAccessOpen(true)}
+            className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 hover:border-amber-500/40 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-left group"
+          >
+            <div className="p-2 rounded-lg bg-amber-500/20 w-fit mb-2 group-hover:scale-110 transition-transform">
+              <Users className="h-5 w-5 text-amber-500" />
+            </div>
+            <p className="font-medium text-sm">Família</p>
+            <p className="text-xs text-muted-foreground">Compartilhar acesso</p>
+          </button>
+        </div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -704,6 +760,11 @@ export default function PortalPaciente() {
       <PasswordChangeModal open={passwordChangeOpen} onOpenChange={setPasswordChangeOpen} />
       <PrivacySettingsModal open={privacySettingsOpen} onOpenChange={setPrivacySettingsOpen} />
       <OnlineRoomModal open={onlineRoomOpen} onOpenChange={setOnlineRoomOpen} />
+      <MedicationRemindersModal open={medicationRemindersOpen} onOpenChange={setMedicationRemindersOpen} />
+      <ClinicChatModal open={clinicChatOpen} onOpenChange={setClinicChatOpen} />
+      <TeleconsultaConfigModal open={teleconsultaConfigOpen} onOpenChange={setTeleconsultaConfigOpen} />
+      <HealthMetricsModal open={healthMetricsOpen} onOpenChange={setHealthMetricsOpen} />
+      <FamilyAccessModal open={familyAccessOpen} onOpenChange={setFamilyAccessOpen} />
     </div>
   );
 }
