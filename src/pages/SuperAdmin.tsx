@@ -742,6 +742,10 @@ export default function SuperAdmin() {
                 <Server className="h-4 w-4" />
                 <span className="hidden sm:inline">Sistema</span>
               </TabsTrigger>
+              <TabsTrigger value="analytics" className="gap-2 text-xs sm:text-sm">
+                <BarChart3 className="h-4 w-4" />
+                <span className="hidden sm:inline">Analytics</span>
+              </TabsTrigger>
             </TabsList>
           </ScrollArea>
 
@@ -2044,6 +2048,412 @@ export default function SuperAdmin() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-6">
+            {/* Cohort Analysis Full */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <LayoutGrid className="h-5 w-5 text-primary" />
+                  Análise de Cohort - Retenção Mensal
+                </h3>
+                <div className="flex items-center gap-2">
+                  <Select defaultValue="retention">
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="retention">Retenção</SelectItem>
+                      <SelectItem value="revenue">Receita</SelectItem>
+                      <SelectItem value="usage">Uso</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Download className="h-4 w-4" />
+                    Exportar
+                  </Button>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-3 font-semibold">Cohort</th>
+                      <th className="text-center py-3 px-3 font-medium text-muted-foreground">M0</th>
+                      <th className="text-center py-3 px-3 font-medium text-muted-foreground">M1</th>
+                      <th className="text-center py-3 px-3 font-medium text-muted-foreground">M2</th>
+                      <th className="text-center py-3 px-3 font-medium text-muted-foreground">M3</th>
+                      <th className="text-center py-3 px-3 font-medium text-muted-foreground">M4</th>
+                      <th className="text-center py-3 px-3 font-medium text-muted-foreground">M5</th>
+                      <th className="text-center py-3 px-3 font-medium text-muted-foreground">M6</th>
+                      <th className="text-center py-3 px-3 font-medium text-muted-foreground">Avg</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cohortData.map((row) => {
+                      const values = [row.m0, row.m1, row.m2, row.m3, row.m4, row.m5, row.m6].filter(v => v !== null) as number[];
+                      const avg = values.length > 1 ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(0) : "-";
+                      return (
+                        <tr key={row.cohort} className="border-b border-border/50 hover:bg-muted/30">
+                          <td className="py-3 px-3 font-medium">{row.cohort}</td>
+                          {[row.m0, row.m1, row.m2, row.m3, row.m4, row.m5, row.m6].map((val, idx) => (
+                            <td key={idx} className="text-center py-3 px-3">
+                              {val !== null ? (
+                                <span 
+                                  className={cn(
+                                    "inline-block w-12 px-2 py-1 rounded-md text-xs font-medium",
+                                    val >= 90 ? "bg-success/20 text-success" :
+                                    val >= 80 ? "bg-primary/20 text-primary" :
+                                    val >= 70 ? "bg-warning/20 text-warning" :
+                                    "bg-destructive/20 text-destructive"
+                                  )}
+                                >
+                                  {val}%
+                                </span>
+                              ) : (
+                                <span className="text-muted-foreground">-</span>
+                              )}
+                            </td>
+                          ))}
+                          <td className="text-center py-3 px-3">
+                            <span className="inline-block w-12 px-2 py-1 rounded-md text-xs font-semibold bg-muted">
+                              {avg}%
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+
+            {/* LTV by Segment */}
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Target className="h-5 w-5 text-primary" />
+                    LTV por Segmento de Plano
+                  </h3>
+                  <Badge variant="outline" className="text-xs">Lifetime Value</Badge>
+                </div>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart 
+                      data={[
+                        { segment: "Free", ltv: 0, cac: 50, ratio: 0, customers: 456 },
+                        { segment: "Starter", ltv: 1200, cac: 280, ratio: 4.3, customers: 312 },
+                        { segment: "Pro", ltv: 4800, cac: 450, ratio: 10.7, customers: 489 },
+                        { segment: "Business", ltv: 12500, cac: 850, ratio: 14.7, customers: 234 },
+                        { segment: "Enterprise", ltv: 48000, cac: 2500, ratio: 19.2, customers: 77 },
+                      ]}
+                      layout="vertical"
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `R$${v/1000}k`} />
+                      <YAxis type="category" dataKey="segment" stroke="hsl(var(--muted-foreground))" fontSize={12} width={80} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'hsl(var(--card))', 
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px'
+                        }}
+                        formatter={(value: number, name: string) => [
+                          `R$ ${value.toLocaleString()}`, 
+                          name === 'ltv' ? 'LTV' : 'CAC'
+                        ]}
+                      />
+                      <Bar dataKey="ltv" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} name="LTV" />
+                      <Bar dataKey="cac" fill="hsl(var(--destructive))" radius={[0, 4, 4, 0]} name="CAC" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4 grid grid-cols-5 gap-2">
+                  {[
+                    { segment: "Free", ratio: "-", color: "muted" },
+                    { segment: "Starter", ratio: "4.3x", color: "warning" },
+                    { segment: "Pro", ratio: "10.7x", color: "primary" },
+                    { segment: "Business", ratio: "14.7x", color: "success" },
+                    { segment: "Enterprise", ratio: "19.2x", color: "purple-600" },
+                  ].map((item) => (
+                    <div key={item.segment} className="text-center p-2 rounded-lg bg-muted/30">
+                      <p className={cn("text-lg font-bold", `text-${item.color}`)}>{item.ratio}</p>
+                      <p className="text-xs text-muted-foreground">LTV/CAC</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Churn Prediction */}
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <TrendingDown className="h-5 w-5 text-destructive" />
+                    Previsão de Churn
+                  </h3>
+                  <Badge className="bg-destructive/10 text-destructive border-destructive/20">Alerta: 23 em risco</Badge>
+                </div>
+                <div className="h-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart 
+                      data={[
+                        { month: "Jan", actual: 2.1, predicted: null },
+                        { month: "Fev", actual: 1.8, predicted: null },
+                        { month: "Mar", actual: 2.5, predicted: null },
+                        { month: "Abr", actual: 2.2, predicted: null },
+                        { month: "Mai", actual: 2.0, predicted: null },
+                        { month: "Jun", actual: 2.3, predicted: null },
+                        { month: "Jul", actual: null, predicted: 2.1 },
+                        { month: "Ago", actual: null, predicted: 1.9 },
+                        { month: "Set", actual: null, predicted: 1.8 },
+                      ]}
+                    >
+                      <defs>
+                        <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--info))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--info))" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `${v}%`} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'hsl(var(--card))', 
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px'
+                        }}
+                        formatter={(value: number) => [`${value}%`, 'Churn Rate']}
+                      />
+                      <Area type="monotone" dataKey="actual" stroke="hsl(var(--destructive))" fill="url(#colorActual)" strokeWidth={2} name="Atual" />
+                      <Area type="monotone" dataKey="predicted" stroke="hsl(var(--info))" fill="url(#colorPredicted)" strokeWidth={2} strokeDasharray="5 5" name="Previsto" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4 space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-destructive" />
+                      Churn Atual (Média 6m)
+                    </span>
+                    <span className="font-semibold">2.15%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-info" />
+                      Previsão Próx. Trimestre
+                    </span>
+                    <span className="font-semibold text-success">1.93% ↓</span>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* At Risk Customers */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-warning" />
+                  Clínicas em Risco de Churn
+                </h3>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Filter className="h-4 w-4" />
+                    Filtrar
+                  </Button>
+                  <Button size="sm" className="gap-2" onClick={() => setShowBroadcastModal(true)}>
+                    <Megaphone className="h-4 w-4" />
+                    Campanha de Retenção
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { name: "Clínica Prime Care", risk: 85, reason: "Inativo há 15 dias, pagamento falhou", plan: "Business", mrr: 450, lastLogin: "Há 15 dias" },
+                  { name: "Saúde Total Integrada", risk: 72, reason: "Uso reduzido 60%, trial expirando", plan: "Starter", mrr: 99, lastLogin: "Há 3 dias" },
+                  { name: "Centro Especialidades", risk: 58, reason: "Tickets de suporte não resolvidos", plan: "Pro", mrr: 299, lastLogin: "Há 6 horas" },
+                  { name: "Clínica Integrada Saúde", risk: 45, reason: "Sem login há 45 dias", plan: "Free", mrr: 0, lastLogin: "Há 45 dias" },
+                ].map((clinic, i) => (
+                  <div 
+                    key={i} 
+                    className={cn(
+                      "flex items-center gap-4 p-4 rounded-xl border transition-all",
+                      clinic.risk >= 70 ? "bg-destructive/5 border-destructive/20" :
+                      clinic.risk >= 50 ? "bg-warning/5 border-warning/20" :
+                      "bg-muted/30 border-transparent"
+                    )}
+                  >
+                    <div className="relative">
+                      <div className={cn(
+                        "w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm",
+                        clinic.risk >= 70 ? "bg-destructive/10 text-destructive" :
+                        clinic.risk >= 50 ? "bg-warning/10 text-warning" :
+                        "bg-muted text-muted-foreground"
+                      )}>
+                        {clinic.risk}%
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-medium">{clinic.name}</h4>
+                        {getPlanBadge(clinic.plan)}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">{clinic.reason}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {clinic.lastLogin}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <DollarSign className="h-3 w-3" />
+                          R$ {clinic.mrr}/mês
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" className="gap-1">
+                        <Mail className="h-3 w-3" />
+                        Contatar
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => {
+                          setSelectedClinic(clinics.find(c => c.name === clinic.name) || null);
+                          setShowClinicModal(true);
+                        }}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Conversion Metrics */}
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Funnel */}
+              <Card className="lg:col-span-2 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Layers className="h-5 w-5 text-primary" />
+                    Funil de Conversão
+                  </h3>
+                  <Select defaultValue="30d">
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="7d">7 dias</SelectItem>
+                      <SelectItem value="30d">30 dias</SelectItem>
+                      <SelectItem value="90d">90 dias</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-4">
+                  {funnelData.map((stage, index) => {
+                    const prevValue = index > 0 ? funnelData[index - 1].value : stage.value;
+                    const convRate = ((stage.value / prevValue) * 100).toFixed(1);
+                    const totalRate = ((stage.value / funnelData[0].value) * 100).toFixed(1);
+                    return (
+                      <div key={stage.stage} className="relative">
+                        <div className="flex items-center gap-4">
+                          <div className="w-40 text-sm font-medium truncate">{stage.stage}</div>
+                          <div className="flex-1">
+                            <div 
+                              className="h-10 rounded-lg flex items-center px-4 text-white font-semibold text-sm transition-all hover:opacity-90"
+                              style={{ 
+                                width: `${(stage.value / funnelData[0].value) * 100}%`, 
+                                backgroundColor: stage.color,
+                                minWidth: '60px'
+                              }}
+                            >
+                              {stage.value.toLocaleString()}
+                            </div>
+                          </div>
+                          <div className="w-20 text-right">
+                            <p className="text-sm font-semibold">{totalRate}%</p>
+                            {index > 0 && (
+                              <p className="text-xs text-muted-foreground">{convRate}% ↓</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="mt-6 pt-4 border-t grid grid-cols-3 gap-4">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-primary">9.8%</p>
+                    <p className="text-xs text-muted-foreground">Taxa de Conversão Total</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-success">R$ 1.250</p>
+                    <p className="text-xs text-muted-foreground">CAC Médio</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-info">14 dias</p>
+                    <p className="text-xs text-muted-foreground">Tempo Médio Conversão</p>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Expansion Revenue */}
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <ArrowUpRight className="h-5 w-5 text-success" />
+                    Receita de Expansão
+                  </h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="text-center p-4 rounded-xl bg-success/5 border border-success/20">
+                    <p className="text-3xl font-bold text-success">R$ 45.2k</p>
+                    <p className="text-sm text-muted-foreground mt-1">Expansion MRR</p>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-2">
+                        <ArrowUp className="h-4 w-4 text-success" />
+                        Upgrades
+                      </span>
+                      <span className="font-semibold">R$ 32.4k</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-2">
+                        <UserPlus className="h-4 w-4 text-info" />
+                        Add-ons
+                      </span>
+                      <span className="font-semibold">R$ 8.1k</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-primary" />
+                        Usuários Extra
+                      </span>
+                      <span className="font-semibold">R$ 4.7k</span>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Net Revenue Retention</span>
+                      <span className="font-bold text-success">118%</span>
+                    </div>
+                    <Progress value={118} max={150} className="h-2" />
+                    <p className="text-xs text-muted-foreground">Meta: 115% • Benchmark SaaS: 100-120%</p>
+                  </div>
                 </div>
               </Card>
             </div>
