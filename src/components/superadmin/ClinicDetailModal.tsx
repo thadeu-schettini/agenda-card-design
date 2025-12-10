@@ -55,8 +55,8 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 interface ClinicDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  clinic: {
-    id: number;
+  clinic?: {
+    id: string | number;
     name: string;
     owner: string;
     email: string;
@@ -71,7 +71,7 @@ interface ClinicDetailModalProps {
     appointments: number;
     patients: number;
     location: string;
-  } | null;
+  };
 }
 
 // Mock usage data

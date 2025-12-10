@@ -242,7 +242,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageContainer } from "@/components/ui/page-container";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, Tooltip, PieChart as RechartsPieChart, Pie, Cell, LineChart as RechartsLineChart, Line, Legend, ComposedChart, Scatter, ScatterChart, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Treemap } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, Tooltip, PieChart as RechartsPieChart, Pie, Cell, LineChart as RechartsLineChart, Line, Legend, ComposedChart, Scatter, ScatterChart, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Treemap, FunnelChart, Funnel, LabelList } from "recharts";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -430,6 +430,39 @@ const usageByHour = [
   { hour: "18h", users: 876 },
   { hour: "20h", users: 345 },
   { hour: "22h", users: 123 },
+];
+
+// Heatmap data - Usage by day and hour
+const heatmapData = [
+  { day: "Seg", h6: 12, h8: 45, h10: 89, h12: 67, h14: 92, h16: 78, h18: 45, h20: 23 },
+  { day: "Ter", h6: 15, h8: 52, h10: 95, h12: 72, h14: 98, h16: 85, h18: 52, h20: 28 },
+  { day: "Qua", h6: 18, h8: 58, h10: 102, h12: 78, h14: 105, h16: 92, h18: 58, h20: 32 },
+  { day: "Qui", h6: 14, h8: 48, h10: 88, h12: 65, h14: 95, h16: 82, h18: 48, h20: 25 },
+  { day: "Sex", h6: 22, h8: 62, h10: 110, h12: 85, h14: 115, h16: 98, h18: 62, h20: 35 },
+  { day: "Sáb", h6: 8, h8: 25, h10: 45, h12: 38, h14: 42, h16: 35, h18: 22, h20: 12 },
+  { day: "Dom", h6: 5, h8: 12, h10: 22, h12: 18, h14: 20, h16: 15, h18: 10, h20: 8 },
+];
+
+// Conversion funnel data
+const funnelData = [
+  { stage: "Visitantes", value: 10000, color: "hsl(var(--primary))" },
+  { stage: "Cadastros Iniciados", value: 4500, color: "hsl(var(--info))" },
+  { stage: "Cadastros Completos", value: 2800, color: "hsl(142, 76%, 36%)" },
+  { stage: "Trial Ativado", value: 2100, color: "hsl(var(--warning))" },
+  { stage: "Primeira Consulta", value: 1400, color: "hsl(280, 76%, 50%)" },
+  { stage: "Conversão Paga", value: 980, color: "hsl(var(--success))" },
+];
+
+// Feature usage radar data
+const featureUsageData = [
+  { feature: "Agendamento", usage: 95 },
+  { feature: "Prontuário", usage: 88 },
+  { feature: "Financeiro", usage: 72 },
+  { feature: "Relatórios", usage: 65 },
+  { feature: "Telemedicina", usage: 45 },
+  { feature: "WhatsApp", usage: 78 },
+  { feature: "Receitas", usage: 82 },
+  { feature: "Estoque", usage: 38 },
 ];
 
 export default function SuperAdmin() {
@@ -714,6 +747,232 @@ export default function SuperAdmin() {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
+            {/* Advanced Analytics Section */}
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Usage Heatmap */}
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <LayoutGrid className="h-5 w-5 text-primary" />
+                    Mapa de Calor - Uso por Horário
+                  </h3>
+                  <Badge variant="outline" className="text-xs">Última semana</Badge>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr>
+                        <th className="text-left py-2 px-1 font-medium text-muted-foreground">Dia</th>
+                        <th className="text-center py-2 px-1 font-medium text-muted-foreground">06h</th>
+                        <th className="text-center py-2 px-1 font-medium text-muted-foreground">08h</th>
+                        <th className="text-center py-2 px-1 font-medium text-muted-foreground">10h</th>
+                        <th className="text-center py-2 px-1 font-medium text-muted-foreground">12h</th>
+                        <th className="text-center py-2 px-1 font-medium text-muted-foreground">14h</th>
+                        <th className="text-center py-2 px-1 font-medium text-muted-foreground">16h</th>
+                        <th className="text-center py-2 px-1 font-medium text-muted-foreground">18h</th>
+                        <th className="text-center py-2 px-1 font-medium text-muted-foreground">20h</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {heatmapData.map((row) => (
+                        <tr key={row.day}>
+                          <td className="py-1 px-1 font-medium">{row.day}</td>
+                          {[row.h6, row.h8, row.h10, row.h12, row.h14, row.h16, row.h18, row.h20].map((val, idx) => {
+                            const intensity = Math.min(val / 120, 1);
+                            return (
+                              <td key={idx} className="py-1 px-1">
+                                <div 
+                                  className="w-full h-8 rounded flex items-center justify-center text-xs font-medium transition-all hover:scale-105"
+                                  style={{ 
+                                    backgroundColor: `hsl(var(--primary) / ${0.1 + intensity * 0.7})`,
+                                    color: intensity > 0.5 ? 'white' : 'hsl(var(--foreground))'
+                                  }}
+                                >
+                                  {val}
+                                </div>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="flex items-center justify-center gap-4 mt-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="w-4 h-4 rounded bg-primary/10" />
+                    <span>Baixo</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="w-4 h-4 rounded bg-primary/40" />
+                    <span>Médio</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="w-4 h-4 rounded bg-primary/80" />
+                    <span>Alto</span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Conversion Funnel */}
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Target className="h-5 w-5 text-primary" />
+                    Funil de Conversão
+                  </h3>
+                  <Badge variant="outline" className="text-xs gap-1">
+                    <TrendingUp className="h-3 w-3 text-success" />
+                    9.8% taxa
+                  </Badge>
+                </div>
+                <div className="space-y-3">
+                  {funnelData.map((item, idx) => {
+                    const widthPercent = (item.value / funnelData[0].value) * 100;
+                    const conversionRate = idx > 0 
+                      ? ((item.value / funnelData[idx - 1].value) * 100).toFixed(1) 
+                      : "100";
+                    return (
+                      <div key={item.stage} className="relative">
+                        <div className="flex items-center justify-between text-sm mb-1">
+                          <span className="font-medium">{item.stage}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">{item.value.toLocaleString()}</span>
+                            {idx > 0 && (
+                              <Badge variant="outline" className="text-xs">
+                                {conversionRate}%
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <div className="h-8 bg-muted/30 rounded-lg overflow-hidden">
+                          <div 
+                            className="h-full rounded-lg transition-all duration-500 flex items-center justify-end pr-2"
+                            style={{ 
+                              width: `${widthPercent}%`,
+                              background: `linear-gradient(90deg, ${item.color}80, ${item.color})`
+                            }}
+                          >
+                            {widthPercent > 30 && (
+                              <span className="text-xs font-medium text-white">
+                                {widthPercent.toFixed(0)}%
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <Separator className="my-4" />
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-lg font-bold text-success">9.8%</p>
+                    <p className="text-xs text-muted-foreground">Taxa Conversão</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-primary">R$ 125</p>
+                    <p className="text-xs text-muted-foreground">CAC</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-info">12 dias</p>
+                    <p className="text-xs text-muted-foreground">Tempo Médio</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Feature Usage Radar + Actions */}
+            <div className="grid lg:grid-cols-3 gap-6">
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Layers className="h-5 w-5 text-primary" />
+                    Uso de Funcionalidades
+                  </h3>
+                </div>
+                <div className="h-[250px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart data={featureUsageData}>
+                      <PolarGrid stroke="hsl(var(--border))" />
+                      <PolarAngleAxis 
+                        dataKey="feature" 
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                      />
+                      <PolarRadiusAxis 
+                        angle={30} 
+                        domain={[0, 100]}
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
+                      />
+                      <Radar
+                        name="Uso"
+                        dataKey="usage"
+                        stroke="hsl(var(--primary))"
+                        fill="hsl(var(--primary))"
+                        fillOpacity={0.3}
+                        strokeWidth={2}
+                      />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'hsl(var(--card))', 
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px'
+                        }}
+                      />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card className="lg:col-span-2 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-primary" />
+                    Ações Rápidas
+                  </h3>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="h-auto py-4 flex-col gap-2 hover:bg-primary/5 hover:border-primary/30"
+                    onClick={() => setShowBroadcastModal(true)}
+                  >
+                    <Megaphone className="h-5 w-5 text-primary" />
+                    <span className="text-xs">Broadcast</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-success/5 hover:border-success/30">
+                    <UserPlus className="h-5 w-5 text-success" />
+                    <span className="text-xs">Nova Clínica</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-info/5 hover:border-info/30">
+                    <Ticket className="h-5 w-5 text-info" />
+                    <span className="text-xs">Tickets</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-warning/5 hover:border-warning/30">
+                    <AlertTriangle className="h-5 w-5 text-warning" />
+                    <span className="text-xs">Alertas</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-purple-500/5 hover:border-purple-500/30">
+                    <Flag className="h-5 w-5 text-purple-500" />
+                    <span className="text-xs">Feature Flags</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-cyan-500/5 hover:border-cyan-500/30">
+                    <BarChart3 className="h-5 w-5 text-cyan-500" />
+                    <span className="text-xs">Relatórios</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-orange-500/5 hover:border-orange-500/30">
+                    <Settings className="h-5 w-5 text-orange-500" />
+                    <span className="text-xs">Sistema</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:bg-destructive/5 hover:border-destructive/30">
+                    <Shield className="h-5 w-5 text-destructive" />
+                    <span className="text-xs">Segurança</span>
+                  </Button>
+                </div>
+              </Card>
+            </div>
+
             <div className="grid lg:grid-cols-3 gap-6">
               {/* Revenue Chart */}
               <Card className="lg:col-span-2 p-6">
@@ -1049,11 +1308,18 @@ export default function SuperAdmin() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
                       <TooltipProvider>
                         <UITooltip>
                           <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => {
+                                setSelectedClinic(clinic);
+                                setShowClinicModal(true);
+                              }}
+                            >
                               <Eye className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1063,7 +1329,11 @@ export default function SuperAdmin() {
                       <TooltipProvider>
                         <UITooltip>
                           <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => setShowBroadcastModal(true)}
+                            >
                               <MessageSquare className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1077,7 +1347,13 @@ export default function SuperAdmin() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="gap-2">
+                          <DropdownMenuItem 
+                            className="gap-2"
+                            onClick={() => {
+                              setSelectedClinic(clinic);
+                              setShowClinicModal(true);
+                            }}
+                          >
                             <Eye className="h-4 w-4" />
                             Ver detalhes
                           </DropdownMenuItem>
@@ -1244,10 +1520,21 @@ export default function SuperAdmin() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowUserModal(true);
+                        }}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => setShowBroadcastModal(true)}
+                      >
                         <Mail className="h-4 w-4" />
                       </Button>
                       <DropdownMenu>
@@ -1561,7 +1848,15 @@ export default function SuperAdmin() {
                         <Clock className="h-3 w-3 mr-1" />
                         {ticket.sla}
                       </Badge>
-                      <Button variant="outline" size="sm" className="gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="gap-2"
+                        onClick={() => {
+                          setSelectedTicket(ticket);
+                          setShowTicketModal(true);
+                        }}
+                      >
                         <Eye className="h-4 w-4" />
                         Ver
                       </Button>
@@ -1906,6 +2201,68 @@ export default function SuperAdmin() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Modals */}
+      <ClinicDetailModal
+        open={showClinicModal}
+        onOpenChange={setShowClinicModal}
+        clinic={selectedClinic ? {
+          id: selectedClinic.id,
+          name: selectedClinic.name,
+          plan: selectedClinic.plan,
+          status: selectedClinic.status,
+          owner: selectedClinic.owner,
+          email: selectedClinic.email,
+          phone: selectedClinic.phone,
+          location: selectedClinic.location,
+          users: selectedClinic.users,
+          patients: selectedClinic.patients,
+          appointments: selectedClinic.appointments,
+          mrr: selectedClinic.mrr,
+          storage: selectedClinic.storage,
+          createdAt: selectedClinic.createdAt,
+          lastLogin: selectedClinic.lastLogin
+        } : undefined}
+      />
+
+      <UserDetailModal
+        open={showUserModal}
+        onOpenChange={setShowUserModal}
+        user={selectedUser ? {
+          id: selectedUser.id,
+          name: selectedUser.name,
+          email: selectedUser.email,
+          role: selectedUser.role,
+          clinic: selectedUser.clinic,
+          status: selectedUser.status,
+          lastLogin: selectedUser.lastLogin,
+          permissions: selectedUser.permissions,
+          avatar: selectedUser.avatar
+        } : undefined}
+      />
+
+      <TicketDetailModal
+        open={showTicketModal}
+        onOpenChange={setShowTicketModal}
+        ticket={selectedTicket ? {
+          id: selectedTicket.id,
+          subject: selectedTicket.subject,
+          clinic: selectedTicket.clinic,
+          clinicId: selectedTicket.clinicId,
+          priority: selectedTicket.priority,
+          status: selectedTicket.status,
+          category: selectedTicket.category,
+          createdAt: selectedTicket.createdAt,
+          assignee: selectedTicket.assignee,
+          messages: selectedTicket.messages,
+          sla: selectedTicket.sla
+        } : undefined}
+      />
+
+      <BroadcastModal
+        open={showBroadcastModal}
+        onOpenChange={setShowBroadcastModal}
+      />
     </PageContainer>
   );
 }

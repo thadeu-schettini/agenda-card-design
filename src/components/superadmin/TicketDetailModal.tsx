@@ -39,19 +39,19 @@ import {
 interface TicketDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  ticket: {
-    id: number;
+  ticket?: {
+    id: string | number;
     clinic: string;
-    clinicId: number;
+    clinicId?: number;
     subject: string;
     priority: string;
     status: string;
     category: string;
     createdAt: string;
-    assignee: string | null;
-    messages: number;
+    assignee?: string | null;
+    messages?: number;
     sla: string;
-  } | null;
+  };
 }
 
 // Mock messages
