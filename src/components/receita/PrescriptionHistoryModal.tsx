@@ -14,6 +14,8 @@ import {
   AlertCircle
 } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
+import { ViewPrescriptionModal } from "./ViewPrescriptionModal";
 
 interface PrescriptionHistoryModalProps {
   open: boolean;
@@ -22,11 +24,57 @@ interface PrescriptionHistoryModalProps {
 }
 
 const mockHistory = [
-  { id: 1, date: "10/01/2025", medications: 2, status: "dispensed", type: "comum" },
-  { id: 2, date: "05/01/2025", medications: 1, status: "sent", type: "antimicrobiano" },
-  { id: 3, date: "20/12/2024", medications: 3, status: "dispensed", type: "comum" },
-  { id: 4, date: "15/12/2024", medications: 1, status: "expired", type: "controlado" },
-  { id: 5, date: "10/11/2024", medications: 2, status: "dispensed", type: "comum" },
+  { 
+    id: 1, 
+    date: "10/01/2025", 
+    medications: [
+      { name: "Losartana 50mg", dosage: "1 comprimido", frequency: "2x ao dia", duration: "uso contínuo" }
+    ], 
+    status: "dispensed", 
+    type: "comum",
+    professional: "Dr. Carlos Santos"
+  },
+  { 
+    id: 2, 
+    date: "05/01/2025", 
+    medications: [
+      { name: "Amoxicilina 500mg", dosage: "1 cápsula", frequency: "8/8h", duration: "7 dias" }
+    ], 
+    status: "sent", 
+    type: "antimicrobiano",
+    professional: "Dra. Ana Lima"
+  },
+  { 
+    id: 3, 
+    date: "20/12/2024", 
+    medications: [
+      { name: "Dipirona 500mg", dosage: "1 comprimido", frequency: "6/6h se dor", duration: "5 dias" },
+      { name: "Omeprazol 20mg", dosage: "1 cápsula", frequency: "em jejum", duration: "5 dias" }
+    ], 
+    status: "dispensed", 
+    type: "comum",
+    professional: "Dr. Carlos Santos"
+  },
+  { 
+    id: 4, 
+    date: "15/12/2024", 
+    medications: [
+      { name: "Clonazepam 2mg", dosage: "1 comprimido", frequency: "à noite", duration: "30 dias" }
+    ], 
+    status: "expired", 
+    type: "controlado",
+    professional: "Dra. Beatriz Rocha"
+  },
+  { 
+    id: 5, 
+    date: "10/11/2024", 
+    medications: [
+      { name: "AAS 100mg", dosage: "1 comprimido", frequency: "1x ao dia", duration: "uso contínuo" }
+    ], 
+    status: "dispensed", 
+    type: "comum",
+    professional: "Dr. Carlos Santos"
+  },
 ];
 
 const statusConfig = {
@@ -43,8 +91,15 @@ const typeConfig = {
 };
 
 export function PrescriptionHistoryModal({ open, onOpenChange, patient }: PrescriptionHistoryModalProps) {
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedPrescription, setSelectedPrescription] = useState<any>(null);
+
   const handleView = (prescription: typeof mockHistory[0]) => {
-    toast.info(`Visualizando receita de ${prescription.date}`);
+    setSelectedPrescription({
+      ...prescription,
+      patient,
+    });
+    setShowViewModal(true);
   };
 
   const handleDownload = (prescription: typeof mockHistory[0]) => {
@@ -82,7 +137,7 @@ export function PrescriptionHistoryModal({ open, onOpenChange, patient }: Prescr
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <p className="font-medium">{prescription.medications} medicamento(s)</p>
+                          <p className="font-medium">{prescription.medications.length} medicamento(s)</p>
                           <Badge variant="outline" className={typeConfig[prescription.type as keyof typeof typeConfig].color}>
                             {typeConfig[prescription.type as keyof typeof typeConfig].label}
                           </Badge>
@@ -132,6 +187,12 @@ export function PrescriptionHistoryModal({ open, onOpenChange, patient }: Prescr
           </Button>
         </div>
       </DialogContent>
+
+      <ViewPrescriptionModal
+        open={showViewModal}
+        onOpenChange={setShowViewModal}
+        prescription={selectedPrescription}
+      />
     </Dialog>
   );
 }

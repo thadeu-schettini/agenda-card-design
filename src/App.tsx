@@ -47,6 +47,7 @@ import PesquisaNPS from "./pages/PesquisaNPS";
 import IntegracaoLaboratorios from "./pages/IntegracaoLaboratorios";
 import ReceitaDigital from "./pages/ReceitaDigital";
 import WhatsAppBusiness from "./pages/WhatsAppBusiness";
+import PedidosCompra from "./pages/PedidosCompra";
 
 const queryClient = new QueryClient();
 
@@ -102,6 +103,7 @@ const App = () => (
               <Route path="/integracao-laboratorios" element={<IntegracaoLaboratorios />} />
               <Route path="/receita-digital" element={<ReceitaDigital />} />
               <Route path="/whatsapp-business" element={<WhatsAppBusiness />} />
+              <Route path="/pedidos-compra" element={<PedidosCompra />} />
             </Route>
             
             {/* Portal Paciente - separate layout */}

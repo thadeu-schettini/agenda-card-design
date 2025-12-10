@@ -35,6 +35,8 @@ import {
 import { NewConsentModal } from "@/components/consentimentos/NewConsentModal";
 import { ConsentTemplateModal } from "@/components/consentimentos/ConsentTemplateModal";
 import { ViewConsentModal } from "@/components/consentimentos/ViewConsentModal";
+import { ConsentHistoryModal } from "@/components/consentimentos/ConsentHistoryModal";
+import { CancelConsentModal } from "@/components/consentimentos/CancelConsentModal";
 import { toast } from "sonner";
 
 const mockConsents = [
@@ -106,6 +108,8 @@ const Consentimentos = () => {
   const [showNewConsentModal, setShowNewConsentModal] = useState(false);
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
   const [showViewConsentModal, setShowViewConsentModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedConsent, setSelectedConsent] = useState<typeof mockConsents[0] | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof mockTemplates[0] | null>(null);
   const [templateMode, setTemplateMode] = useState<"create" | "edit" | "view">("create");
@@ -142,8 +146,24 @@ const Consentimentos = () => {
     setShowNewTemplateModal(true);
   };
 
+  const handleEditTemplate = (template: typeof mockTemplates[0]) => {
+    setSelectedTemplate(template);
+    setTemplateMode("edit");
+    setShowNewTemplateModal(true);
+  };
+
   const handleUseTemplate = (template: typeof mockTemplates[0]) => {
     setShowNewConsentModal(true);
+  };
+
+  const handleViewHistory = (consent: typeof mockConsents[0]) => {
+    setSelectedConsent(consent);
+    setShowHistoryModal(true);
+  };
+
+  const handleCancelConsent = (consent: typeof mockConsents[0]) => {
+    setSelectedConsent(consent);
+    setShowCancelModal(true);
   };
 
   return (
@@ -309,9 +329,9 @@ const Consentimentos = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
-                              <DropdownMenuItem>Histórico</DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive">Cancelar</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleViewConsent(consent)}>Ver Detalhes</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleViewHistory(consent)}>Histórico</DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive" onClick={() => handleCancelConsent(consent)}>Cancelar</DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
@@ -360,7 +380,15 @@ const Consentimentos = () => {
                       onClick={() => handleViewTemplate(template)}
                     >
                       <Eye className="h-4 w-4 mr-1" />
-                      Visualizar
+                      Ver
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleEditTemplate(template)}
+                    >
+                      Editar
                     </Button>
                     <Button 
                       size="sm" 
@@ -394,6 +422,18 @@ const Consentimentos = () => {
       <ViewConsentModal
         open={showViewConsentModal}
         onOpenChange={setShowViewConsentModal}
+        consent={selectedConsent}
+      />
+
+      <ConsentHistoryModal
+        open={showHistoryModal}
+        onOpenChange={setShowHistoryModal}
+        consent={selectedConsent}
+      />
+
+      <CancelConsentModal
+        open={showCancelModal}
+        onOpenChange={setShowCancelModal}
         consent={selectedConsent}
       />
     </PageContainer>
