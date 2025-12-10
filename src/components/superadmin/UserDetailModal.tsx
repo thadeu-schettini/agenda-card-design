@@ -47,8 +47,8 @@ import {
 interface UserDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: {
-    id: number;
+  user?: {
+    id: string | number;
     name: string;
     email: string;
     role: string;
@@ -56,8 +56,8 @@ interface UserDetailModalProps {
     status: string;
     lastLogin: string;
     permissions: string[];
-    avatar: string | null;
-  } | null;
+    avatar?: string | null;
+  };
 }
 
 // Mock session data
