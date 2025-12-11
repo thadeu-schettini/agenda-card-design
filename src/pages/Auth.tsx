@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { AuthCarousel } from "@/components/auth/AuthCarousel";
 import { 
   Eye, 
   EyeOff, 
@@ -192,7 +193,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen w-full flex">
-      {/* Left Side - Branding (Fixed) */}
+      {/* Left Side - Branding + Carousel (Fixed) */}
       <div className="hidden lg:flex lg:w-1/2 fixed left-0 top-0 bottom-0 overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-blue-600">
@@ -212,66 +213,44 @@ export default function Auth() {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-center px-12 xl:px-16 text-white">
-          <div className="mb-12">
-            <div className="flex items-center gap-4 mb-10">
-              <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl">
-                <Building2 className="w-8 h-8" />
+        <div className="relative z-10 flex flex-col h-full px-12 xl:px-16 text-white">
+          {/* Header */}
+          <div className="pt-10 pb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl">
+                <Building2 className="w-7 h-7" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">MedClinic</h1>
-                <p className="text-white/70">Sistema Médico Inteligente</p>
+                <h1 className="text-2xl font-bold tracking-tight">MedClinic</h1>
+                <p className="text-white/70 text-sm">Sistema Médico Inteligente</p>
               </div>
             </div>
-            
-            <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
-              Transforme a gestão
-              <br />
-              <span className="text-white/80">da sua clínica</span>
-            </h2>
-            
-            <p className="text-lg text-white/70 max-w-md leading-relaxed">
-              Prontuário eletrônico, agendamento inteligente e gestão financeira 
-              em uma única plataforma moderna e intuitiva.
-            </p>
-          </div>
-          
-          {/* Features */}
-          <div className="space-y-4">
-            {[
-              { icon: Sparkles, text: "IA integrada para auxílio clínico" },
-              { icon: Shield, text: "Dados seguros e criptografados" },
-              { icon: Zap, text: "Interface rápida e intuitiva" }
-            ].map((feature, index) => (
-              <div 
-                key={index}
-                className="flex items-center gap-4 p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 transition-all duration-300 hover:bg-white/15 hover:translate-x-2"
-              >
-                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                  <feature.icon className="w-6 h-6" />
-                </div>
-                <span className="text-lg font-medium">{feature.text}</span>
-              </div>
-            ))}
           </div>
 
-          {/* Stats */}
-          <div className="mt-16 flex gap-12">
-            {[
-              { value: "5.000+", label: "Clínicas ativas" },
-              { value: "99.9%", label: "Uptime garantido" },
-              { value: "4.9★", label: "Avaliação média" }
-            ].map((stat, index) => (
-              <div key={index}>
-                <div className="text-3xl font-bold">{stat.value}</div>
-                <div className="text-sm text-white/60">{stat.label}</div>
-              </div>
-            ))}
+          {/* Dynamic Carousel */}
+          <div className="flex-1">
+            <AuthCarousel />
+          </div>
+
+          {/* Stats Footer */}
+          <div className="py-8 border-t border-white/10">
+            <div className="flex justify-between">
+              {[
+                { value: "5.000+", label: "Clínicas ativas" },
+                { value: "99.9%", label: "Uptime" },
+                { value: "4.9★", label: "Avaliação" }
+              ].map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                  <div className="text-xs text-white/60">{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         
         {/* Bottom decoration */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
       </div>
 
       {/* Right Side - Forms (Scrollable) */}
