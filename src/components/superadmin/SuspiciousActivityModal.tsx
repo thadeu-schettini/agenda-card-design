@@ -62,7 +62,13 @@ const mockAlerts = [
 
 export function SuspiciousActivityModal({ open, onOpenChange }: SuspiciousActivityModalProps) {
   const [filter, setFilter] = useState("all");
-
+  const [showRulesConfig, setShowRulesConfig] = useState(false);
+  const [rules, setRules] = useState([
+    { id: "1", name: "Brute Force", threshold: 10, window: "5 min", action: "block", enabled: true },
+    { id: "2", name: "Localização Incomum", threshold: 1, window: "24h", action: "alert", enabled: true },
+    { id: "3", name: "Exportação Massiva", threshold: 1000, window: "10 min", action: "alert", enabled: true },
+    { id: "4", name: "Rate Limit Excedido", threshold: 500, window: "1 min", action: "throttle", enabled: false },
+  ]);
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
       case "high": return <Badge variant="destructive">Alto</Badge>;
@@ -174,17 +180,52 @@ export function SuspiciousActivityModal({ open, onOpenChange }: SuspiciousActivi
           </div>
         </ScrollArea>
 
-        <Card className="mt-4 bg-muted/50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">Configurações de Detecção</div>
-                <div className="text-sm text-muted-foreground">Ajuste os limites e regras de detecção automática</div>
+        {showRulesConfig ? (
+          <Card className="mt-4 border-primary">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center justify-between">
+                <span>Configurações de Detecção</span>
+                <Button variant="ghost" size="sm" onClick={() => setShowRulesConfig(false)}>
+                  Fechar
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[200px]">
+                <div className="space-y-3 pr-4">
+                  {rules.map((rule) => (
+                    <div key={rule.id} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                      <div className="flex-1">
+                        <div className="font-medium">{rule.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {rule.threshold} ocorrências em {rule.window} → {rule.action === "block" ? "Bloquear" : rule.action === "alert" ? "Alertar" : "Throttle"}
+                        </div>
+                      </div>
+                      <Badge variant={rule.enabled ? "default" : "secondary"}>
+                        {rule.enabled ? "Ativo" : "Inativo"}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+              <div className="flex justify-end mt-4">
+                <Button size="sm" onClick={() => setShowRulesConfig(false)}>Salvar Regras</Button>
               </div>
-              <Button variant="outline">Configurar Regras</Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="mt-4 bg-muted/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">Configurações de Detecção</div>
+                  <div className="text-sm text-muted-foreground">Ajuste os limites e regras de detecção automática</div>
+                </div>
+                <Button variant="outline" onClick={() => setShowRulesConfig(true)}>Configurar Regras</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -8,7 +8,8 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Gauge, Activity, AlertTriangle, CheckCircle2, Settings, Save } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Gauge, Activity, AlertTriangle, CheckCircle2, Settings, Save, X, Edit } from "lucide-react";
 import { ChartContainer } from "@/components/ui/chart";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 
@@ -41,11 +42,25 @@ const chartConfig = {
 export function RateLimitingModal({ open, onOpenChange }: RateLimitingModalProps) {
   const [rules, setRules] = useState(rateLimitRules);
   const [globalLimit, setGlobalLimit] = useState([100]);
+  const [editingRule, setEditingRule] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ limit: 0, window: "" });
 
   const toggleRule = (id: string) => {
     setRules(rules.map(rule =>
       rule.id === id ? { ...rule, enabled: !rule.enabled } : rule
     ));
+  };
+
+  const startEditRule = (rule: typeof rateLimitRules[0]) => {
+    setEditingRule(rule.id);
+    setEditForm({ limit: rule.limit, window: rule.window });
+  };
+
+  const saveRuleEdit = (id: string) => {
+    setRules(rules.map(rule =>
+      rule.id === id ? { ...rule, limit: editForm.limit, window: editForm.window } : rule
+    ));
+    setEditingRule(null);
   };
 
   return (
@@ -96,8 +111,8 @@ export function RateLimitingModal({ open, onOpenChange }: RateLimitingModalProps
                   <Settings className="h-4 w-4 text-info" />
                   <span className="text-sm text-muted-foreground">Regras Ativas</span>
                 </div>
-                <div className="text-2xl font-bold">4</div>
-                <div className="text-xs text-muted-foreground">de 5 configuradas</div>
+                <div className="text-2xl font-bold">{rules.filter(r => r.enabled).length}</div>
+                <div className="text-xs text-muted-foreground">de {rules.length} configuradas</div>
               </CardContent>
             </Card>
           </div>
@@ -153,31 +168,73 @@ export function RateLimitingModal({ open, onOpenChange }: RateLimitingModalProps
                 {rules.map((rule) => (
                   <Card key={rule.id} className={!rule.enabled ? "opacity-60" : ""}>
                     <CardContent className="p-4">
-                      <div className="flex items-center gap-4">
-                        <Switch
-                          checked={rule.enabled}
-                          onCheckedChange={() => toggleRule(rule.id)}
-                        />
-                        <div className="flex-1">
+                      {editingRule === rule.id ? (
+                        <div className="space-y-4">
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{rule.name}</span>
                             <code className="text-xs bg-muted px-2 py-0.5 rounded">{rule.endpoint}</code>
                           </div>
-                          <div className="text-sm text-muted-foreground mt-1">
-                            {rule.limit} requests / {rule.window}
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className="text-sm">Limite de Requests</Label>
+                              <Input
+                                type="number"
+                                value={editForm.limit}
+                                onChange={(e) => setEditForm({ ...editForm, limit: parseInt(e.target.value) })}
+                                className="mt-1"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-sm">Janela de Tempo</Label>
+                              <Select value={editForm.window} onValueChange={(v) => setEditForm({ ...editForm, window: v })}>
+                                <SelectTrigger className="mt-1">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="1 min">1 minuto</SelectItem>
+                                  <SelectItem value="5 min">5 minutos</SelectItem>
+                                  <SelectItem value="15 min">15 minutos</SelectItem>
+                                  <SelectItem value="1 hora">1 hora</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <div className="flex justify-end gap-2">
+                            <Button variant="outline" size="sm" onClick={() => setEditingRule(null)}>
+                              <X className="h-4 w-4 mr-1" /> Cancelar
+                            </Button>
+                            <Button size="sm" onClick={() => saveRuleEdit(rule.id)}>
+                              <Save className="h-4 w-4 mr-1" /> Salvar
+                            </Button>
                           </div>
                         </div>
-                        <div className="text-right">
-                          {rule.violations > 0 ? (
-                            <Badge variant="destructive">{rule.violations} violações</Badge>
-                          ) : (
-                            <Badge variant="secondary">Sem violações</Badge>
-                          )}
+                      ) : (
+                        <div className="flex items-center gap-4">
+                          <Switch
+                            checked={rule.enabled}
+                            onCheckedChange={() => toggleRule(rule.id)}
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{rule.name}</span>
+                              <code className="text-xs bg-muted px-2 py-0.5 rounded">{rule.endpoint}</code>
+                            </div>
+                            <div className="text-sm text-muted-foreground mt-1">
+                              {rule.limit} requests / {rule.window}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            {rule.violations > 0 ? (
+                              <Badge variant="destructive">{rule.violations} violações</Badge>
+                            ) : (
+                              <Badge variant="secondary">Sem violações</Badge>
+                            )}
+                          </div>
+                          <Button variant="ghost" size="icon" onClick={() => startEditRule(rule)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
                         </div>
-                        <Button variant="ghost" size="icon">
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Users, Monitor, Smartphone, Globe, Clock, MapPin, Search, LogOut, ShieldAlert } from "lucide-react";
 
 interface ActiveSessionsModalProps {
@@ -71,7 +73,10 @@ const mockSessions = [
 export function ActiveSessionsModal({ open, onOpenChange }: ActiveSessionsModalProps) {
   const [search, setSearch] = useState("");
   const [deviceFilter, setDeviceFilter] = useState("all");
-
+  const [showConfig, setShowConfig] = useState(false);
+  const [sessionTimeout, setSessionTimeout] = useState("30");
+  const [maxSessions, setMaxSessions] = useState("3");
+  const [ipVerification, setIpVerification] = useState(true);
   const getDeviceIcon = (device: string) => {
     switch (device) {
       case "mobile": return <Smartphone className="h-4 w-4" />;
@@ -184,19 +189,69 @@ export function ActiveSessionsModal({ open, onOpenChange }: ActiveSessionsModalP
           </div>
         </ScrollArea>
 
-        <Card className="mt-4 bg-muted/50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">Configurações de Sessão</div>
-                <div className="text-sm text-muted-foreground">
-                  Timeout: 30 min • Máximo por usuário: 3 sessões • Verificação de IP: Ativa
+        {showConfig ? (
+          <Card className="mt-4 border-primary">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Configurações de Sessão</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <Label>Timeout de Inatividade</Label>
+                  <Select value={sessionTimeout} onValueChange={setSessionTimeout}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="15">15 minutos</SelectItem>
+                      <SelectItem value="30">30 minutos</SelectItem>
+                      <SelectItem value="60">1 hora</SelectItem>
+                      <SelectItem value="120">2 horas</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Máximo de Sessões por Usuário</Label>
+                  <Select value={maxSessions} onValueChange={setMaxSessions}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1 sessão</SelectItem>
+                      <SelectItem value="3">3 sessões</SelectItem>
+                      <SelectItem value="5">5 sessões</SelectItem>
+                      <SelectItem value="10">10 sessões</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-end">
+                  <div className="flex items-center gap-2">
+                    <Switch checked={ipVerification} onCheckedChange={setIpVerification} />
+                    <Label>Verificação de IP</Label>
+                  </div>
                 </div>
               </div>
-              <Button variant="outline">Configurar</Button>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={() => setShowConfig(false)}>Cancelar</Button>
+                <Button onClick={() => setShowConfig(false)}>Salvar</Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="mt-4 bg-muted/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">Configurações de Sessão</div>
+                  <div className="text-sm text-muted-foreground">
+                    Timeout: {sessionTimeout} min • Máximo por usuário: {maxSessions} sessões • Verificação de IP: {ipVerification ? "Ativa" : "Inativa"}
+                  </div>
+                </div>
+                <Button variant="outline" onClick={() => setShowConfig(true)}>Configurar</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </DialogContent>
     </Dialog>
   );

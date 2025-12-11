@@ -31,7 +31,8 @@ const mockLogs = [
 export function SMSGatewayModal({ open, onOpenChange }: SMSGatewayModalProps) {
   const [testPhone, setTestPhone] = useState("");
   const [providers, setProviders] = useState(mockProviders);
-
+  const [showAddProvider, setShowAddProvider] = useState(false);
+  const [editingProvider, setEditingProvider] = useState<string | null>(null);
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active": return <Badge className="bg-success/20 text-success">Ativo</Badge>;
@@ -86,30 +87,32 @@ export function SMSGatewayModal({ open, onOpenChange }: SMSGatewayModalProps) {
 
           <TabsContent value="providers" className="flex-1 overflow-hidden mt-4">
             <div className="space-y-4">
-              {providers.map((provider) => (
-                <Card key={provider.id} className={provider.status === "active" ? "border-success/50" : ""}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-4">
-                      <div className={`h-12 w-12 rounded-lg flex items-center justify-center ${
-                        provider.status === "active" ? "bg-success/10" : "bg-muted"
-                      }`}>
-                        <MessageSquare className={`h-6 w-6 ${provider.status === "active" ? "text-success" : "text-muted-foreground"}`} />
+              {showAddProvider && (
+                <Card className="border-primary">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Novo Provedor SMS</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Provedor</Label>
+                        <Select>
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="twilio">Twilio</SelectItem>
+                            <SelectItem value="aws">AWS SNS</SelectItem>
+                            <SelectItem value="vonage">Vonage</SelectItem>
+                            <SelectItem value="messagebird">MessageBird</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-lg">{provider.name}</span>
-                          {getStatusBadge(provider.status)}
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                          <span>Saldo: R$ {provider.balance.toFixed(2)}</span>
-                          <span>{provider.messagesMonth} SMS/mês</span>
-                          {provider.successRate > 0 && <span>{provider.successRate}% entrega</span>}
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Select defaultValue={provider.status}>
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
+                      <div>
+                        <Label>Status Inicial</Label>
+                        <Select>
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="active">Ativo</SelectItem>
@@ -117,18 +120,98 @@ export function SMSGatewayModal({ open, onOpenChange }: SMSGatewayModalProps) {
                             <SelectItem value="inactive">Inativo</SelectItem>
                           </SelectContent>
                         </Select>
-                        <Button variant="outline" size="icon">
-                          <Settings className="h-4 w-4" />
-                        </Button>
+                      </div>
+                      <div>
+                        <Label>API Key</Label>
+                        <Input type="password" placeholder="••••••••••••" className="mt-1" />
+                      </div>
+                      <div>
+                        <Label>API Secret</Label>
+                        <Input type="password" placeholder="••••••••••••" className="mt-1" />
                       </div>
                     </div>
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button variant="outline" onClick={() => setShowAddProvider(false)}>Cancelar</Button>
+                      <Button onClick={() => setShowAddProvider(false)}>Adicionar</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {providers.map((provider) => (
+                <Card key={provider.id} className={provider.status === "active" ? "border-success/50" : ""}>
+                  <CardContent className="p-4">
+                    {editingProvider === provider.id ? (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <MessageSquare className="h-5 w-5 text-primary" />
+                          <span className="font-medium text-lg">{provider.name}</span>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                            <Label>API Key</Label>
+                            <Input type="password" defaultValue="sk_live_xxx" className="mt-1" />
+                          </div>
+                          <div>
+                            <Label>API Secret</Label>
+                            <Input type="password" defaultValue="secret_xxx" className="mt-1" />
+                          </div>
+                          <div>
+                            <Label>Webhook URL</Label>
+                            <Input defaultValue="https://api.example.com/webhook" className="mt-1" />
+                          </div>
+                          <div>
+                            <Label>Número de Origem</Label>
+                            <Input defaultValue="+5511999999999" className="mt-1" />
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="outline" size="sm" onClick={() => setEditingProvider(null)}>Cancelar</Button>
+                          <Button size="sm" onClick={() => setEditingProvider(null)}>Salvar</Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-4">
+                        <div className={`h-12 w-12 rounded-lg flex items-center justify-center ${
+                          provider.status === "active" ? "bg-success/10" : "bg-muted"
+                        }`}>
+                          <MessageSquare className={`h-6 w-6 ${provider.status === "active" ? "text-success" : "text-muted-foreground"}`} />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-lg">{provider.name}</span>
+                            {getStatusBadge(provider.status)}
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                            <span>Saldo: R$ {provider.balance.toFixed(2)}</span>
+                            <span>{provider.messagesMonth} SMS/mês</span>
+                            {provider.successRate > 0 && <span>{provider.successRate}% entrega</span>}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Select defaultValue={provider.status}>
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="active">Ativo</SelectItem>
+                              <SelectItem value="backup">Backup</SelectItem>
+                              <SelectItem value="inactive">Inativo</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Button variant="outline" size="icon" onClick={() => setEditingProvider(provider.id)}>
+                            <Settings className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
 
               <Card className="border-dashed">
                 <CardContent className="p-4 text-center">
-                  <Button variant="outline">
+                  <Button variant="outline" onClick={() => setShowAddProvider(true)}>
                     <Settings className="h-4 w-4 mr-2" /> Adicionar Provedor
                   </Button>
                 </CardContent>
