@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BookOpen, Plus, Search, Eye, Edit, Trash2, FileText, HelpCircle, Video, FolderOpen, TrendingUp } from "lucide-react";
+import { BookOpen, Plus, Search, Eye, Edit, Trash2, FileText, HelpCircle, Video, FolderOpen, TrendingUp, X, Check } from "lucide-react";
 
 interface KnowledgeBaseModalProps {
   open: boolean;
@@ -16,10 +16,10 @@ interface KnowledgeBaseModalProps {
 }
 
 const mockArticles = [
-  { id: "1", title: "Como configurar o WhatsApp Business", category: "Integrações", views: 1234, helpful: 89, status: "published", type: "article" },
-  { id: "2", title: "Primeiros passos com agendamento", category: "Onboarding", views: 2341, helpful: 95, status: "published", type: "article" },
-  { id: "3", title: "Configurando pagamentos online", category: "Financeiro", views: 876, helpful: 72, status: "draft", type: "article" },
-  { id: "4", title: "Tutorial: Receita Digital", category: "Prontuário", views: 1567, helpful: 91, status: "published", type: "video" },
+  { id: "1", title: "Como configurar o WhatsApp Business", category: "Integrações", views: 1234, helpful: 89, status: "published", type: "article", content: "Conteúdo do artigo sobre WhatsApp..." },
+  { id: "2", title: "Primeiros passos com agendamento", category: "Onboarding", views: 2341, helpful: 95, status: "published", type: "article", content: "Conteúdo do artigo sobre agendamento..." },
+  { id: "3", title: "Configurando pagamentos online", category: "Financeiro", views: 876, helpful: 72, status: "draft", type: "article", content: "Conteúdo do artigo sobre pagamentos..." },
+  { id: "4", title: "Tutorial: Receita Digital", category: "Prontuário", views: 1567, helpful: 91, status: "published", type: "video", content: "URL do vídeo..." },
 ];
 
 const mockFaqs = [
@@ -32,10 +32,72 @@ const categories = ["Onboarding", "Integrações", "Financeiro", "Prontuário", 
 
 export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalProps) {
   const [search, setSearch] = useState("");
-  const [editingArticle, setEditingArticle] = useState<any>(null);
-  const [editingFaq, setEditingFaq] = useState<any>(null);
   const [showNewContent, setShowNewContent] = useState(false);
   const [newContentType, setNewContentType] = useState<"article" | "faq">("article");
+  
+  // Edit states
+  const [editingArticle, setEditingArticle] = useState<any>(null);
+  const [editingFaq, setEditingFaq] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<string | null>(null);
+  const [showNewCategory, setShowNewCategory] = useState(false);
+  
+  // Form states
+  const [articleForm, setArticleForm] = useState({ title: "", category: "", content: "", status: "draft", type: "article" });
+  const [faqForm, setFaqForm] = useState({ question: "", answer: "", category: "" });
+  const [categoryForm, setCategoryForm] = useState("");
+
+  const handleEditArticle = (article: any) => {
+    setEditingArticle(article);
+    setArticleForm({
+      title: article.title,
+      category: article.category.toLowerCase(),
+      content: article.content || "",
+      status: article.status,
+      type: article.type
+    });
+    setShowNewContent(false);
+  };
+
+  const handleEditFaq = (faq: any) => {
+    setEditingFaq(faq);
+    setFaqForm({
+      question: faq.question,
+      answer: faq.answer,
+      category: faq.category.toLowerCase()
+    });
+    setShowNewContent(false);
+  };
+
+  const handleEditCategory = (cat: string) => {
+    setEditingCategory(cat);
+    setCategoryForm(cat);
+  };
+
+  const cancelEdit = () => {
+    setEditingArticle(null);
+    setEditingFaq(null);
+    setEditingCategory(null);
+    setShowNewCategory(false);
+    setArticleForm({ title: "", category: "", content: "", status: "draft", type: "article" });
+    setFaqForm({ question: "", answer: "", category: "" });
+    setCategoryForm("");
+  };
+
+  const saveArticle = () => {
+    // Save logic
+    cancelEdit();
+  };
+
+  const saveFaq = () => {
+    // Save logic
+    cancelEdit();
+  };
+
+  const saveCategory = () => {
+    // Save logic
+    cancelEdit();
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[85vh] overflow-hidden flex flex-col">
@@ -46,7 +108,7 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-4 mb-4 flex-wrap">
           <Card className="px-4 py-2">
             <div className="text-2xl font-bold text-primary">24</div>
             <div className="text-xs text-muted-foreground">Artigos</div>
@@ -59,7 +121,7 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
             <div className="text-2xl font-bold text-info">8.5K</div>
             <div className="text-xs text-muted-foreground">Visualizações/mês</div>
           </Card>
-          <div className="flex-1">
+          <div className="flex-1 min-w-[200px]">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -70,74 +132,37 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
               />
             </div>
           </div>
-          <Button onClick={() => { setShowNewContent(true); setNewContentType("article"); }}>
+          <Button onClick={() => { setShowNewContent(true); setNewContentType("article"); cancelEdit(); }}>
             <Plus className="h-4 w-4 mr-2" /> Novo Conteúdo
           </Button>
         </div>
 
-        {showNewContent && (
+        {/* New/Edit Article Form */}
+        {(showNewContent && newContentType === "article") || editingArticle ? (
           <Card className="mb-4 border-primary">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">
-                {newContentType === "article" ? "Novo Artigo" : "Nova FAQ"}
+              <CardTitle className="text-base flex items-center justify-between">
+                {editingArticle ? "Editar Artigo" : "Novo Artigo"}
+                <Button variant="ghost" size="icon" onClick={() => { setShowNewContent(false); cancelEdit(); }}>
+                  <X className="h-4 w-4" />
+                </Button>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-2 mb-4">
-                <Button
-                  variant={newContentType === "article" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setNewContentType("article")}
-                >
-                  <FileText className="h-4 w-4 mr-1" /> Artigo
-                </Button>
-                <Button
-                  variant={newContentType === "faq" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setNewContentType("faq")}
-                >
-                  <HelpCircle className="h-4 w-4 mr-1" /> FAQ
-                </Button>
-              </div>
-              {newContentType === "article" ? (
-                <div className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium">Título</label>
-                      <Input placeholder="Título do artigo" className="mt-1" />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">Categoria</label>
-                      <Select>
-                        <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Selecione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map(cat => (
-                            <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+              <div className="space-y-4">
+                <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <label className="text-sm font-medium">Conteúdo</label>
-                    <Textarea placeholder="Escreva o conteúdo do artigo..." className="mt-1" rows={6} />
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium">Pergunta</label>
-                    <Input placeholder="Qual é a pergunta?" className="mt-1" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Resposta</label>
-                    <Textarea placeholder="Escreva a resposta..." className="mt-1" rows={4} />
+                    <label className="text-sm font-medium">Título</label>
+                    <Input 
+                      placeholder="Título do artigo" 
+                      className="mt-1" 
+                      value={articleForm.title}
+                      onChange={(e) => setArticleForm({...articleForm, title: e.target.value})}
+                    />
                   </div>
                   <div>
                     <label className="text-sm font-medium">Categoria</label>
-                    <Select>
+                    <Select value={articleForm.category} onValueChange={(v) => setArticleForm({...articleForm, category: v})}>
                       <SelectTrigger className="mt-1">
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
@@ -148,15 +173,116 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
                       </SelectContent>
                     </Select>
                   </div>
+                  <div>
+                    <label className="text-sm font-medium">Tipo</label>
+                    <Select value={articleForm.type} onValueChange={(v) => setArticleForm({...articleForm, type: v})}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="article">Artigo</SelectItem>
+                        <SelectItem value="video">Vídeo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              )}
+                <div>
+                  <label className="text-sm font-medium">Conteúdo</label>
+                  <Textarea 
+                    placeholder="Escreva o conteúdo do artigo..." 
+                    className="mt-1" 
+                    rows={6} 
+                    value={articleForm.content}
+                    onChange={(e) => setArticleForm({...articleForm, content: e.target.value})}
+                  />
+                </div>
+              </div>
               <div className="flex justify-end gap-2 mt-4">
-                <Button variant="outline" onClick={() => setShowNewContent(false)}>Cancelar</Button>
-                <Button variant="outline">Salvar Rascunho</Button>
-                <Button onClick={() => setShowNewContent(false)}>Publicar</Button>
+                <Button variant="outline" onClick={() => { setShowNewContent(false); cancelEdit(); }}>Cancelar</Button>
+                <Button variant="outline" onClick={() => setArticleForm({...articleForm, status: "draft"})}>Salvar Rascunho</Button>
+                <Button onClick={saveArticle}>
+                  <Check className="h-4 w-4 mr-2" />
+                  {editingArticle ? "Salvar Alterações" : "Publicar"}
+                </Button>
               </div>
             </CardContent>
           </Card>
+        ) : null}
+
+        {/* New/Edit FAQ Form */}
+        {(showNewContent && newContentType === "faq") || editingFaq ? (
+          <Card className="mb-4 border-primary">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center justify-between">
+                {editingFaq ? "Editar FAQ" : "Nova FAQ"}
+                <Button variant="ghost" size="icon" onClick={() => { setShowNewContent(false); cancelEdit(); }}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Pergunta</label>
+                  <Input 
+                    placeholder="Qual é a pergunta?" 
+                    className="mt-1" 
+                    value={faqForm.question}
+                    onChange={(e) => setFaqForm({...faqForm, question: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Resposta</label>
+                  <Textarea 
+                    placeholder="Escreva a resposta..." 
+                    className="mt-1" 
+                    rows={4} 
+                    value={faqForm.answer}
+                    onChange={(e) => setFaqForm({...faqForm, answer: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Categoria</label>
+                  <Select value={faqForm.category} onValueChange={(v) => setFaqForm({...faqForm, category: v})}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(cat => (
+                        <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={() => { setShowNewContent(false); cancelEdit(); }}>Cancelar</Button>
+                <Button onClick={saveFaq}>
+                  <Check className="h-4 w-4 mr-2" />
+                  {editingFaq ? "Salvar Alterações" : "Publicar"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {!showNewContent && !editingArticle && !editingFaq && (
+          <div className="flex gap-2 mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { setShowNewContent(true); setNewContentType("article"); }}
+            >
+              <FileText className="h-4 w-4 mr-1" /> Artigo
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { setShowNewContent(true); setNewContentType("faq"); }}
+            >
+              <HelpCircle className="h-4 w-4 mr-1" /> FAQ
+            </Button>
+          </div>
         )}
 
         <Tabs defaultValue="articles" className="flex-1 flex flex-col overflow-hidden">
@@ -176,7 +302,7 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
           </TabsList>
 
           <TabsContent value="articles" className="flex-1 overflow-hidden mt-4">
-            <ScrollArea className="h-[400px]">
+            <ScrollArea className="h-[350px]">
               <div className="space-y-3 pr-4">
                 {mockArticles.map((article) => (
                   <Card key={article.id} className="hover:shadow-md transition-shadow">
@@ -205,7 +331,7 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => setEditingArticle(article)}>
+                          <Button variant="ghost" size="icon" onClick={() => handleEditArticle(article)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="icon" className="text-destructive">
@@ -221,7 +347,7 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
           </TabsContent>
 
           <TabsContent value="faqs" className="flex-1 overflow-hidden mt-4">
-            <ScrollArea className="h-[400px]">
+            <ScrollArea className="h-[350px]">
               <div className="space-y-3 pr-4">
                 {mockFaqs.map((faq) => (
                   <Card key={faq.id} className="hover:shadow-md transition-shadow">
@@ -241,7 +367,7 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => setEditingFaq(faq)}>
+                          <Button variant="ghost" size="icon" onClick={() => handleEditFaq(faq)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="icon" className="text-destructive">
@@ -257,10 +383,45 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
           </TabsContent>
 
           <TabsContent value="categories" className="mt-4">
+            {(editingCategory || showNewCategory) && (
+              <Card className="mb-4 border-primary">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center justify-between">
+                    {editingCategory ? "Editar Categoria" : "Nova Categoria"}
+                    <Button variant="ghost" size="icon" onClick={cancelEdit}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-4">
+                    <Input 
+                      placeholder="Nome da categoria" 
+                      className="flex-1" 
+                      value={categoryForm}
+                      onChange={(e) => setCategoryForm(e.target.value)}
+                    />
+                    <Button onClick={saveCategory}>
+                      <Check className="h-4 w-4 mr-2" />
+                      {editingCategory ? "Salvar" : "Criar"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {categories.map((category) => (
-                <Card key={category} className="hover:shadow-md transition-shadow cursor-pointer">
-                  <CardContent className="p-4 text-center">
+                <Card key={category} className="hover:shadow-md transition-shadow cursor-pointer group">
+                  <CardContent className="p-4 text-center relative">
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleEditCategory(category)}>
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive">
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                     <FolderOpen className="h-8 w-8 mx-auto mb-2 text-primary" />
                     <div className="font-medium">{category}</div>
                     <div className="text-sm text-muted-foreground">
@@ -269,7 +430,10 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
                   </CardContent>
                 </Card>
               ))}
-              <Card className="hover:shadow-md transition-shadow cursor-pointer border-dashed">
+              <Card 
+                className="hover:shadow-md transition-shadow cursor-pointer border-dashed"
+                onClick={() => setShowNewCategory(true)}
+              >
                 <CardContent className="p-4 text-center flex flex-col items-center justify-center h-full">
                   <Plus className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
                   <div className="text-muted-foreground">Nova Categoria</div>

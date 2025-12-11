@@ -4,10 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, ThumbsUp, ThumbsDown, MessageSquare, TrendingUp, Users, Calendar, ChevronRight } from "lucide-react";
-import { ChartContainer } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { Textarea } from "@/components/ui/textarea";
+import { Star, ThumbsUp, ThumbsDown, MessageSquare, TrendingUp, Users, Calendar, ChevronRight, Eye, X, Reply, Flag } from "lucide-react";
 
 interface SatisfactionSurveyModalProps {
   open: boolean;
@@ -23,20 +21,19 @@ const satisfactionData = [
 ];
 
 const recentFeedback = [
-  { id: "1", clinic: "Clínica São Lucas", rating: 5, comment: "Atendimento excepcional! Resolveram meu problema em minutos.", agent: "Ana Paula", date: "Hoje, 10:30" },
-  { id: "2", clinic: "Centro Médico Vida", rating: 4, comment: "Bom suporte, mas demorou um pouco para responder inicialmente.", agent: "Carlos Silva", date: "Hoje, 09:15" },
-  { id: "3", clinic: "Odonto Plus", rating: 5, comment: "Perfeito! Equipe muito profissional e atenciosa.", agent: "Marina Santos", date: "Ontem, 16:45" },
-  { id: "4", clinic: "Fisio Center", rating: 3, comment: "Problema resolvido, mas precisei explicar várias vezes.", agent: "Pedro Costa", date: "Ontem, 14:20" },
+  { id: "1", clinic: "Clínica São Lucas", rating: 5, comment: "Atendimento excepcional! Resolveram meu problema em minutos.", agent: "Ana Paula", date: "Hoje, 10:30", status: "new", ticketId: "TK-1234" },
+  { id: "2", clinic: "Centro Médico Vida", rating: 4, comment: "Bom suporte, mas demorou um pouco para responder inicialmente.", agent: "Carlos Silva", date: "Hoje, 09:15", status: "replied", ticketId: "TK-1233" },
+  { id: "3", clinic: "Odonto Plus", rating: 5, comment: "Perfeito! Equipe muito profissional e atenciosa.", agent: "Marina Santos", date: "Ontem, 16:45", status: "new", ticketId: "TK-1232" },
+  { id: "4", clinic: "Fisio Center", rating: 3, comment: "Problema resolvido, mas precisei explicar várias vezes.", agent: "Pedro Costa", date: "Ontem, 14:20", status: "flagged", ticketId: "TK-1231" },
+  { id: "5", clinic: "Dermato Clinic", rating: 2, comment: "Demorou muito para resolver um problema simples.", agent: "João Mendes", date: "Ontem, 11:00", status: "new", ticketId: "TK-1230" },
+  { id: "6", clinic: "CardioVida", rating: 5, comment: "Excelente atendimento, muito rápido e eficiente!", agent: "Ana Paula", date: "12/01/2024", status: "replied", ticketId: "TK-1229" },
 ];
-
-const chartConfig = {
-  count: { label: "Respostas", color: "hsl(var(--primary))" },
-};
-
-const COLORS = ["hsl(var(--success))", "hsl(var(--primary))", "hsl(var(--warning))", "hsl(var(--destructive))", "hsl(var(--muted))"];
 
 export function SatisfactionSurveyModal({ open, onOpenChange }: SatisfactionSurveyModalProps) {
   const [period, setPeriod] = useState("month");
+  const [viewingFeedback, setViewingFeedback] = useState<any>(null);
+  const [replyText, setReplyText] = useState("");
+  const [showReplyForm, setShowReplyForm] = useState(false);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -45,6 +42,27 @@ export function SatisfactionSurveyModal({ open, onOpenChange }: SatisfactionSurv
         className={`h-4 w-4 ${i < rating ? "fill-warning text-warning" : "text-muted"}`}
       />
     ));
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "new": return <Badge className="bg-info/20 text-info">Novo</Badge>;
+      case "replied": return <Badge className="bg-success/20 text-success">Respondido</Badge>;
+      case "flagged": return <Badge className="bg-warning/20 text-warning">Sinalizado</Badge>;
+      default: return null;
+    }
+  };
+
+  const handleViewFeedback = (feedback: any) => {
+    setViewingFeedback(feedback);
+    setShowReplyForm(false);
+    setReplyText("");
+  };
+
+  const closeFeedbackDetail = () => {
+    setViewingFeedback(null);
+    setShowReplyForm(false);
+    setReplyText("");
   };
 
   return (
@@ -161,35 +179,122 @@ export function SatisfactionSurveyModal({ open, onOpenChange }: SatisfactionSurv
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="h-[250px]">
-                <div className="space-y-3 pr-4">
-                  {recentFeedback.map((feedback) => (
-                    <Card key={feedback.id} className="bg-muted/30">
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-medium">{feedback.clinic}</span>
-                              <div className="flex">{renderStars(feedback.rating)}</div>
-                            </div>
-                            <p className="text-sm text-muted-foreground">{feedback.comment}</p>
-                            <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                              <span>Atendido por: {feedback.agent}</span>
-                              <span className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
-                                {feedback.date}
-                              </span>
+              {viewingFeedback ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Button variant="ghost" size="sm" onClick={closeFeedbackDetail}>
+                      <X className="h-4 w-4 mr-2" /> Voltar à lista
+                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setShowReplyForm(!showReplyForm)}>
+                        <Reply className="h-4 w-4 mr-2" /> Responder
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Flag className="h-4 w-4 mr-2" /> Sinalizar
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <Card className="bg-muted/30">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <div className="flex items-center gap-3">
+                            <span className="font-semibold text-lg">{viewingFeedback.clinic}</span>
+                            {getStatusBadge(viewingFeedback.status)}
+                          </div>
+                          <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                            <span>Ticket: {viewingFeedback.ticketId}</span>
+                            <span>•</span>
+                            <span>Atendido por: {viewingFeedback.agent}</span>
+                          </div>
+                        </div>
+                        <div className="flex">{renderStars(viewingFeedback.rating)}</div>
+                      </div>
+                      
+                      <div className="p-4 bg-background rounded-lg mb-4">
+                        <p className="text-foreground">{viewingFeedback.comment}</p>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        <span>{viewingFeedback.date}</span>
+                      </div>
+
+                      {showReplyForm && (
+                        <div className="mt-4 pt-4 border-t">
+                          <label className="text-sm font-medium mb-2 block">Responder ao feedback</label>
+                          <Textarea 
+                            placeholder="Escreva sua resposta ao cliente..."
+                            className="mb-3"
+                            rows={4}
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                          />
+                          <div className="flex justify-end gap-2">
+                            <Button variant="outline" size="sm" onClick={() => setShowReplyForm(false)}>
+                              Cancelar
+                            </Button>
+                            <Button size="sm">
+                              Enviar Resposta
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {viewingFeedback.status === "replied" && !showReplyForm && (
+                        <div className="mt-4 pt-4 border-t">
+                          <div className="text-sm font-medium mb-2 flex items-center gap-2">
+                            <Reply className="h-4 w-4 text-success" />
+                            Resposta enviada
+                          </div>
+                          <div className="p-3 bg-success/10 rounded-lg text-sm">
+                            <p>Olá! Agradecemos muito seu feedback positivo. Ficamos felizes em poder ajudar!</p>
+                            <div className="text-xs text-muted-foreground mt-2">
+                              Respondido por Ana Paula em {viewingFeedback.date}
                             </div>
                           </div>
-                          <Button variant="ghost" size="icon">
-                            <ChevronRight className="h-4 w-4" />
-                          </Button>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                      )}
+                    </CardContent>
+                  </Card>
                 </div>
-              </ScrollArea>
+              ) : (
+                <ScrollArea className="h-[300px]">
+                  <div className="space-y-3 pr-4">
+                    {recentFeedback.map((feedback) => (
+                      <Card 
+                        key={feedback.id} 
+                        className="bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+                        onClick={() => handleViewFeedback(feedback)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-medium">{feedback.clinic}</span>
+                                <div className="flex">{renderStars(feedback.rating)}</div>
+                                {getStatusBadge(feedback.status)}
+                              </div>
+                              <p className="text-sm text-muted-foreground line-clamp-2">{feedback.comment}</p>
+                              <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                <span>Atendido por: {feedback.agent}</span>
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {feedback.date}
+                                </span>
+                              </div>
+                            </div>
+                            <Button variant="ghost" size="icon">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
             </CardContent>
           </Card>
         </div>
