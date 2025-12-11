@@ -60,7 +60,12 @@ const mockErrors = [
 export function ErrorTrackingModal({ open, onOpenChange }: ErrorTrackingModalProps) {
   const [search, setSearch] = useState("");
   const [expandedError, setExpandedError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("all");
 
+  const filteredErrors = mockErrors.filter(error => {
+    if (activeTab === "all") return true;
+    return error.type === activeTab;
+  });
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "critical": return <XCircle className="h-4 w-4 text-destructive" />;
@@ -113,18 +118,18 @@ export function ErrorTrackingModal({ open, onOpenChange }: ErrorTrackingModalPro
           </div>
         </div>
 
-        <Tabs defaultValue="all" className="flex-1 flex flex-col overflow-hidden">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
           <TabsList>
-            <TabsTrigger value="all">Todos</TabsTrigger>
-            <TabsTrigger value="critical">Críticos</TabsTrigger>
-            <TabsTrigger value="error">Erros</TabsTrigger>
-            <TabsTrigger value="warning">Avisos</TabsTrigger>
+            <TabsTrigger value="all">Todos ({mockErrors.length})</TabsTrigger>
+            <TabsTrigger value="critical">Críticos ({mockErrors.filter(e => e.type === "critical").length})</TabsTrigger>
+            <TabsTrigger value="error">Erros ({mockErrors.filter(e => e.type === "error").length})</TabsTrigger>
+            <TabsTrigger value="warning">Avisos ({mockErrors.filter(e => e.type === "warning").length})</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="all" className="flex-1 overflow-hidden mt-4">
+          <TabsContent value={activeTab} className="flex-1 overflow-hidden mt-4">
             <ScrollArea className="h-[400px]">
               <div className="space-y-3 pr-4">
-                {mockErrors.map((error) => (
+                {filteredErrors.map((error) => (
                   <Card key={error.id} className="overflow-hidden">
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">

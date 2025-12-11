@@ -34,7 +34,8 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
   const [search, setSearch] = useState("");
   const [editingArticle, setEditingArticle] = useState<any>(null);
   const [editingFaq, setEditingFaq] = useState<any>(null);
-
+  const [showNewContent, setShowNewContent] = useState(false);
+  const [newContentType, setNewContentType] = useState<"article" | "faq">("article");
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[85vh] overflow-hidden flex flex-col">
@@ -69,10 +70,94 @@ export function KnowledgeBaseModal({ open, onOpenChange }: KnowledgeBaseModalPro
               />
             </div>
           </div>
-          <Button>
+          <Button onClick={() => { setShowNewContent(true); setNewContentType("article"); }}>
             <Plus className="h-4 w-4 mr-2" /> Novo Conteúdo
           </Button>
         </div>
+
+        {showNewContent && (
+          <Card className="mb-4 border-primary">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">
+                {newContentType === "article" ? "Novo Artigo" : "Nova FAQ"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-2 mb-4">
+                <Button
+                  variant={newContentType === "article" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setNewContentType("article")}
+                >
+                  <FileText className="h-4 w-4 mr-1" /> Artigo
+                </Button>
+                <Button
+                  variant={newContentType === "faq" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setNewContentType("faq")}
+                >
+                  <HelpCircle className="h-4 w-4 mr-1" /> FAQ
+                </Button>
+              </div>
+              {newContentType === "article" ? (
+                <div className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium">Título</label>
+                      <Input placeholder="Título do artigo" className="mt-1" />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Categoria</label>
+                      <Select>
+                        <SelectTrigger className="mt-1">
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map(cat => (
+                            <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Conteúdo</label>
+                    <Textarea placeholder="Escreva o conteúdo do artigo..." className="mt-1" rows={6} />
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">Pergunta</label>
+                    <Input placeholder="Qual é a pergunta?" className="mt-1" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Resposta</label>
+                    <Textarea placeholder="Escreva a resposta..." className="mt-1" rows={4} />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Categoria</label>
+                    <Select>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(cat => (
+                          <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={() => setShowNewContent(false)}>Cancelar</Button>
+                <Button variant="outline">Salvar Rascunho</Button>
+                <Button onClick={() => setShowNewContent(false)}>Publicar</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Tabs defaultValue="articles" className="flex-1 flex flex-col overflow-hidden">
           <TabsList>
