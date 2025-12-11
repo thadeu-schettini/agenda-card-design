@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Bell, Plus, Send, Clock, Users, Eye, Settings, Smartphone, Monitor, Trash2 } from "lucide-react";
+import { Bell, Plus, Send, Clock, Users, Eye, Settings, Smartphone, Monitor, Trash2, Edit, X, Check } from "lucide-react";
 
 interface PushNotificationsModalProps {
   open: boolean;
@@ -18,9 +18,9 @@ interface PushNotificationsModalProps {
 }
 
 const mockNotifications = [
-  { id: "1", title: "Nova atualização disponível", body: "Confira as novidades da versão 2.5", status: "sent", recipients: 2847, openRate: 68, sentAt: "10/01/2024 10:00" },
-  { id: "2", title: "Lembrete de pagamento", body: "Sua fatura vence amanhã", status: "scheduled", recipients: 234, openRate: null, sentAt: "15/01/2024 09:00" },
-  { id: "3", title: "Manutenção programada", body: "Sistema ficará indisponível das 2h às 4h", status: "draft", recipients: 0, openRate: null, sentAt: null },
+  { id: "1", title: "Nova atualização disponível", body: "Confira as novidades da versão 2.5", status: "sent", recipients: 2847, openRate: 68, sentAt: "10/01/2024 10:00", segment: "all", url: "" },
+  { id: "2", title: "Lembrete de pagamento", body: "Sua fatura vence amanhã", status: "scheduled", recipients: 234, openRate: null, sentAt: "15/01/2024 09:00", segment: "active", url: "/billing" },
+  { id: "3", title: "Manutenção programada", body: "Sistema ficará indisponível das 2h às 4h", status: "draft", recipients: 0, openRate: null, sentAt: null, segment: "all", url: "" },
 ];
 
 const notificationTypes = [
@@ -32,7 +32,37 @@ const notificationTypes = [
 
 export function PushNotificationsModal({ open, onOpenChange }: PushNotificationsModalProps) {
   const [showNewNotification, setShowNewNotification] = useState(false);
+  const [editingNotification, setEditingNotification] = useState<any>(null);
   const [types, setTypes] = useState(notificationTypes);
+
+  // Form state
+  const [notificationForm, setNotificationForm] = useState({
+    title: "",
+    body: "",
+    segment: "",
+    url: ""
+  });
+
+  const handleEditNotification = (notification: any) => {
+    setEditingNotification(notification);
+    setNotificationForm({
+      title: notification.title,
+      body: notification.body,
+      segment: notification.segment,
+      url: notification.url || ""
+    });
+    setShowNewNotification(false);
+  };
+
+  const cancelEdit = () => {
+    setEditingNotification(null);
+    setShowNewNotification(false);
+    setNotificationForm({ title: "", body: "", segment: "", url: "" });
+  };
+
+  const saveNotification = () => {
+    cancelEdit();
+  };
 
   const toggleType = (type: string) => {
     setTypes(types.map(t => t.type === type ? { ...t, enabled: !t.enabled } : t));
@@ -56,7 +86,7 @@ export function PushNotificationsModal({ open, onOpenChange }: PushNotifications
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-4 mb-4 flex-wrap">
           <Card className="px-4 py-2 bg-gradient-to-br from-primary/10 to-transparent">
             <div className="text-2xl font-bold text-primary">2.8K</div>
             <div className="text-xs text-muted-foreground">Dispositivos Registrados</div>
@@ -80,7 +110,7 @@ export function PushNotificationsModal({ open, onOpenChange }: PushNotifications
             <div className="text-xs text-muted-foreground">Desktop</div>
           </Card>
           <div className="flex-1" />
-          <Button onClick={() => setShowNewNotification(true)}>
+          <Button onClick={() => { setShowNewNotification(true); cancelEdit(); }}>
             <Plus className="h-4 w-4 mr-2" /> Nova Notificação
           </Button>
         </div>
@@ -92,21 +122,34 @@ export function PushNotificationsModal({ open, onOpenChange }: PushNotifications
           </TabsList>
 
           <TabsContent value="notifications" className="flex-1 overflow-hidden mt-4">
-            {showNewNotification && (
+            {(showNewNotification || editingNotification) && (
               <Card className="mb-4 border-primary">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Nova Notificação Push</CardTitle>
+                  <CardTitle className="text-base flex items-center justify-between">
+                    {editingNotification ? "Editar Notificação" : "Nova Notificação Push"}
+                    <Button variant="ghost" size="icon" onClick={cancelEdit}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium">Título</label>
-                      <Input placeholder="Título da notificação" className="mt-1" maxLength={50} />
-                      <div className="text-xs text-muted-foreground mt-1">Máximo 50 caracteres</div>
+                      <Label>Título</Label>
+                      <Input 
+                        placeholder="Título da notificação" 
+                        className="mt-1" 
+                        maxLength={50} 
+                        value={notificationForm.title}
+                        onChange={(e) => setNotificationForm({...notificationForm, title: e.target.value})}
+                      />
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {notificationForm.title.length}/50 caracteres
+                      </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium">Segmento</label>
-                      <Select>
+                      <Label>Segmento</Label>
+                      <Select value={notificationForm.segment} onValueChange={(v) => setNotificationForm({...notificationForm, segment: v})}>
                         <SelectTrigger className="mt-1">
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
@@ -120,21 +163,35 @@ export function PushNotificationsModal({ open, onOpenChange }: PushNotifications
                     </div>
                   </div>
                   <div className="mt-4">
-                    <label className="text-sm font-medium">Mensagem</label>
-                    <Textarea placeholder="Corpo da notificação..." className="mt-1" rows={3} maxLength={150} />
-                    <div className="text-xs text-muted-foreground mt-1">Máximo 150 caracteres</div>
+                    <Label>Mensagem</Label>
+                    <Textarea 
+                      placeholder="Corpo da notificação..." 
+                      className="mt-1" 
+                      rows={3} 
+                      maxLength={150} 
+                      value={notificationForm.body}
+                      onChange={(e) => setNotificationForm({...notificationForm, body: e.target.value})}
+                    />
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {notificationForm.body.length}/150 caracteres
+                    </div>
                   </div>
                   <div className="mt-4">
-                    <label className="text-sm font-medium">URL de Destino (opcional)</label>
-                    <Input placeholder="https://app.exemplo.com/pagina" className="mt-1" />
+                    <Label>URL de Destino (opcional)</Label>
+                    <Input 
+                      placeholder="https://app.exemplo.com/pagina" 
+                      className="mt-1" 
+                      value={notificationForm.url}
+                      onChange={(e) => setNotificationForm({...notificationForm, url: e.target.value})}
+                    />
                   </div>
                   <div className="flex justify-end gap-2 mt-4">
-                    <Button variant="outline" onClick={() => setShowNewNotification(false)}>Cancelar</Button>
-                    <Button variant="outline">
+                    <Button variant="outline" onClick={cancelEdit}>Cancelar</Button>
+                    <Button variant="outline" onClick={saveNotification}>
                       <Clock className="h-4 w-4 mr-2" /> Agendar
                     </Button>
-                    <Button>
-                      <Send className="h-4 w-4 mr-2" /> Enviar Agora
+                    <Button onClick={saveNotification}>
+                      <Send className="h-4 w-4 mr-2" /> {editingNotification ? "Salvar e Enviar" : "Enviar Agora"}
                     </Button>
                   </div>
                 </CardContent>
@@ -178,9 +235,14 @@ export function PushNotificationsModal({ open, onOpenChange }: PushNotifications
                             <div className="text-xs text-muted-foreground">Abertura</div>
                           </div>
                         )}
-                        <Button variant="ghost" size="icon" className="text-destructive">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="icon" onClick={() => handleEditNotification(notification)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
