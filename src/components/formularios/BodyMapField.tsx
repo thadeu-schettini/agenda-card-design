@@ -14,18 +14,20 @@ type ViewType = "front" | "back";
 interface MeasurementPoint {
   id: string;
   label: string;
+  // Positions are percentages from the center of the body image
   position: { front?: { x: number; y: number }; back?: { x: number; y: number } };
   cardSide: "left" | "right";
 }
 
-// Measurement points connected to the body silhouette (percentages for positioning)
+// Measurement points - x/y as percentages of the body image container
+// x: 50 = center, y: 0 = top, 100 = bottom
 const measurementPoints: MeasurementPoint[] = [
-  { id: "braco", label: "Braço", position: { front: { x: 18, y: 32 }, back: { x: 18, y: 32 } }, cardSide: "left" },
-  { id: "peito", label: "Peito", position: { front: { x: 58, y: 28 } }, cardSide: "right" },
-  { id: "costas", label: "Costas Superior", position: { back: { x: 58, y: 28 } }, cardSide: "right" },
-  { id: "cintura", label: "Cintura", position: { front: { x: 22, y: 46 }, back: { x: 22, y: 46 } }, cardSide: "left" },
-  { id: "coxa", label: "Coxa", position: { front: { x: 62, y: 58 }, back: { x: 62, y: 58 } }, cardSide: "right" },
-  { id: "quadril", label: "Quadril", position: { front: { x: 25, y: 54 }, back: { x: 25, y: 54 } }, cardSide: "left" },
+  { id: "braco", label: "Braço", position: { front: { x: 22, y: 30 }, back: { x: 22, y: 30 } }, cardSide: "left" },
+  { id: "peito", label: "Peito", position: { front: { x: 50, y: 25 } }, cardSide: "right" },
+  { id: "costas", label: "Costas Superior", position: { back: { x: 50, y: 25 } }, cardSide: "right" },
+  { id: "cintura", label: "Cintura", position: { front: { x: 35, y: 42 }, back: { x: 35, y: 42 } }, cardSide: "left" },
+  { id: "coxa", label: "Coxa", position: { front: { x: 60, y: 58 }, back: { x: 60, y: 58 } }, cardSide: "right" },
+  { id: "quadril", label: "Quadril", position: { front: { x: 30, y: 50 }, back: { x: 30, y: 50 } }, cardSide: "left" },
   { id: "panturrilha", label: "Panturrilha", position: { front: { x: 58, y: 78 }, back: { x: 58, y: 78 } }, cardSide: "right" },
 ];
 
@@ -128,7 +130,7 @@ export function BodyMapField({
       </div>
 
       {/* Main Body Map Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-4 lg:gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px_1fr] gap-4 lg:gap-2 items-start">
         {/* Left Measurement Cards */}
         <div className="flex flex-col gap-3 order-2 lg:order-1">
           {leftPoints.map((point) => (
@@ -148,71 +150,61 @@ export function BodyMapField({
           ))}
         </div>
 
-        {/* Center: Body Image with Connection Lines */}
-        <div className="relative flex justify-center order-1 lg:order-2">
-          <div className="relative w-full max-w-[200px] sm:max-w-[240px]">
+        {/* Center: Body Image with Markers */}
+        <div className="relative flex justify-center order-1 lg:order-2 py-4">
+          <div className="relative w-[200px] sm:w-[240px]">
             {/* Real body image */}
             <img 
               src={view === "front" ? bodyFrontImage : bodyBackImage}
               alt={view === "front" ? "Corpo Frontal" : "Corpo Posterior"}
               className="w-full h-auto select-none pointer-events-none drop-shadow-lg"
+              draggable={false}
             />
             
-            {/* Connection dots and lines overlay */}
-            <svg 
-              viewBox="0 0 100 200" 
-              className="absolute inset-0 w-full h-full"
-              style={{ pointerEvents: 'none' }}
-            >
-              {visiblePoints.map((point) => {
-                const pos = point.position[view];
-                if (!pos) return null;
-                const pointHasData = hasData(point.id);
-                const isActive = activeField === point.id;
-                
-                return (
-                  <g key={point.id}>
-                    {/* Connection line */}
-                    <line
-                      x1={pos.x}
-                      y1={pos.y}
-                      x2={point.cardSide === "left" ? 0 : 100}
-                      y2={pos.y}
-                      stroke={pointHasData ? "hsl(var(--primary))" : "hsl(var(--destructive))"}
-                      strokeWidth="0.8"
-                      strokeDasharray={pointHasData ? "none" : "2,1.5"}
-                      opacity={isActive ? 0.9 : 0.5}
-                      className="transition-all duration-300"
-                    />
-                    
-                    {/* Pulsing ring for active */}
-                    {isActive && (
-                      <circle
-                        cx={pos.x}
-                        cy={pos.y}
-                        r="4"
-                        fill="none"
-                        stroke="hsl(var(--primary))"
-                        strokeWidth="0.8"
-                        opacity="0.6"
-                        className="animate-ping"
-                      />
+            {/* Markers and connection lines */}
+            {visiblePoints.map((point) => {
+              const pos = point.position[view];
+              if (!pos) return null;
+              const pointHasData = hasData(point.id);
+              const isActive = activeField === point.id;
+              
+              return (
+                <div key={point.id}>
+                  {/* Connection line */}
+                  <div 
+                    className={cn(
+                      "absolute h-[2px] transition-all duration-300",
+                      pointHasData 
+                        ? "bg-primary" 
+                        : "bg-destructive border-dashed",
+                      isActive ? "opacity-90" : "opacity-50"
                     )}
-                    
-                    {/* Main dot */}
-                    <circle
-                      cx={pos.x}
-                      cy={pos.y}
-                      r="2.5"
-                      fill={pointHasData ? "hsl(var(--primary))" : "hsl(var(--destructive))"}
-                      stroke="white"
-                      strokeWidth="1"
-                      className="transition-all duration-300"
-                    />
-                  </g>
-                );
-              })}
-            </svg>
+                    style={{
+                      top: `${pos.y}%`,
+                      left: point.cardSide === "left" ? 0 : `${pos.x}%`,
+                      width: point.cardSide === "left" ? `${pos.x}%` : `${100 - pos.x}%`,
+                      borderStyle: pointHasData ? 'solid' : 'dashed',
+                      borderTopWidth: pointHasData ? 0 : '2px',
+                      borderColor: pointHasData ? undefined : 'hsl(var(--destructive))',
+                      backgroundColor: pointHasData ? undefined : 'transparent',
+                    }}
+                  />
+                  
+                  {/* Marker dot */}
+                  <div
+                    className={cn(
+                      "absolute w-4 h-4 rounded-full border-2 border-white shadow-lg transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300",
+                      pointHasData ? "bg-primary" : "bg-destructive",
+                      isActive && "scale-125 ring-4 ring-primary/30"
+                    )}
+                    style={{
+                      left: `${pos.x}%`,
+                      top: `${pos.y}%`,
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -337,13 +329,13 @@ function MeasurementCard({
             ? "border-primary/30" 
             : "border-destructive/30 border-dashed",
         side === "left" ? "lg:ml-auto" : "lg:mr-auto",
-        "w-full lg:max-w-[200px]"
+        "w-full lg:max-w-[180px]"
       )}
     >
       <div className="flex items-center gap-2 mb-2">
         <div
           className={cn(
-            "w-2 h-2 rounded-full transition-colors",
+            "w-2.5 h-2.5 rounded-full transition-colors",
             hasData ? "bg-primary" : "bg-destructive"
           )}
         />
