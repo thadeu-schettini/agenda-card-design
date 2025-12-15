@@ -79,49 +79,6 @@ const palmerAdultTeeth = {
   lowerRight: ["8┐", "7┐", "6┐", "5┐", "4┐", "3┐", "2┐", "1┐"],
 };
 
-// Precise tooth positions for the image (percentage from left and top)
-// These are calibrated for the realistic 3D dental model image
-const toothPositions = {
-  // Upper arch - from patient's right (18) to left (28)
-  upper: [
-    { left: 7.5, top: 18 },   // 18 - Third molar (right)
-    { left: 13, top: 14 },    // 17
-    { left: 18.5, top: 10 },  // 16
-    { left: 24, top: 8 },     // 15
-    { left: 29.5, top: 6 },   // 14
-    { left: 35, top: 4.5 },   // 13
-    { left: 41, top: 4 },     // 12
-    { left: 47, top: 3.5 },   // 11 - Central incisor
-    { left: 53, top: 3.5 },   // 21 - Central incisor
-    { left: 59, top: 4 },     // 22
-    { left: 65, top: 4.5 },   // 23
-    { left: 70.5, top: 6 },   // 24
-    { left: 76, top: 8 },     // 25
-    { left: 81.5, top: 10 },  // 26
-    { left: 87, top: 14 },    // 27
-    { left: 92.5, top: 18 },  // 28 - Third molar (left)
-  ],
-  // Lower arch - from patient's left (31) to right (41)
-  lower: [
-    { left: 92.5, top: 82 },  // 38 - Third molar (left)
-    { left: 87, top: 86 },    // 37
-    { left: 81.5, top: 89 },  // 36
-    { left: 76, top: 91 },    // 35
-    { left: 70.5, top: 93 },  // 34
-    { left: 65, top: 94.5 },  // 33
-    { left: 59, top: 95.5 },  // 32
-    { left: 53, top: 96 },    // 31 - Central incisor
-    { left: 47, top: 96 },    // 41 - Central incisor
-    { left: 41, top: 95.5 },  // 42
-    { left: 35, top: 94.5 },  // 43
-    { left: 29.5, top: 93 },  // 44
-    { left: 24, top: 91 },    // 45
-    { left: 18.5, top: 89 },  // 46
-    { left: 13, top: 86 },    // 47
-    { left: 7.5, top: 82 },   // 48 - Third molar (right)
-  ],
-};
-
 interface ToothData {
   condition: string;
   notes: string;
@@ -196,7 +153,7 @@ export function OdontogramField({
     return conditions.find((c) => c.id === conditionId) || conditions[0];
   };
 
-  const renderToothButton = (tooth: number | string, position: { left: number; top: number }, isUpper: boolean) => {
+  const renderToothButton = (tooth: number | string, index: number, isUpper: boolean) => {
     const toothId = getToothNumber(tooth);
     const condition = getToothCondition(tooth);
     const isSelected = selectedTooth === toothId;
@@ -215,31 +172,32 @@ export function OdontogramField({
             onClick={() => handleToothClick(tooth)}
             disabled={readOnly}
             className={cn(
-              "absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-200 group z-10",
-              "w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 rounded-full",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-              isSelected && "scale-125 z-20 ring-2 ring-primary ring-offset-1",
-              !readOnly && "hover:scale-110 hover:z-20",
-              readOnly && "cursor-default",
-              isHealthy && "bg-transparent hover:bg-primary/20 border-2 border-transparent hover:border-primary/50",
-              !isHealthy && "shadow-lg"
+              "flex flex-col items-center justify-center transition-all duration-200 group",
+              "w-[5.5%] aspect-square min-w-[24px] max-w-[36px]",
+              "rounded-full shadow-md border-2",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+              isSelected && "scale-110 z-10 ring-2 ring-primary ring-offset-1",
+              !readOnly && "hover:scale-110 hover:z-10 cursor-pointer",
+              readOnly && "cursor-default opacity-80",
+              isHealthy 
+                ? "bg-white/90 border-border hover:border-primary hover:bg-primary/10" 
+                : "border-white"
             )}
             style={{
-              left: `${position.left}%`,
-              top: `${position.top}%`,
               backgroundColor: !isHealthy ? condition.bgColor : undefined,
             }}
           >
-            {/* Condition Symbol */}
-            {!isHealthy && (
-              <span className="text-white text-[8px] sm:text-[10px] md:text-xs font-bold">
-                {condition.symbol}
-              </span>
-            )}
+            {/* Condition Symbol or Tooth Number */}
+            <span className={cn(
+              "text-[9px] sm:text-[10px] md:text-xs font-bold leading-none",
+              isHealthy ? "text-muted-foreground group-hover:text-primary" : "text-white"
+            )}>
+              {isHealthy ? tooth : condition.symbol}
+            </span>
             
             {/* Notes indicator */}
             {hasNotes && (
-              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-info rounded-full border-2 border-background shadow-sm" />
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-info rounded-full border border-white shadow-sm" />
             )}
           </button>
         </PopoverTrigger>
@@ -384,9 +342,9 @@ export function OdontogramField({
       </div>
 
       {/* Odontogram with Real Image */}
-      <div className="relative bg-gradient-to-b from-muted/30 to-background rounded-2xl border border-border/50 shadow-sm p-4 sm:p-6 overflow-hidden">
+      <div className="relative bg-gradient-to-b from-muted/30 to-background rounded-2xl border border-border/50 shadow-sm overflow-hidden">
         {/* Real Teeth Image */}
-        <div className="relative mx-auto max-w-3xl">
+        <div className="relative mx-auto">
           <img 
             src={odontogramImage} 
             alt="Odontograma" 
@@ -394,15 +352,21 @@ export function OdontogramField({
             draggable={false}
           />
           
-          {/* Tooth Buttons Overlay - Upper Arch */}
-          {upperTeeth.map((tooth, idx) => 
-            renderToothButton(tooth, toothPositions.upper[idx], true)
-          )}
+          {/* Upper Teeth Row - positioned over the upper arch */}
+          <div 
+            className="absolute left-0 right-0 flex justify-center items-center gap-[0.5%] px-[8%]"
+            style={{ top: '12%' }}
+          >
+            {upperTeeth.map((tooth, idx) => renderToothButton(tooth, idx, true))}
+          </div>
           
-          {/* Tooth Buttons Overlay - Lower Arch */}
-          {lowerTeeth.map((tooth, idx) => 
-            renderToothButton(tooth, toothPositions.lower[idx], false)
-          )}
+          {/* Lower Teeth Row - positioned over the lower arch */}
+          <div 
+            className="absolute left-0 right-0 flex justify-center items-center gap-[0.5%] px-[8%]"
+            style={{ bottom: '12%' }}
+          >
+            {lowerTeeth.map((tooth, idx) => renderToothButton(tooth, idx, false))}
+          </div>
         </div>
         
         {/* Arcade Labels */}
