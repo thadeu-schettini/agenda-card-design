@@ -49,6 +49,7 @@ import ReceitaDigital from "./pages/ReceitaDigital";
 import WhatsAppBusiness from "./pages/WhatsAppBusiness";
 import PedidosCompra from "./pages/PedidosCompra";
 import AvaliacaoPaciente from "./pages/AvaliacaoPaciente";
+import Cupons from "./pages/Cupons";
 
 const queryClient = new QueryClient();
 
@@ -105,6 +106,7 @@ const App = () => (
               <Route path="/receita-digital" element={<ReceitaDigital />} />
               <Route path="/whatsapp-business" element={<WhatsAppBusiness />} />
               <Route path="/pedidos-compra" element={<PedidosCompra />} />
+              <Route path="/cupons" element={<Cupons />} />
             </Route>
             
             {/* Portal Paciente - separate layout */}
