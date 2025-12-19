@@ -40,14 +40,24 @@ const appointmentData = {
   patientName: "João Silva",
 };
 
-const experienceTags = [
-  { id: "atendimento", label: "Atendimento", icon: Heart },
+const positiveExperienceTags = [
+  { id: "atendimento", label: "Atendimento acolhedor", icon: Heart },
   { id: "pontualidade", label: "Pontualidade", icon: Clock },
-  { id: "competencia", label: "Competência", icon: Stethoscope },
-  { id: "ambiente", label: "Ambiente", icon: Building2 },
-  { id: "comunicacao", label: "Comunicação", icon: MessageSquare },
-  { id: "limpeza", label: "Limpeza", icon: Sparkles },
-  { id: "privacidade", label: "Privacidade", icon: Shield },
+  { id: "competencia", label: "Competência profissional", icon: Stethoscope },
+  { id: "ambiente", label: "Ambiente agradável", icon: Building2 },
+  { id: "comunicacao", label: "Comunicação clara", icon: MessageSquare },
+  { id: "limpeza", label: "Limpeza e organização", icon: Sparkles },
+  { id: "privacidade", label: "Privacidade respeitada", icon: Shield },
+];
+
+const negativeExperienceTags = [
+  { id: "demora", label: "Tempo de espera", icon: Clock },
+  { id: "atendimento", label: "Atendimento frio", icon: Heart },
+  { id: "comunicacao", label: "Falta de clareza", icon: MessageSquare },
+  { id: "ambiente", label: "Ambiente desconfortável", icon: Building2 },
+  { id: "organizacao", label: "Desorganização", icon: Sparkles },
+  { id: "privacidade", label: "Falta de privacidade", icon: Shield },
+  { id: "preco", label: "Custo-benefício", icon: Stethoscope },
 ];
 
 const npsLabels = {
@@ -338,27 +348,40 @@ export default function AvaliacaoPaciente() {
               </div>
             )}
 
-            {/* Step 3: Tags Selection */}
+            {/* Step 3: Tags Selection - Adaptive based on experience */}
             {step === 3 && (
               <div className="space-y-6">
                 <div className="text-center">
                   <h2 className="text-xl font-semibold mb-2">
-                    O que você mais gostou?
+                    {overallExperience === "negative" || rating <= 2
+                      ? "O que podemos melhorar?"
+                      : overallExperience === "neutral" || rating === 3
+                      ? "O que chamou sua atenção?"
+                      : "O que você mais gostou?"}
                   </h2>
                   <p className="text-muted-foreground text-sm">
-                    Selecione os aspectos que se destacaram (opcional)
+                    {overallExperience === "negative" || rating <= 2
+                      ? "Sua opinião nos ajuda a evoluir (opcional)"
+                      : overallExperience === "neutral" || rating === 3
+                      ? "Selecione os aspectos que se destacaram (opcional)"
+                      : "Selecione os pontos positivos da experiência (opcional)"}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 py-4">
-                  {experienceTags.map((tag) => (
+                  {(overallExperience === "negative" || rating <= 2
+                    ? negativeExperienceTags
+                    : positiveExperienceTags
+                  ).map((tag) => (
                     <button
                       key={tag.id}
                       onClick={() => toggleTag(tag.id)}
                       className={cn(
                         "flex items-center gap-2 p-3 rounded-xl border-2 transition-all",
                         selectedTags.includes(tag.id)
-                          ? "border-primary bg-primary/10 text-primary"
+                          ? overallExperience === "negative" || rating <= 2
+                            ? "border-red-500 bg-red-500/10 text-red-600"
+                            : "border-primary bg-primary/10 text-primary"
                           : "border-border hover:border-primary/50"
                       )}
                     >
@@ -374,9 +397,19 @@ export default function AvaliacaoPaciente() {
                 {selectedTags.length > 0 && (
                   <div className="flex flex-wrap gap-2 justify-center">
                     {selectedTags.map((tagId) => {
-                      const tag = experienceTags.find((t) => t.id === tagId);
+                      const tags = overallExperience === "negative" || rating <= 2
+                        ? negativeExperienceTags
+                        : positiveExperienceTags;
+                      const tag = tags.find((t) => t.id === tagId);
                       return (
-                        <Badge key={tagId} variant="secondary" className="gap-1">
+                        <Badge 
+                          key={tagId} 
+                          variant="secondary" 
+                          className={cn(
+                            "gap-1",
+                            (overallExperience === "negative" || rating <= 2) && "bg-red-500/10 text-red-600"
+                          )}
+                        >
                           {tag?.label}
                         </Badge>
                       );
@@ -435,7 +468,10 @@ export default function AvaliacaoPaciente() {
                   {selectedTags.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {selectedTags.map((tagId) => {
-                        const tag = experienceTags.find((t) => t.id === tagId);
+                        const tags = overallExperience === "negative" || rating <= 2
+                          ? negativeExperienceTags
+                          : positiveExperienceTags;
+                        const tag = tags.find((t) => t.id === tagId);
                         return (
                           <Badge key={tagId} variant="outline" className="text-xs">
                             {tag?.label}
