@@ -78,6 +78,8 @@ export default function Configuracoes() {
   const [activeSection, setActiveSection] = useState<ConfigSection>("home");
   const [emailEditorOpen, setEmailEditorOpen] = useState(false);
   const [selectedEmailTemplate, setSelectedEmailTemplate] = useState<{ name: string; type: string } | null>(null);
+  const [libraryModalOpen, setLibraryModalOpen] = useState(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [orgData, setOrgData] = useState({
     nomeFantasia: "Clínica Demo",
     razaoSocial: "Clínica Demo LTDA",
@@ -2868,13 +2870,35 @@ export default function Configuracoes() {
               {/* Email Marketing Templates */}
               <Card className="border-border/50 backdrop-blur-sm bg-card/95 shadow-lg">
                 <CardHeader className="border-b border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500/20 to-rose-500/20 flex items-center justify-center">
-                      <Megaphone className="h-5 w-5 text-pink-500" />
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500/20 to-rose-500/20 flex items-center justify-center">
+                        <Megaphone className="h-5 w-5 text-pink-500" />
+                      </div>
+                      <div>
+                        <CardTitle>Templates de E-mail Marketing</CardTitle>
+                        <CardDescription>Gerencie os tipos de e-mails que sua clínica envia</CardDescription>
+                      </div>
                     </div>
-                    <div>
-                      <CardTitle>Templates de E-mail Marketing</CardTitle>
-                      <CardDescription>Gerencie os tipos de e-mails que sua clínica envia</CardDescription>
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="gap-2"
+                        onClick={() => setLibraryModalOpen(true)}
+                      >
+                        <Database className="h-4 w-4" />
+                        Biblioteca de Templates
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="gap-2"
+                        onClick={() => setPreviewModalOpen(true)}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Preview em Clientes
+                      </Button>
                     </div>
                   </div>
                 </CardHeader>
@@ -2922,7 +2946,11 @@ export default function Configuracoes() {
                               <FileCode className="h-3 w-3" />
                               Editar Template
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => setPreviewModalOpen(true)}
+                            >
                               <ExternalLink className="h-3 w-3" />
                             </Button>
                           </div>
@@ -3065,6 +3093,23 @@ export default function Configuracoes() {
         onOpenChange={setEmailEditorOpen}
         templateName={selectedEmailTemplate?.name || "Novo Template"}
         templateType={selectedEmailTemplate?.type || "marketing"}
+      />
+
+      {/* Email Templates Library Modal */}
+      <EmailTemplatesLibraryModal
+        open={libraryModalOpen}
+        onOpenChange={setLibraryModalOpen}
+        onSelectTemplate={(template) => {
+          setSelectedEmailTemplate({ name: template.name, type: template.category });
+          setLibraryModalOpen(false);
+          setEmailEditorOpen(true);
+        }}
+      />
+
+      {/* Email Client Preview Modal */}
+      <EmailClientPreviewModal
+        open={previewModalOpen}
+        onOpenChange={setPreviewModalOpen}
       />
     </TooltipProvider>
   );
