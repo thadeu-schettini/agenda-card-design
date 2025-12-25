@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,12 @@ import {
   Database,
   Lock,
   Megaphone,
+  Star,
+  ChevronDown,
+  Info,
+  User,
+  ArrowRight,
+  Stethoscope,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -71,15 +78,21 @@ type ConfigSection =
   | "telemedicina" 
   | "fiscal" 
   | "acessos"
-  | "whitelabel";
+  | "whitelabel"
+  | "tuss"
+  | "prescricaoDigital";
 
 export default function Configuracoes() {
   const { currentTheme, setTheme } = useThemeColor();
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<ConfigSection>("home");
   const [emailEditorOpen, setEmailEditorOpen] = useState(false);
   const [selectedEmailTemplate, setSelectedEmailTemplate] = useState<{ name: string; type: string } | null>(null);
   const [libraryModalOpen, setLibraryModalOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [tussModalOpen, setTussModalOpen] = useState(false);
+  const [selectedTussTable, setSelectedTussTable] = useState<{ id: string; number: number; name: string; description: string } | null>(null);
+  const [expandedTussTables, setExpandedTussTables] = useState<string[]>([]);
   const [orgData, setOrgData] = useState({
     nomeFantasia: "Clínica Demo",
     razaoSocial: "Clínica Demo LTDA",
@@ -323,6 +336,24 @@ export default function Configuracoes() {
       completion: 25,
       items: ["Domínio", "DNS", "E-mail Marketing", "Branding"],
       badge: "PRO",
+    },
+    {
+      id: "tuss",
+      title: "Configuração TUSS",
+      description: "Tabelas e terminologias padronizadas de saúde",
+      icon: Stethoscope,
+      color: "from-teal-500 to-emerald-500",
+      completion: 0,
+      items: ["Tabelas principais", "Personalização", "Padrões"],
+    },
+    {
+      id: "prescricaoDigital",
+      title: "Prescrição Digital",
+      description: "Assinatura digital com certificado ICP-Brasil",
+      icon: FileCode,
+      color: "from-sky-500 to-blue-500",
+      completion: 0,
+      items: ["Certificado Digital", "Provedores", "Configuração"],
     },
   ];
 
@@ -3098,8 +3129,197 @@ export default function Configuracoes() {
             </div>
           )}
 
+          {/* TUSS Configuration Section */}
+          {activeSection === "tuss" && (
+            <div className="space-y-6">
+              {/* How it works card */}
+              <Card className="border-info/30 bg-info/5">
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-3">
+                    <Info className="h-5 w-5 text-info mt-0.5" />
+                    <div>
+                      <p className="font-medium text-info">Como funciona?</p>
+                      <ul className="mt-2 space-y-1 text-sm text-muted-foreground list-disc list-inside">
+                        <li>Selecione quais itens de cada tabela você deseja usar</li>
+                        <li>Personalize os rótulos se necessário (ex: "Masculino" para "Homem")</li>
+                        <li>Defina um item padrão para pré-selecionar em formulários</li>
+                        <li>Se nenhum item for selecionado, todos estarão disponíveis</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Main Tables */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-pending" />
+                  <h3 className="text-lg font-semibold">Tabelas Principais</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { id: "23", number: 23, name: "Caráter do Atendimento", description: "Eletivo ou Urgência/Emergência", tags: ["Agendamento", "Prontuário"] },
+                    { id: "24", number: 24, name: "CBO - Ocupações", description: "Código Brasileiro de Ocupações para profissionais de saúde", tags: ["Cadastro de Profissionais"] },
+                    { id: "43", number: 43, name: "Sexo", description: "Masculino ou Feminino (TUSS padronizado)", tags: ["Cadastro de Pacientes"] },
+                    { id: "58", number: 58, name: "Tipo de Atendimento", description: "Consulta, Exame, Telessaúde, Internação, etc.", tags: ["Agendamento", "Faturamento"] },
+                    { id: "52", number: 52, name: "Tipo de Consulta", description: "Primeira Consulta, Retorno, Pré-natal ou Por Encaminhamento", tags: ["Agendamento", "Prontuário"] },
+                  ].map((table) => (
+                    <Card 
+                      key={table.id}
+                      className="group cursor-pointer hover:shadow-lg hover:border-primary/30 transition-all"
+                      onClick={() => {
+                        setSelectedTussTable(table);
+                        setTussModalOpen(true);
+                      }}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">Tabela {table.number}</Badge>
+                              <Badge variant="secondary" className="text-xs">Padrão</Badge>
+                            </div>
+                            <h4 className="font-semibold group-hover:text-primary transition-colors">{table.name}</h4>
+                            <p className="text-sm text-muted-foreground">{table.description}</p>
+                            <div className="flex flex-wrap gap-1 pt-1">
+                              {table.tags.map((tag) => (
+                                <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+                              ))}
+                            </div>
+                          </div>
+                          <ChevronDown className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors rotate-[-90deg]" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Other Tables - Collapsible List */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Outras Tabelas</h3>
+                <Card>
+                  <CardContent className="p-0 divide-y">
+                    {[
+                      { id: "36", number: 36, name: "Indicador de Acidente" },
+                      { id: "39", number: 39, name: "Motivo de Encerramento" },
+                      { id: "41", number: 41, name: "Regime de Internação" },
+                      { id: "57", number: 57, name: "Tipo de Internação" },
+                      { id: "68", number: 68, name: "Unidade de Medida" },
+                      { id: "76", number: 76, name: "Regime de Atendimento" },
+                      { id: "77", number: 77, name: "Saúde Ocupacional" },
+                      { id: "79", number: 79, name: "Modelos de Remuneração" },
+                    ].map((table) => (
+                      <div 
+                        key={table.id}
+                        className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors cursor-pointer"
+                        onClick={() => {
+                          setSelectedTussTable({ ...table, description: "" });
+                          setTussModalOpen(true);
+                        }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm text-muted-foreground">Tabela {table.number}</span>
+                          <span className="font-medium">{table.name}</span>
+                          <Badge variant="secondary" className="text-xs">Padrão</Badge>
+                        </div>
+                        <ChevronDown className="h-5 w-5 text-muted-foreground rotate-[-90deg]" />
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Prescrição Digital Section */}
+          {activeSection === "prescricaoDigital" && (
+            <div className="space-y-6">
+              <Card className="border-border/50 backdrop-blur-sm bg-card/95 shadow-lg overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="p-6 space-y-6">
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold">Prescrição Eletrônica (Certificado Digital)</h3>
+                      <p className="text-muted-foreground">
+                        Configure a assinatura digital de receitas com certificado ICP-Brasil em nuvem (VIDaaS, BirdID, SafeID, etc.).
+                      </p>
+                    </div>
+
+                    {/* Important notice */}
+                    <Card className="border-info/30 bg-info/5">
+                      <CardContent className="pt-6">
+                        <div className="flex items-start gap-3">
+                          <Info className="h-5 w-5 text-info mt-0.5" />
+                          <div>
+                            <p className="font-medium text-info">Configuração Individual por Profissional</p>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              O certificado digital é pessoal e intransferível. Cada profissional deve configurar seu próprio certificado em <strong>Meu Perfil</strong> para poder assinar receitas digitalmente.
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Action Card */}
+                    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                              <FileCode className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">Certificado Digital ICP-Brasil</h4>
+                              <p className="text-sm text-muted-foreground">Configure em Meu Perfil → Certificado Digital</p>
+                            </div>
+                          </div>
+                          <Button 
+                            onClick={() => navigate('/meu-perfil')}
+                            className="gap-2"
+                          >
+                            <User className="h-4 w-4" />
+                            Ir para Meu Perfil
+                            <ArrowRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Supported Providers */}
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-muted-foreground">Provedores Suportados:</p>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {[
+                          { name: "VIDaaS", provider: "VALID" },
+                          { name: "BirdID", provider: "Soluti" },
+                          { name: "SafeID", provider: "Safeweb" },
+                          { name: "RemoteID", provider: "Certisign" },
+                          { name: "VaultID", provider: "Serpro" },
+                          { name: "NeoID", provider: "Serasa" },
+                        ].map((item) => (
+                          <div key={item.name} className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Circle className="h-3 w-3" />
+                            <span className="font-medium">{item.name}</span>
+                            <span className="text-xs">({item.provider})</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
         </div>
       </div>
+
+      {/* TUSS Config Modal */}
+      <TussConfigModal
+        open={tussModalOpen}
+        onOpenChange={setTussModalOpen}
+        table={selectedTussTable}
+      />
 
       {/* Email Template Editor Modal */}
       <EmailTemplateEditorModal
