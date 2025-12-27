@@ -330,6 +330,7 @@ export default function Pipeline() {
                           <Card 
                             key={patient.id} 
                             className="p-4 hover:shadow-lg transition-all cursor-pointer group border-border/50 hover:border-primary/30 bg-card/80 backdrop-blur-sm"
+                            onClick={() => setSelectedLead(patient)}
                           >
                             <div className="flex items-start gap-3">
                               <GripVertical className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-grab mt-1" />
@@ -379,7 +380,7 @@ export default function Pipeline() {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
                                       <Phone className="h-4 w-4" />
                                     </Button>
                                   </TooltipTrigger>
@@ -389,7 +390,7 @@ export default function Pipeline() {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
                                       <MessageSquare className="h-4 w-4" />
                                     </Button>
                                   </TooltipTrigger>
@@ -399,14 +400,14 @@ export default function Pipeline() {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
                                       <Mail className="h-4 w-4" />
                                     </Button>
                                   </TooltipTrigger>
                                   <TooltipContent>E-mail</TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
-                              <Button variant="outline" size="sm" className="h-8 px-3 text-xs gap-1.5 ml-auto">
+                              <Button variant="outline" size="sm" className="h-8 px-3 text-xs gap-1.5 ml-auto" onClick={(e) => e.stopPropagation()}>
                                 Avançar
                                 <ArrowRight className="h-3.5 w-3.5" />
                               </Button>
