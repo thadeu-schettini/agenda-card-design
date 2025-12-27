@@ -22,7 +22,8 @@ import { cn } from "@/lib/utils";
 interface TelemedicinaMetricDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  metricType: "active" | "today" | "avgTime" | "successRate";
+  metricType: string;
+  metricTitle?: string;
 }
 
 const mockData = {
@@ -91,8 +92,12 @@ export function TelemedicinaMetricDetailModal({
   onOpenChange, 
   metricType 
 }: TelemedicinaMetricDetailModalProps) {
-  const data = mockData[metricType];
+  const validTypes = ['active', 'today', 'avgTime', 'successRate'];
+  const safeType = validTypes.includes(metricType) ? metricType : 'active';
+  const data = mockData[safeType as keyof typeof mockData];
   const Icon = data.icon;
+
+  if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

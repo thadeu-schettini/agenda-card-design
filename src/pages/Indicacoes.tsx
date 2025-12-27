@@ -8,6 +8,8 @@ import { LevelUpModal } from "@/components/LevelUpModal";
 import { MissionCompleteModal } from "@/components/MissionCompleteModal";
 import { PageContainer, PageContent } from "@/components/ui/page-container";
 import { PageHeader } from "@/components/ui/page-header";
+import { RedeemRewardModal } from "@/components/indicacoes/RedeemRewardModal";
+import { IndicacaoMetricDetailModal } from "@/components/indicacoes/IndicacaoMetricDetailModal";
 import { 
   Share2, 
   Copy, 
@@ -32,6 +34,8 @@ const Indicacoes = () => {
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [showMissionComplete, setShowMissionComplete] = useState(false);
   const [completedMission, setCompletedMission] = useState({ title: "", reward: "" });
+  const [selectedReward, setSelectedReward] = useState<{ name: string; points: string; discount: string; level: string } | null>(null);
+  const [metricModal, setMetricModal] = useState<{ type: string; title: string } | null>(null);
   const referralLink = "https://clinica.com/ref/DemoEV4";
 
   const currentLevel = {
@@ -280,18 +284,24 @@ const Indicacoes = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
-            <Card className="p-4 sm:p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 shadow-lg">
+            <Card 
+              className="p-4 sm:p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 shadow-lg cursor-pointer hover:shadow-xl transition-all group"
+              onClick={() => setMetricModal({ type: 'referrals', title: 'Indicações Ativas' })}
+            >
               <div className="flex items-center justify-between mb-2">
-                <Users className="h-8 w-8 text-primary" />
+                <Users className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
                 <TrendingUp className="h-5 w-5 text-green-500" />
               </div>
               <div className="text-3xl font-bold mb-1">12</div>
               <div className="text-sm text-muted-foreground">Indicações ativas</div>
             </Card>
 
-            <Card className="p-4 sm:p-6 bg-gradient-to-br from-success/10 to-success/5 border-success/20 shadow-lg">
+            <Card 
+              className="p-4 sm:p-6 bg-gradient-to-br from-success/10 to-success/5 border-success/20 shadow-lg cursor-pointer hover:shadow-xl transition-all group"
+              onClick={() => setMetricModal({ type: 'earnings', title: 'Ganhos do Mês' })}
+            >
               <div className="flex items-center justify-between mb-2">
-                <Gift className="h-8 w-8 text-success" />
+                <Gift className="h-8 w-8 text-success group-hover:scale-110 transition-transform" />
                 <Star className="h-5 w-5 text-warning" />
               </div>
               <div className="text-3xl font-bold mb-1">R$ 180,00</div>
@@ -485,6 +495,23 @@ const Indicacoes = () => {
             </ScrollArea>
           </Card>
         </div>
+
+        <RedeemRewardModal
+          open={!!selectedReward}
+          onOpenChange={() => setSelectedReward(null)}
+          reward={selectedReward}
+          onConfirm={() => {
+            toast({ title: "Resgate solicitado!", description: "O benefício será aplicado na próxima fatura." });
+            setSelectedReward(null);
+          }}
+        />
+
+        <IndicacaoMetricDetailModal
+          open={!!metricModal}
+          onOpenChange={() => setMetricModal(null)}
+          metricType={metricModal?.type || ""}
+          metricTitle={metricModal?.title || ""}
+        />
       </PageContent>
     </PageContainer>
   );

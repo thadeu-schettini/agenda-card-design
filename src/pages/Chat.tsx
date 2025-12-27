@@ -35,6 +35,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { CreatePatientModal } from "@/components/chat/CreatePatientModal";
+import { TransferChatModal } from "@/components/chat/TransferChatModal";
+import { SendDocumentsModal } from "@/components/chat/SendDocumentsModal";
+import { ScheduleFromChatModal } from "@/components/chat/ScheduleFromChatModal";
 
 // Mock conversations
 const conversations = [
@@ -110,6 +114,10 @@ export default function Chat() {
   const [filter, setFilter] = useState("all");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [showCreatePatient, setShowCreatePatient] = useState(false);
+  const [showTransfer, setShowTransfer] = useState(false);
+  const [showSendDocs, setShowSendDocs] = useState(false);
+  const [showSchedule, setShowSchedule] = useState(false);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -260,10 +268,10 @@ export default function Chat() {
           <DropdownMenuContent align="end">
             <DropdownMenuItem><Phone className="h-4 w-4 mr-2" />Ligar</DropdownMenuItem>
             <DropdownMenuItem><Video className="h-4 w-4 mr-2" />Vídeo</DropdownMenuItem>
-            <DropdownMenuItem><Calendar className="h-4 w-4 mr-2" />Agendar</DropdownMenuItem>
-            <DropdownMenuItem><FileText className="h-4 w-4 mr-2" />Enviar Docs</DropdownMenuItem>
-            <DropdownMenuItem><UserPlus className="h-4 w-4 mr-2" />Criar Paciente</DropdownMenuItem>
-            <DropdownMenuItem><Forward className="h-4 w-4 mr-2" />Transferir</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowSchedule(true)}><Calendar className="h-4 w-4 mr-2" />Agendar</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowSendDocs(true)}><FileText className="h-4 w-4 mr-2" />Enviar Docs</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowCreatePatient(true)}><UserPlus className="h-4 w-4 mr-2" />Criar Paciente</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowTransfer(true)}><Forward className="h-4 w-4 mr-2" />Transferir</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -424,6 +432,19 @@ export default function Chat() {
           <ChatArea />
         </div>
       </div>
+
+      <CreatePatientModal 
+        open={showCreatePatient} 
+        onOpenChange={setShowCreatePatient}
+        prefillData={{ name: selectedConversation.patient.name, phone: selectedConversation.patient.phone }}
+      />
+      <TransferChatModal open={showTransfer} onOpenChange={setShowTransfer} />
+      <SendDocumentsModal open={showSendDocs} onOpenChange={setShowSendDocs} />
+      <ScheduleFromChatModal 
+        open={showSchedule} 
+        onOpenChange={setShowSchedule}
+        patientName={selectedConversation.patient.name}
+      />
     </div>
   );
 }

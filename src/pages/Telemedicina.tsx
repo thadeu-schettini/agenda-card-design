@@ -41,6 +41,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { TeleconfigModal } from "@/components/telemedicina/TeleconfigModal";
+import { TelemedicinaMetricDetailModal } from "@/components/telemedicina/TelemedicinaMetricDetailModal";
 
 const stats = [
   { label: "Salas Ativas", value: 3, icon: Video, change: "Agora", color: "from-emerald-500 to-green-500" },
@@ -95,6 +97,8 @@ export default function Telemedicina() {
   const [professionalSearch, setProfessionalSearch] = useState("");
   const [enableRecording, setEnableRecording] = useState(false);
   const [createdRoom, setCreatedRoom] = useState<{ id: string; patientLink: string; professionalLink: string } | null>(null);
+  const [showConfig, setShowConfig] = useState(false);
+  const [metricModal, setMetricModal] = useState<{ type: string; title: string } | null>(null);
 
   const createRoom = () => {
     const roomId = crypto.randomUUID().slice(0, 8);
@@ -126,7 +130,7 @@ export default function Telemedicina() {
         description="Gerencie consultas online e salas de videoconferência"
         actions={
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => setShowConfig(true)}>
               <Settings2 className="h-4 w-4" />
               Configurações
             </Button>
@@ -298,11 +302,15 @@ export default function Telemedicina() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {stats.map((stat) => (
-            <Card key={stat.label} className="group overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
+          {stats.map((stat, index) => (
+            <Card 
+              key={stat.label} 
+              className="group overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg cursor-pointer"
+              onClick={() => setMetricModal({ type: ['rooms', 'today', 'avgTime', 'success'][index], title: stat.label })}
+            >
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-3">
-                  <div className={cn("p-2.5 rounded-xl bg-gradient-to-br shadow-lg", stat.color)}>
+                  <div className={cn("p-2.5 rounded-xl bg-gradient-to-br shadow-lg group-hover:scale-110 transition-transform", stat.color)}>
                     <stat.icon className="h-5 w-5 text-white" />
                   </div>
                   <Badge variant="secondary" className="text-xs font-medium text-emerald-600">
@@ -575,6 +583,14 @@ export default function Telemedicina() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <TeleconfigModal open={showConfig} onOpenChange={setShowConfig} />
+      <TelemedicinaMetricDetailModal
+        open={!!metricModal}
+        onOpenChange={() => setMetricModal(null)}
+        metricType={metricModal?.type || ""}
+        metricTitle={metricModal?.title || ""}
+      />
       </PageContent>
     </PageContainer>
   );

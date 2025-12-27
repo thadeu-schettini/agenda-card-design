@@ -16,6 +16,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { LiveChatModal } from "@/components/ajuda/LiveChatModal";
+import { ArticleModal } from "@/components/ajuda/ArticleModal";
 
 const helpCategories = [
   {
@@ -130,6 +132,8 @@ const faqs = [
 
 export default function Ajuda() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showLiveChat, setShowLiveChat] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<typeof popularArticles[0] | null>(null);
 
   const filteredFaqs = faqs.filter(
     faq => 
@@ -187,7 +191,10 @@ export default function Ajuda() {
             </CardContent>
           </Card>
 
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer group">
+          <Card 
+            className="border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer group"
+            onClick={() => setShowLiveChat(true)}
+          >
             <CardContent className="p-4 flex items-center gap-4">
               <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                 <MessageCircle className="h-6 w-6 text-white" />
@@ -281,6 +288,7 @@ export default function Ajuda() {
                   <div 
                     key={article.id}
                     className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group"
+                    onClick={() => setSelectedArticle(article)}
                   >
                     <FileText className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                     <div className="flex-1 min-w-0">
@@ -309,7 +317,7 @@ export default function Ajuda() {
                 <CardDescription>Nossa equipe está pronta para ajudar</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button variant="outline" className="w-full justify-start gap-3">
+                <Button variant="outline" className="w-full justify-start gap-3" onClick={() => setShowLiveChat(true)}>
                   <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
                     <MessageCircle className="h-4 w-4 text-primary" />
                   </div>
@@ -348,6 +356,13 @@ export default function Ajuda() {
             </Card>
           </div>
         </div>
+
+        <LiveChatModal open={showLiveChat} onOpenChange={setShowLiveChat} />
+        <ArticleModal 
+          open={!!selectedArticle} 
+          onOpenChange={() => setSelectedArticle(null)} 
+          article={selectedArticle}
+        />
       </PageContent>
     </PageContainer>
   );

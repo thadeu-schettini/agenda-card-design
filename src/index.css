@@ -299,4 +299,91 @@ All colors MUST be HSL.
   .overflow-x-auto::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.55);
   }
+
+  /* Metric Card Hover Animations */
+  .metric-card {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .metric-card:hover {
+    @apply shadow-lg -translate-y-1;
+  }
+
+  .metric-card:active {
+    @apply scale-[0.98];
+  }
+
+  /* Modal Enter Animation */
+  .modal-enter {
+    animation: modal-enter 0.2s ease-out;
+  }
+
+  @keyframes modal-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* Icon Bounce on Hover */
+  .icon-bounce:hover {
+    animation: icon-bounce 0.5s ease;
+  }
+
+  @keyframes icon-bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  /* Loading Skeleton Shimmer */
+  .loading-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--muted-foreground) / 0.1) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Stagger Animation for Lists */
+  .stagger-animate > * {
+    animation: stagger-fade-in 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  .stagger-animate > *:nth-child(1) { animation-delay: 0.05s; }
+  .stagger-animate > *:nth-child(2) { animation-delay: 0.1s; }
+  .stagger-animate > *:nth-child(3) { animation-delay: 0.15s; }
+  .stagger-animate > *:nth-child(4) { animation-delay: 0.2s; }
+  .stagger-animate > *:nth-child(5) { animation-delay: 0.25s; }
+
+  @keyframes stagger-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
