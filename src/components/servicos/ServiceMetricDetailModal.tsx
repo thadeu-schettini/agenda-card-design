@@ -97,9 +97,13 @@ export function ServiceMetricDetailModal({
   metricType 
 }: ServiceMetricDetailModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  
-  const data = mockData[metricType];
+  // Guard against invalid metricType
+  const validTypes = ['total', 'ativos', 'receita', 'popular'];
+  const safeType = validTypes.includes(metricType) ? metricType : 'total';
+  const data = mockData[safeType as keyof typeof mockData];
   const Icon = data.icon;
+
+  if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

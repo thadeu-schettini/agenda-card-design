@@ -25,7 +25,8 @@ import { cn } from "@/lib/utils";
 interface IndicacaoMetricDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  metricType: "referrals" | "earnings";
+  metricType: string;
+  metricTitle?: string;
 }
 
 const mockData = {
@@ -66,8 +67,12 @@ export function IndicacaoMetricDetailModal({
 }: IndicacaoMetricDetailModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
   
-  const data = mockData[metricType];
+  const validTypes = ['referrals', 'earnings'];
+  const safeType = validTypes.includes(metricType) ? metricType : 'referrals';
+  const data = mockData[safeType as keyof typeof mockData];
   const Icon = data.icon;
+
+  if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -111,8 +111,13 @@ export function PipelineMetricDetailModal({
   onOpenChange, 
   metricType 
 }: PipelineMetricDetailModalProps) {
-  const data = mockData[metricType];
+  // Guard against invalid metricType
+  const validTypes = ['total', 'value', 'conversion', 'avgTime', 'reengage'];
+  const safeType = validTypes.includes(metricType) ? metricType : 'total';
+  const data = mockData[safeType as keyof typeof mockData];
   const Icon = data.icon;
+
+  if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
