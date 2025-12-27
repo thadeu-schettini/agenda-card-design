@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/accordion";
 import { LiveChatModal } from "@/components/ajuda/LiveChatModal";
 import { ArticleModal } from "@/components/ajuda/ArticleModal";
+import { CategoryModal } from "@/components/ajuda/CategoryModal";
 
 const helpCategories = [
   {
@@ -134,6 +135,7 @@ export default function Ajuda() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showLiveChat, setShowLiveChat] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<typeof popularArticles[0] | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<typeof helpCategories[0] | null>(null);
 
   const filteredFaqs = faqs.filter(
     faq => 
@@ -230,6 +232,7 @@ export default function Ajuda() {
                   <Card 
                     key={category.id}
                     className="border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer group"
+                    onClick={() => setSelectedCategory(category)}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
@@ -362,6 +365,11 @@ export default function Ajuda() {
           open={!!selectedArticle} 
           onOpenChange={() => setSelectedArticle(null)} 
           article={selectedArticle}
+        />
+        <CategoryModal
+          open={!!selectedCategory}
+          onOpenChange={() => setSelectedCategory(null)}
+          category={selectedCategory}
         />
       </PageContent>
     </PageContainer>
